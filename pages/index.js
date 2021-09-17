@@ -1,42 +1,87 @@
 import Head from "next/head";
-import Image from "next/image";
-import Link from "next/link";
+// import Link from "next/link";
 import {
   makeStyles,
   Box,
   Typography,
   AppBar,
   Toolbar,
+  Paper,
 } from "@material-ui/core";
-import EthereumLogo from "public/ethereum-logo-landscape-purple.png";
+import Logo from "components/logo";
+import { useReducer } from "react";
+
+// ===================================================
+// UTIL
+// ===================================================
+
+/*
+  VARS
+  1. Total Contacts
+  2. Security Timelock
+  3. Transfer Cost
+  4. Contacts (Array)
+  5. Contacts (Mapping - address to index)
+  6. Contacts (Mapping - name to index)
+  7. Owner (of contract / address book)
+
+  SCRIPTS
+  1. Add Contact
+  2. Remove Contact (by name)
+  3. Pay Contact
+  4. Check Balance
+  5. Withdraw Funds
+*/
 
 // ===================================================
 // STYLES
 // ===================================================
 
-const useStyles = makeStyles((theme) => ({
+export const useStyles = makeStyles((theme) => ({
   container: {
-    height: "100vh",
+    minHeight: "100vh",
     width: "100vw",
     background: theme.palette.background.default,
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
   },
   toolbar: {
     display: "flex",
     justifyContent: "space-between",
-  },
-  logo: {
-    position: "relative",
-    maxWidth: 180,
-    width: "100%",
-    height: "auto",
-    padding: theme.spacing(1, 2),
   },
   tagline: {
     display: "flex",
     alignItems: "center",
   },
   main: {
-    //
+    position: "relative",
+  },
+  columns: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    "&>*": {
+      flex: 1,
+    },
+  },
+  infoPanel: {
+    border: "1px solid red",
+    margin: "auto",
+    padding: theme.spacing(3),
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  // paperPanelContainer: {
+  //   width: "fit-content"
+  // },
+  paperPanel: {
+    margin: "auto",
+    padding: theme.spacing(3),
+    maxWidth: theme.breakpoints.values.sm,
   },
   title: {
     //
@@ -71,6 +116,18 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Home() {
   const classes = useStyles();
+
+  const { contacts, timelock, cost, list, owner } = useReducer(
+    (state, moreState) => ({ ...state, ...moreState }),
+    {
+      contacts: "",
+      timelock: "",
+      cost: "",
+      owner: "",
+      list: "",
+    }
+  );
+
   return (
     <Box className={classes.container}>
       <Head>
@@ -84,74 +141,77 @@ export default function Home() {
 
       <AppBar color="primary">
         <Toolbar className={classes.toolbar}>
-          <Typography variant="h6">
-            <Link passHref href="/">
-              James Hooper
-            </Link>
-          </Typography>
+          <a href="https://www.jameshooper.io" target="_blank" rel="noreferrer">
+            <Typography variant="h6">James Hooper</Typography>
+          </a>
           <Box className={classes.tagline}>
             <Typography variant="h6">Active network:</Typography>
-            <Box className={classes.logo}>
-              <Image
-                alt="Ethereum Logo"
-                src={EthereumLogo}
-                layout="intrinsic"
-              />
-            </Box>
+            <Logo network="ethereum" />
           </Box>
         </Toolbar>
       </AppBar>
 
       <main className={classes.main}>
-        <Typography variant="h1" className={classes.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </Typography>
-
-        <Typography variant="body1" className={classes.description}>
-          Get started by editing{" "}
-          <code className={classes.code}>pages/index.js</code>
-        </Typography>
-
-        <Box className={classes.grid}>
-          <a href="https://nextjs.org/docs" className={classes.card}>
-            <Typography variant="h2">Documentation &rarr;</Typography>
-            <Typography variant="body1">
-              Find in-depth information about Next.js features and API.
+        <Box className={classes.columns}>
+          <Box className={classes.infoPanel}>
+            <Typography variant="h1">Ethereum Address Book</Typography>
+            <Typography variant="h2" color="textSecondary">
+              Manage contacts and send transactions
             </Typography>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={classes.card}>
-            <Typography variant="h2">Learn &rarr;</Typography>
-            <Typography variant="body1">
-              Learn about Next.js in an interactive course with quizzes!
-            </Typography>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={classes.card}
-          >
-            <Typography variant="h2">Examples &rarr;</Typography>
-            <Typography variant="body1">
-              Discover and deploy boilerplate example Next.js projects.
-            </Typography>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={classes.card}
-          >
-            <Typography variant="h2">Deploy &rarr;</Typography>
-            <Typography variant="body1">
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </Typography>
-          </a>
+          </Box>
+          {/* <Box> */}
+          <Paper elevation={4} className={classes.paperPanel}>
+            <Box>
+              <Typography variant="h3">Variables</Typography>
+              <Box className={classes.optionsList}>
+                <Box>
+                  <Typography variant="body1">Total Contacts:</Typography>
+                  <Typography variant="body1">{contacts}</Typography>
+                </Box>
+                <Box>
+                  <Typography variant="body1">Security Timelock:</Typography>
+                  <Typography variant="body1">{timelock}</Typography>
+                </Box>
+                <Box>
+                  <Typography variant="body1">Transfer Cost:</Typography>
+                  <Typography variant="body1">{cost}</Typography>
+                </Box>
+                <Box>
+                  <Typography variant="body1">Contacts List:</Typography>
+                  <Typography variant="body1">{list}</Typography>
+                </Box>
+                <Box>
+                  <Typography variant="body1">Contract Owner:</Typography>
+                  <Typography variant="body1">{owner}</Typography>
+                </Box>
+              </Box>
+            </Box>
+            {/* <Box>
+              <Typography variant="h3">Modifiers</Typography>
+              <Box className={classes.optionsList}>
+                <Typography variant="body1"></Typography>
+              </Box>
+            </Box> */}
+            <Box>
+              <Typography variant="h3">Functions</Typography>
+              <Box className={classes.optionsList}>
+                <Typography variant="body1">Add Contact</Typography>
+                <Typography variant="body1">
+                  Remove Contact (by name)
+                </Typography>
+                <Typography variant="body1">Pay Contact</Typography>
+                <Typography variant="body1">Check Balance</Typography>
+                <Typography variant="body1">Withdraw Funds</Typography>
+              </Box>
+            </Box>
+          </Paper>
+          {/* </Box> */}
         </Box>
       </main>
 
       <footer className={classes.footer}>
         <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
+          href="https://www.jameshooper.io"
           target="_blank"
           rel="noopener noreferrer"
         >
