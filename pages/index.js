@@ -1,16 +1,23 @@
+import { useCallback, useReducer, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import {
   makeStyles,
   Box,
+  List,
+  ListItemButton,
+  ListItemText,
+  IconButton,
   Typography,
   AppBar,
   Toolbar,
   Paper,
   Button,
 } from "@material-ui/core";
+import PersonAddIcon from "@material-ui/icons/PersonAdd";
+import PersonRemoveIcon from "@material-ui/icons/PersonAddDisabled";
+import PaymentIcon from "@material-ui/icons/Payment";
 import Logo from "components/logo";
-import { useReducer } from "react";
 
 // ===================================================
 // UTIL
@@ -29,29 +36,11 @@ const linkProps = {
   },
 };
 
-/*
-  VARS
-  1. Total Contacts
-  2. Security Timelock
-  3. Transfer Cost
-  4. Contacts (Array)
-  5. Contacts (Mapping - address to index)
-  6. Contacts (Mapping - name to index)
-  7. Owner (of contract / address book)
-
-  SCRIPTS
-  1. Add Contact
-  2. Remove Contact (by name)
-  3. Pay Contact
-  4. Check Balance
-  5. Withdraw Funds
-*/
-
 // ===================================================
 // STYLES
 // ===================================================
 
-export const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme) => ({
   container: {
     minHeight: "100vh",
     width: "100vw",
@@ -87,7 +76,8 @@ export const useStyles = makeStyles((theme) => ({
     justifyContent: "space-between",
   },
   titles: {
-    marginBottom: theme.spacing(12),
+    margin: theme.spacing(4, "auto"),
+    textAlign: "center",
   },
   paperPanel: {
     height: "100%",
@@ -110,8 +100,19 @@ export const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
-    "&>.MuiButton-root": {
+    "&>$button": {
       margin: theme.spacing(1, 0),
+    },
+  },
+  buttonRow: {
+    display: "flex",
+    margin: theme.spacing(0, -1),
+    "&>$button": {
+      margin: theme.spacing(0, 1),
+      flex: 1,
+      // "&:first-child": {
+      //   flex: 0,
+      // },
     },
   },
   button: {},
@@ -134,16 +135,32 @@ export const useStyles = makeStyles((theme) => ({
 export default function Home() {
   const classes = useStyles();
 
-  const [{ contacts, timelock, cost, list, owner }, dispatch] = useReducer(
-    (state, moreState) => ({ ...state, ...moreState }),
-    {
-      contacts: "0",
+  // web3 variables
+  const [{ numContacts, timelock, txCost, contactList, owner }, dispatch] =
+    useReducer((state, moreState) => ({ ...state, ...moreState }), {
+      numContacts: "0",
       timelock: "30",
-      cost: "Calculating...",
+      txCost: "Calculating...",
       owner: "Calculating...",
-      list: "[]",
-    }
-  );
+      contactList: [],
+    });
+
+  // web3 functions
+  const addContact = useCallback(() => {}, []);
+
+  const removeContact = useCallback(() => {}, []);
+
+  const payContact = useCallback(() => {}, []);
+
+  const checkBalance = useCallback(() => {}, []);
+
+  const withdrawFunds = useCallback(() => {}, []);
+
+  // Contact selector handlers
+  const [selectedIndex, setSelectedIndex] = useState(1);
+  const handleListItemClick = useCallback((event, index) => {
+    setSelectedIndex(index);
+  }, []);
 
   return (
     <Box className={classes.container}>
@@ -151,7 +168,7 @@ export default function Home() {
         <title>Address Book Whitelist</title>
         <meta
           name="description"
-          content="Address book for Ethereum users. Add and remove contracts and send transactions to them"
+          content="Address book for Ethereum users. Add and remove contacts and send transactions to them"
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -185,14 +202,43 @@ export default function Home() {
               className={[classes.paperPanel, classes.smallPanel]}
             >
               <Typography variant="h3">Contacts</Typography>
-              <Box className={classes.buttonList}>
-                <Button variant="contained" color="primary">
-                  <Typography variant="body1">Add Contact</Typography>
+              <Box className={classes.contactWindow}>
+                <List>
+                  {contactList.map((contact) => (
+                    <ListItemButton
+                      selected={selectedIndex === 0}
+                      onClick={(event) => handleListItemClick(event, 0)}
+                      key={`contact-list-${contact.name}`}
+                    >
+                      <ListItemText primary={contact.name} />
+                    </ListItemButton>
+                  ))}
+                </List>
+              </Box>
+              <Box className={classes.buttonRow}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={removeContact}
+                  className={classes.button}
+                >
+                  <PersonRemoveIcon />
                 </Button>
-                <Button variant="contained" color="secondary">
-                  <Typography variant="body1">
-                    Remove Contact (by name)
-                  </Typography>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={payContact}
+                  className={classes.button}
+                >
+                  <PaymentIcon />
+                </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={addContact}
+                  className={classes.button}
+                >
+                  <PersonAddIcon />
                 </Button>
               </Box>
             </Paper>
@@ -205,7 +251,7 @@ export default function Home() {
                 <Box className={classes.optionsList}>
                   <Box className={classes.option}>
                     <Typography variant="body1">Total Contacts:</Typography>
-                    <Typography variant="body1">{contacts}</Typography>
+                    <Typography variant="body1">{numContacts}</Typography>
                   </Box>
                   <Box className={classes.option}>
                     <Typography variant="body1">Security Timelock:</Typography>
@@ -215,36 +261,55 @@ export default function Home() {
                   </Box>
                   <Box className={classes.option}>
                     <Typography variant="body1">Transfer Cost:</Typography>
-                    <Typography variant="body1">{cost}</Typography>
+                    <Typography variant="body1">{txCost}</Typography>
                   </Box>
                   <Box className={classes.option}>
                     <Typography variant="body1">Contract Owner:</Typography>
                     <Typography variant="body1">{owner}</Typography>
-                  </Box>
-                  <Box className={classes.option}>
-                    <Typography variant="body1">Contacts List:</Typography>
-                    <Typography variant="body1">{list}</Typography>
                   </Box>
                 </Box>
               </Box>
               <Box>
                 <Typography variant="h3">Functions</Typography>
                 <Box className={classes.buttonList}>
-                  <Button variant="contained" color="primary">
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={addContact}
+                    className={classes.button}
+                  >
                     <Typography variant="body1">Add Contact</Typography>
                   </Button>
-                  <Button variant="contained" color="secondary">
-                    <Typography variant="body1">
-                      Remove Contact (by name)
-                    </Typography>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={removeContact}
+                    className={classes.button}
+                  >
+                    <Typography variant="body1">Remove Contact</Typography>
                   </Button>
-                  <Button variant="contained" color="primary">
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={payContact}
+                    className={classes.button}
+                  >
                     <Typography variant="body1">Pay Contact</Typography>
                   </Button>
-                  <Button variant="contained" color="primary">
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={checkBalance}
+                    className={classes.button}
+                  >
                     <Typography variant="body1">Check Balance</Typography>
                   </Button>
-                  <Button variant="contained" color="primary">
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={withdrawFunds}
+                    className={classes.button}
+                  >
                     <Typography variant="body1">Withdraw Funds</Typography>
                   </Button>
                 </Box>
