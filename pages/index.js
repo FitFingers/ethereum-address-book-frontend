@@ -7,6 +7,7 @@ import {
   AppBar,
   Toolbar,
   Paper,
+  Button,
 } from "@material-ui/core";
 import Logo from "components/logo";
 import { useReducer } from "react";
@@ -81,16 +82,16 @@ export const useStyles = makeStyles((theme) => ({
     },
   },
   infoPanel: {
-    border: "1px solid red",
     display: "flex",
     flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: "space-between",
   },
-  // paperPanelContainer: {
-  //   width: "fit-content"
-  // },
+  titles: {
+    marginBottom: theme.spacing(12),
+  },
   paperPanel: {
+    height: "100%",
+    padding: theme.spacing(5),
     maxWidth: theme.breakpoints.values.lg,
   },
   optionsList: {
@@ -105,7 +106,14 @@ export const useStyles = makeStyles((theme) => ({
       fontWeight: "bold",
     },
   },
-  buttonList: {},
+  buttonList: {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    "&>.MuiButton-root": {
+      margin: theme.spacing(1, 0),
+    },
+  },
   button: {},
   footer: {
     position: "absolute",
@@ -131,9 +139,9 @@ export default function Home() {
     {
       contacts: "0",
       timelock: "30",
-      cost: "",
-      owner: "",
-      list: "",
+      cost: "Calculating...",
+      owner: "Calculating...",
+      list: "[]",
     }
   );
 
@@ -152,7 +160,7 @@ export default function Home() {
         <Toolbar className={classes.toolbar}>
           <Link passHref {...linkProps[linkBehaviour]}>
             <a {...linkProps[linkBehaviour]}>
-              <Typography variant="h6">James Hooper</Typography>
+              <Typography variant="h6">Ethereum Address Book</Typography>
             </a>
           </Link>
           <Box className={classes.tagline}>
@@ -165,58 +173,84 @@ export default function Home() {
       <main className={classes.main}>
         <Box className={classes.columns}>
           <Box className={classes.infoPanel}>
-            <Typography variant="h1">Ethereum Address Book</Typography>
-            <Typography variant="h2" color="textSecondary">
-              Manage contacts and send transactions
-            </Typography>
-          </Box>
-          {/* <Box> */}
-          <Paper elevation={4} className={classes.paperPanel}>
-            <Box>
-              <Typography variant="h3">Variables</Typography>
-              <Box className={classes.optionsList}>
-                <Box className={classes.option}>
-                  <Typography variant="body1">Total Contacts:</Typography>
-                  <Typography variant="body1">{contacts}</Typography>
-                </Box>
-                <Box className={classes.option}>
-                  <Typography variant="body1">Security Timelock:</Typography>
-                  <Typography variant="body1">{timelock} (seconds)</Typography>
-                </Box>
-                <Box className={classes.option}>
-                  <Typography variant="body1">Transfer Cost:</Typography>
-                  <Typography variant="body1">{cost}</Typography>
-                </Box>
-                <Box className={classes.option}>
-                  <Typography variant="body1">Contacts List:</Typography>
-                  <Typography variant="body1">{list}</Typography>
-                </Box>
-                <Box className={classes.option}>
-                  <Typography variant="body1">Contract Owner:</Typography>
-                  <Typography variant="body1">{owner}</Typography>
-                </Box>
-              </Box>
+            <Box className={classes.titles}>
+              <Typography variant="h1">Ethereum Address Book</Typography>
+              <Typography variant="h2" color="textSecondary">
+                Manage contacts and send transactions
+              </Typography>
             </Box>
-            {/* <Box>
-              <Typography variant="h3">Modifiers</Typography>
-              <Box className={classes.optionsList}>
-                <Typography variant="body1"></Typography>
-              </Box>
-            </Box> */}
-            <Box>
-              <Typography variant="h3">Functions</Typography>
+
+            <Paper
+              elevation={4}
+              className={[classes.paperPanel, classes.smallPanel]}
+            >
+              <Typography variant="h3">Contacts</Typography>
               <Box className={classes.buttonList}>
-                <Typography variant="body1">Add Contact</Typography>
-                <Typography variant="body1">
-                  Remove Contact (by name)
-                </Typography>
-                <Typography variant="body1">Pay Contact</Typography>
-                <Typography variant="body1">Check Balance</Typography>
-                <Typography variant="body1">Withdraw Funds</Typography>
+                <Button variant="contained" color="primary">
+                  <Typography variant="body1">Add Contact</Typography>
+                </Button>
+                <Button variant="contained" color="secondary">
+                  <Typography variant="body1">
+                    Remove Contact (by name)
+                  </Typography>
+                </Button>
               </Box>
-            </Box>
-          </Paper>
-          {/* </Box> */}
+            </Paper>
+          </Box>
+
+          <Box>
+            <Paper elevation={4} className={classes.paperPanel}>
+              <Box>
+                <Typography variant="h3">Variables</Typography>
+                <Box className={classes.optionsList}>
+                  <Box className={classes.option}>
+                    <Typography variant="body1">Total Contacts:</Typography>
+                    <Typography variant="body1">{contacts}</Typography>
+                  </Box>
+                  <Box className={classes.option}>
+                    <Typography variant="body1">Security Timelock:</Typography>
+                    <Typography variant="body1">
+                      {timelock} (seconds)
+                    </Typography>
+                  </Box>
+                  <Box className={classes.option}>
+                    <Typography variant="body1">Transfer Cost:</Typography>
+                    <Typography variant="body1">{cost}</Typography>
+                  </Box>
+                  <Box className={classes.option}>
+                    <Typography variant="body1">Contract Owner:</Typography>
+                    <Typography variant="body1">{owner}</Typography>
+                  </Box>
+                  <Box className={classes.option}>
+                    <Typography variant="body1">Contacts List:</Typography>
+                    <Typography variant="body1">{list}</Typography>
+                  </Box>
+                </Box>
+              </Box>
+              <Box>
+                <Typography variant="h3">Functions</Typography>
+                <Box className={classes.buttonList}>
+                  <Button variant="contained" color="primary">
+                    <Typography variant="body1">Add Contact</Typography>
+                  </Button>
+                  <Button variant="contained" color="secondary">
+                    <Typography variant="body1">
+                      Remove Contact (by name)
+                    </Typography>
+                  </Button>
+                  <Button variant="contained" color="primary">
+                    <Typography variant="body1">Pay Contact</Typography>
+                  </Button>
+                  <Button variant="contained" color="primary">
+                    <Typography variant="body1">Check Balance</Typography>
+                  </Button>
+                  <Button variant="contained" color="primary">
+                    <Typography variant="body1">Withdraw Funds</Typography>
+                  </Button>
+                </Box>
+              </Box>
+            </Paper>
+          </Box>
         </Box>
       </main>
 
@@ -224,7 +258,7 @@ export default function Home() {
         <Link passHref {...linkProps[linkBehaviour]}>
           <a {...linkProps[linkBehaviour]}>
             <Typography variant="h6">
-              © {new Date().getFullYear()} James Hooper
+              © {new Date().getFullYear()} Ethereum Address Book
             </Typography>
           </a>
         </Link>
