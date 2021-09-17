@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useReducer } from "react";
+import { useCallback, useEffect, useMemo, useReducer } from "react";
 // import Link from "next/link";
 import Web3 from "web3";
-import ABI from "utils/abi";
-// import { useFeedback } from "components/feedback";
+import { ABI } from "util/abi";
+import { useFeedback } from "components/feedback";
 
 // const isDev = process.env.NODE_ENV === "development";
 
@@ -22,6 +22,8 @@ const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
 // ===================================================
 
 export default function useMetaMask() {
+  const { handleOpen } = useFeedback();
+
   const [{ account, network, contract }, dispatch] = useReducer(
     (state, moreState) => ({ ...state, ...moreState }),
     {
@@ -49,10 +51,12 @@ export default function useMetaMask() {
       const network = await window.web3.eth.net.getNetworkType();
       dispatch({ network });
       console.debug("Connected.");
+      handleOpen("success", `Successfully connected to ${network}!`);
     } catch (err) {
       console.debug("ERROR: couldn't connect wallet", { err });
+      handleOpen("error", `Couldn't connect: ${err.message}`);
     }
-  }, []);
+  }, [handleOpen]);
 
   // create a contract instance
   useEffect(() => {
@@ -74,12 +78,15 @@ export default function useMetaMask() {
   // assign a listener to a payable tx to get a hash and then receipt
   // useTransactionConfirmation();
 
-  return {
-    connectWallet,
-    network,
-    account,
-    contract,
-  };
+  return useMemo(
+    () => ({
+      connectWallet,
+      network,
+      account,
+      contract,
+    }),
+    [account, connectWallet, contract, network]
+  );
 }
 
 // ===================================================

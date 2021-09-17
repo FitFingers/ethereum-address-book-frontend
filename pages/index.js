@@ -19,6 +19,7 @@ import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import PersonRemoveIcon from "@material-ui/icons/PersonAddDisabled";
 import PaymentIcon from "@material-ui/icons/Payment";
 import Logo from "components/logo";
+import useMetaMask from "hooks/useMetaMask";
 
 // ===================================================
 // UTIL
@@ -137,9 +138,6 @@ const useStyles = makeStyles((theme) => ({
     "&>$button": {
       margin: theme.spacing(0, 1),
       flex: 1,
-      // "&:first-child": {
-      //   flex: 0,
-      // },
     },
   },
   button: {},
@@ -163,9 +161,7 @@ export default function Home() {
   const classes = useStyles();
 
   // init web3
-  useEffect(() => {
-
-  }, [])
+  const { connectWallet, network, /*account,*/ contract } = useMetaMask();
 
   // web3 variables
   const [{ numContacts, timelock, txCost, contactList, owner }, dispatch] =
@@ -241,7 +237,7 @@ export default function Home() {
           </Link>
           <Box className={classes.tagline}>
             <Typography variant="h6">Active network:</Typography>
-            <Logo network={""} />
+            <Logo network={network} handleClick={connectWallet} />
           </Box>
         </Toolbar>
       </AppBar>

@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import Image from "next/image";
 import { makeStyles, Button, Box, Typography } from "@material-ui/core";
 
@@ -16,7 +15,7 @@ import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
 // ===================================================
 
 const logos = {
-  ethereum: EthereumLogo,
+  main: EthereumLogo,
   rinkeby: RinkebyLogo,
 };
 
@@ -25,28 +24,28 @@ const logos = {
 // ===================================================
 
 const useStyles = makeStyles((theme) => ({
-  logo: ({ network }) => ({
+  logo: {
     position: "relative",
     maxWidth: 180,
     width: "100%",
     height: "auto",
     padding: theme.spacing(1, 2),
-    mixBlendMode: network === "rinkeby" ? "multiply" : "normal",
+    mixBlendMode: "multiply", // network === "rinkeby" ? "multiply" : "normal", // TODO: network updates, but new styles aren't applied?
     "& .MuiSvgIcon-root": {
       marginLeft: theme.spacing(1),
     },
-  }),
+  },
 }));
 
 // ===================================================
 // COMPONENTS
 // ===================================================
 
-export default function Logo({ network = "ethereum" }) {
+export default function Logo({ network, handleClick }) {
   const classes = useStyles({ network });
-  const logo = useMemo(() => logos[network], [network]);
+  const logo = logos[network];
   return (
-    <Box className={classes.logo}>
+    <Box className={classes.logo} onClick={handleClick}>
       {logo ? (
         <Image alt={`${network} Logo`} src={logo} layout="intrinsic" />
       ) : (

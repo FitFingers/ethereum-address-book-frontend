@@ -4,6 +4,7 @@ import React from "react";
 import Document, { Html, Head, Main, NextScript } from "next/document";
 import { ServerStyleSheets } from "@material-ui/core/styles";
 import { theme } from "theme";
+import NoScript from "components/noscript";
 
 export default class MyDocument extends Document {
   render() {
@@ -19,6 +20,7 @@ export default class MyDocument extends Document {
           />
         </Head>
         <body>
+          <NoScript />
           <Main />
           <NextScript />
         </body>
