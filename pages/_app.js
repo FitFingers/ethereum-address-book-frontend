@@ -1,7 +1,14 @@
-import '../styles/globals.css'
+import "../styles/globals.css";
+import { CssBaseline } from "@material-ui/core";
+import ThemeProvider from "theme";
 
-function MyApp({ Component, pageProps }) {
-  return <Component {...pageProps} />
+function AddressBookWhitelist({ Component, pageProps }) {
+  return (
+    <ThemeProvider>
+      <CssBaseline />
+      <Component {...pageProps} />
+    </ThemeProvider>
+  );
 }
 
-export default MyApp
+export default AddressBookWhitelist;
