@@ -1,8 +1,7 @@
-import React, { useContext, createContext, useCallback, useReducer } from "react";
+import { useContext, createContext, useCallback, useReducer } from "react";
 import MuiSnackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
-
-import { makeStyles } from "@material-ui/core";
+import { makeStyles, Slide } from "@material-ui/core";
 
 // ===================================================
 // STYLES
@@ -28,23 +27,38 @@ export function useFeedback() {
 // COMPONENTS
 // ===================================================
 
+function SlideRight(props) {
+  return <Slide {...props} direction="right" />;
+}
+
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-function Snackbar() {
+export function Snackbar() {
   const { type, message, open, handleClose } = useFeedback();
   const classes = useStyles({ type });
 
   return (
-    <MuiSnackbar open={open} autoHideDuration={4000} onClose={handleClose}>
-      <Alert
-        onClose={handleClose}
-        severity={type || "success"}
-        className={classes.alert}
-      >
-        {message}
-      </Alert>
+    <MuiSnackbar
+      open={open}
+      anchorOrigin={{
+        vertical: "bottom",
+        horizontal: "left",
+      }}
+      onClose={handleClose}
+      autoHideDuration={4000}
+      TransitionComponent={SlideRight}
+    >
+      <div>
+        <Alert
+          onClose={handleClose}
+          severity={type || "success"}
+          className={classes.alert}
+        >
+          {message}
+        </Alert>
+      </div>
     </MuiSnackbar>
   );
 }

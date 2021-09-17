@@ -1,7 +1,7 @@
 import "../styles/globals.css";
 import { CssBaseline } from "@material-ui/core";
 import ThemeProvider from "theme";
-import { FeedbackContext } from "components/feedback";
+import { FeedbackContext, Snackbar } from "components/feedback";
 
 function AddressBookWhitelist({ Component, pageProps }) {
   return (
@@ -9,6 +9,7 @@ function AddressBookWhitelist({ Component, pageProps }) {
       <CssBaseline />
       <FeedbackContext>
         <Component {...pageProps} />
+        <Snackbar />
       </FeedbackContext>
     </ThemeProvider>
   );
