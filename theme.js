@@ -10,13 +10,13 @@ const headingFonts = ["Montserrat", "Lato", "Sans-Serif"].join(",");
 const rootTheme = createTheme({
   palette: {
     primary: {
-      main: "#780101",
+      main: "#ECEFF0",
     },
     secondary: {
-      main: "#171717",
+      main: "#333333",
     },
     text: {
-      main: "#171717",
+      primary: "#333333",
     },
     background: {
       default: "#FFFFFF",

@@ -1,5 +1,6 @@
 import Head from "next/head";
 import Image from "next/image";
+import Link from "next/link";
 import {
   makeStyles,
   Box,
@@ -7,6 +8,7 @@ import {
   AppBar,
   Toolbar,
 } from "@material-ui/core";
+import EthereumLogo from "public/ethereum-logo-landscape-purple.png";
 
 // ===================================================
 // STYLES
@@ -17,6 +19,21 @@ const useStyles = makeStyles((theme) => ({
     height: "100vh",
     width: "100vw",
     background: theme.palette.background.default,
+  },
+  toolbar: {
+    display: "flex",
+    justifyContent: "space-between",
+  },
+  logo: {
+    position: "relative",
+    maxWidth: 180,
+    width: "100%",
+    height: "auto",
+    padding: theme.spacing(1, 2),
+  },
+  tagline: {
+    display: "flex",
+    alignItems: "center",
   },
   main: {
     //
@@ -37,7 +54,14 @@ const useStyles = makeStyles((theme) => ({
     //
   },
   footer: {
-    //
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: theme.spacing(2, 3),
+    background: theme.palette.primary.main,
+    color: theme.palette.text.secondary,
+    textAlign: "center",
   },
 }));
 
@@ -59,7 +83,23 @@ export default function Home() {
       </Head>
 
       <AppBar color="primary">
-        <Toolbar></Toolbar>
+        <Toolbar className={classes.toolbar}>
+          <Typography variant="h6">
+            <Link passHref href="/">
+              James Hooper
+            </Link>
+          </Typography>
+          <Box className={classes.tagline}>
+            <Typography variant="h6">Active network:</Typography>
+            <Box className={classes.logo}>
+              <Image
+                alt="Ethereum Logo"
+                src={EthereumLogo}
+                layout="intrinsic"
+              />
+            </Box>
+          </Box>
+        </Toolbar>
       </AppBar>
 
       <main className={classes.main}>
@@ -115,7 +155,7 @@ export default function Home() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Typography variant="body1">
+          <Typography variant="h6">
             © {new Date().getFullYear()} James Hooper
           </Typography>
         </a>
