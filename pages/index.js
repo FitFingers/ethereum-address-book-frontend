@@ -210,10 +210,11 @@ export default function Home() {
   const withdrawFunds = useCallback(() => {}, []);
 
   // Contact selector handlers
-  const [selectedIndex, setSelectedIndex] = useState(1);
-  const handleListItemClick = useCallback((event, index) => {
-    setSelectedIndex(index);
-  }, []);
+  const [selectedContact, setSelectedContact] = useState("");
+  const handleListItemClick = useCallback(
+    (name) => setSelectedContact((n) => (n === name ? null : name)),
+    []
+  );
 
   return (
     <Box className={classes.container}>
@@ -260,8 +261,8 @@ export default function Home() {
                   {contactList.map((contact) => (
                     <ListItem
                       button
-                      selected={selectedIndex === 0}
-                      onClick={(event) => handleListItemClick(event, 0)}
+                      selected={selectedContact === contact.name}
+                      onClick={() => handleListItemClick(contact.name)}
                       key={`contact-list-${contact.name}`}
                     >
                       <ListItemText primary={contact.name} />
