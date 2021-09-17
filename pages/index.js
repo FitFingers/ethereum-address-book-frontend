@@ -1,4 +1,4 @@
-import { useCallback, useReducer, useState } from "react";
+import { useCallback, useEffect, useReducer, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import {
@@ -162,6 +162,11 @@ const useStyles = makeStyles((theme) => ({
 export default function Home() {
   const classes = useStyles();
 
+  // init web3
+  useEffect(() => {
+
+  }, [])
+
   // web3 variables
   const [{ numContacts, timelock, txCost, contactList, owner }, dispatch] =
     useReducer((state, moreState) => ({ ...state, ...moreState }), {
@@ -236,7 +241,7 @@ export default function Home() {
           </Link>
           <Box className={classes.tagline}>
             <Typography variant="h6">Active network:</Typography>
-            <Logo network="ethereum" />
+            <Logo network={""} />
           </Box>
         </Toolbar>
       </AppBar>

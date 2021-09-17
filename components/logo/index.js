@@ -1,8 +1,10 @@
+import { useMemo } from "react";
 import Image from "next/image";
-import { makeStyles, Box } from "@material-ui/core";
+import { makeStyles, Button, Box, Typography } from "@material-ui/core";
 
 import RinkebyLogo from "public/rinkeby-logo-landscape.jpeg";
 import EthereumLogo from "public/ethereum-logo-landscape-purple.png";
+import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
 
 // NextJS doesn't support this type of dynamic import on static images
 // import dynamic from "next/dynamic";
@@ -30,6 +32,9 @@ const useStyles = makeStyles((theme) => ({
     height: "auto",
     padding: theme.spacing(1, 2),
     mixBlendMode: network === "rinkeby" ? "multiply" : "normal",
+    "& .MuiSvgIcon-root": {
+      marginLeft: theme.spacing(1),
+    },
   }),
 }));
 
@@ -39,9 +44,17 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Logo({ network = "ethereum" }) {
   const classes = useStyles({ network });
+  const logo = useMemo(() => logos[network], [network]);
   return (
     <Box className={classes.logo}>
-      <Image alt={`${network} Logo`} src={logos[network]} layout="intrinsic" />
+      {logo ? (
+        <Image alt={`${network} Logo`} src={logo} layout="intrinsic" />
+      ) : (
+        <Button variant="contained" color="secondary">
+          <Typography variant="body2">Connect</Typography>
+          <AccountBalanceWalletIcon fontSize="medium" color="primary" />
+        </Button>
+      )}
     </Box>
   );
 }
