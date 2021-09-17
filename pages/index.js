@@ -85,11 +85,15 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
     padding: theme.spacing(5),
     maxWidth: theme.breakpoints.values.lg,
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
   },
   contactWindow: {
     borderRadius: theme.shape.borderRadius,
     boxShadow: `inset ${theme.shadows[3].replace(/\),/g, "),inset ")}`,
     marginBottom: theme.spacing(2),
+    minHeight: 120,
     maxHeight: 180,
     overflow: "auto",
 
@@ -122,6 +126,9 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "space-between",
     "&>:last-child": {
       fontWeight: "bold",
+      textOverflow: "ellipsis",
+      maxWidth: 150,
+      overflow: "hidden",
     },
   },
   buttonList: {
@@ -130,6 +137,9 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
     "&>$button": {
       margin: theme.spacing(1, 0),
+      "&:last-child": {
+        marginBottom: 0,
+      },
     },
   },
   buttonRow: {
@@ -157,49 +167,54 @@ const useStyles = makeStyles((theme) => ({
 // COMPONENTS
 // ===================================================
 
+async function unpackCallback(functionName, contract) {
+  try {
+    if (!contract?.methods) throw new Error("No contract defined");
+    return contract.methods[functionName];
+    // return callback// (); // .call({ from: account });
+  } catch (err) {
+    return () => console.log("DEBUG callback not set");
+  }
+}
+
 export default function Home() {
   const classes = useStyles();
 
-  // init web3
-  const { connectWallet, network, /*account,*/ contract } = useMetaMask();
+  // init web3 contract (NOT contract contents)
+  const { connectWallet, network, contract, account, fetchVariable } =
+    useMetaMask();
 
   // web3 variables
-  const [{ numContacts, timelock, txCost, contactList, owner }, dispatch] =
+  const [{ totalContacts, timelock, txCost, contactList, owner }, dispatch] =
     useReducer((state, moreState) => ({ ...state, ...moreState }), {
-      numContacts: "0",
-      timelock: "30",
-      txCost: "Calculating...",
-      owner: "Calculating...",
-      contactList: [
-        {
-          name: "James",
-          address: "0x4kasdjlsdkjasidi892olkjasdkas",
-          dateAdded: new Date(2021, 7, 19),
-        },
-        {
-          name: "Chrissi",
-          address: "0x4kdo23i9r849c834ro2ijdsoid7s8",
-          dateAdded: new Date(2021, 8, 19),
-        },
-        {
-          name: "Ilona",
-          address: "0x4kasjd8993uirjo2i3d9w8sdf321e",
-          dateAdded: new Date(2021, 8, 21),
-        },
-        {
-          name: "Oli",
-          address: "0x4djkosjd9823ri23pro30if9seof3",
-          dateAdded: new Date(2021, 8, 7),
-        },
-        {
-          name: "Marlene",
-          address: "0x4ldk23i938f34jpdjiosdfjwf9823",
-          dateAdded: new Date(2021, 7, 27),
-        },
-      ],
+      totalContacts: 0, // total numbers of contacts in address book
+      timelock: 0, // time until address is whitelisted
+      txCost: 0, // cost to send a transaction via this service
+      owner: "...", // contract owner's address
+      contactList: [],
     });
 
-  // web3 functions
+  // initialise contract variables
+  useEffect(() => {
+    if (!network) return;
+    async function initialiseVariables() {
+      const getTotalContacts = await fetchVariable("totalContacts");
+      const getTimelock = await fetchVariable("securityTimelock");
+      const getTxCost = await fetchVariable("transferPrice");
+      const getOwner = await fetchVariable("owner");
+      // const getContactList = await fetchVariable("contacts");
+      dispatch({
+        totalContacts: await getTotalContacts(),
+        timelock: await getTimelock(),
+        txCost: await getTxCost(),
+        owner: await getOwner(),
+        // contactList: await getContactList(),
+      });
+    }
+    initialiseVariables();
+  }, [network, contract, account, fetchVariable]);
+
+  // web3 / contract functions
   const addContact = useCallback(() => {}, []);
 
   const removeContact = useCallback(() => {}, []);
@@ -307,17 +322,17 @@ export default function Home() {
                 <Box className={classes.optionsList}>
                   <Box className={classes.option}>
                     <Typography variant="body1">Total Contacts:</Typography>
-                    <Typography variant="body1">{numContacts}</Typography>
+                    <Typography variant="body1">{totalContacts}</Typography>
                   </Box>
                   <Box className={classes.option}>
                     <Typography variant="body1">Security Timelock:</Typography>
-                    <Typography variant="body1">
-                      {timelock} (seconds)
-                    </Typography>
+                    <Typography variant="body1">{timelock} seconds</Typography>
                   </Box>
                   <Box className={classes.option}>
                     <Typography variant="body1">Transfer Cost:</Typography>
-                    <Typography variant="body1">{txCost}</Typography>
+                    <Typography variant="body1">
+                      {txCost / 1000000000000000000} ETH
+                    </Typography>
                   </Box>
                   <Box className={classes.option}>
                     <Typography variant="body1">Contract Owner:</Typography>
@@ -338,7 +353,7 @@ export default function Home() {
                   </Button>
                   <Button
                     variant="contained"
-                    color="secondary"
+                    color="primary"
                     onClick={removeContact}
                     className={classes.button}
                   >
@@ -354,7 +369,7 @@ export default function Home() {
                   </Button>
                   <Button
                     variant="contained"
-                    color="primary"
+                    color="secondary"
                     onClick={checkBalance}
                     className={classes.button}
                   >
@@ -362,7 +377,7 @@ export default function Home() {
                   </Button>
                   <Button
                     variant="contained"
-                    color="primary"
+                    color="secondary"
                     onClick={withdrawFunds}
                     className={classes.button}
                   >

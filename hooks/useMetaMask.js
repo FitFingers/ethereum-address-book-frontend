@@ -68,6 +68,19 @@ export default function useMetaMask() {
     dispatch({ contract });
   }, []);
 
+  const fetchVariable = useCallback(
+    async (functionName) => {
+      try {
+        if (!contract?.methods) throw new Error("No contract defined");
+        const callback = contract.methods[functionName];
+        return () => callback().call({ from: account });
+      } catch (err) {
+        return () => console.log("DEBUG callback not set");
+      }
+    },
+    [contract.methods, account]
+  );
+
   // ===================================================
   // NON-CALLABLE HOOKS THAT RUN AUTOMATICALLY
   // ===================================================
@@ -78,15 +91,13 @@ export default function useMetaMask() {
   // assign a listener to a payable tx to get a hash and then receipt
   // useTransactionConfirmation();
 
-  return useMemo(
-    () => ({
-      connectWallet,
-      network,
-      account,
-      contract,
-    }),
-    [account, connectWallet, contract, network]
-  );
+  return {
+    connectWallet,
+    network,
+    account,
+    contract,
+    fetchVariable,
+  };
 }
 
 // ===================================================
