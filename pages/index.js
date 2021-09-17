@@ -13,6 +13,7 @@ import {
   Toolbar,
   Paper,
   Button,
+  ListItem,
 } from "@material-ui/core";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import PersonRemoveIcon from "@material-ui/icons/PersonAddDisabled";
@@ -84,6 +85,32 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(5),
     maxWidth: theme.breakpoints.values.lg,
   },
+  contactWindow: {
+    borderRadius: theme.shape.borderRadius,
+    boxShadow: `inset ${theme.shadows[3].replace(/\),/g, "),inset ")}`,
+    marginBottom: theme.spacing(2),
+    maxHeight: 180,
+    overflow: "auto",
+
+    "&::-webkit-scrollbar-track": {
+      borderRadius: theme.shape.borderRadius,
+      backgroundColor: "inherit",
+      "-webkit-box-shadow": `inset 0 0 ${theme.spacing(
+        0.5
+      )} rgba(0, 0, 0, 0.3)`,
+    },
+    "&::-webkit-scrollbar": {
+      width: theme.spacing(0.5),
+      background: "#f5f5f5",
+    },
+    "&::-webkit-scrollbar-thumb": {
+      backgroundColor: theme.palette.text.secondary,
+      borderRadius: theme.shape.borderRadius,
+      "-webkit-box-shadow": `inset 0 0 ${theme.spacing(
+        0.5
+      )} rgba(0, 0, 0, 0.3)`,
+    },
+  },
   optionsList: {
     display: "flex",
     flexDirection: "column",
@@ -142,7 +169,33 @@ export default function Home() {
       timelock: "30",
       txCost: "Calculating...",
       owner: "Calculating...",
-      contactList: [],
+      contactList: [
+        {
+          name: "James",
+          address: "0x4kasdjlsdkjasidi892olkjasdkas",
+          dateAdded: new Date(2021, 7, 19),
+        },
+        {
+          name: "Chrissi",
+          address: "0x4kdo23i9r849c834ro2ijdsoid7s8",
+          dateAdded: new Date(2021, 8, 19),
+        },
+        {
+          name: "Ilona",
+          address: "0x4kasjd8993uirjo2i3d9w8sdf321e",
+          dateAdded: new Date(2021, 8, 21),
+        },
+        {
+          name: "Oli",
+          address: "0x4djkosjd9823ri23pro30if9seof3",
+          dateAdded: new Date(2021, 8, 7),
+        },
+        {
+          name: "Marlene",
+          address: "0x4ldk23i938f34jpdjiosdfjwf9823",
+          dateAdded: new Date(2021, 7, 27),
+        },
+      ],
     });
 
   // web3 functions
@@ -198,20 +251,21 @@ export default function Home() {
             </Box>
 
             <Paper
-              elevation={4}
+              elevation={5}
               className={[classes.paperPanel, classes.smallPanel]}
             >
               <Typography variant="h3">Contacts</Typography>
               <Box className={classes.contactWindow}>
                 <List>
                   {contactList.map((contact) => (
-                    <ListItemButton
+                    <ListItem
+                      button
                       selected={selectedIndex === 0}
                       onClick={(event) => handleListItemClick(event, 0)}
                       key={`contact-list-${contact.name}`}
                     >
                       <ListItemText primary={contact.name} />
-                    </ListItemButton>
+                    </ListItem>
                   ))}
                 </List>
               </Box>
@@ -245,7 +299,7 @@ export default function Home() {
           </Box>
 
           <Box>
-            <Paper elevation={4} className={classes.paperPanel}>
+            <Paper elevation={5} className={classes.paperPanel}>
               <Box>
                 <Typography variant="h3">Variables</Typography>
                 <Box className={classes.optionsList}>
