@@ -1,5 +1,5 @@
 import Head from "next/head";
-// import Link from "next/link";
+import Link from "next/link";
 import {
   makeStyles,
   Box,
@@ -14,6 +14,19 @@ import { useReducer } from "react";
 // ===================================================
 // UTIL
 // ===================================================
+
+const linkBehaviour = "samesite";
+
+const linkProps = {
+  portfolio: {
+    href: "https://www.jameshooper.io",
+    target: "_blank",
+    rel: "noopener noreferrer",
+  },
+  samesite: {
+    href: "/",
+  },
+};
 
 /*
   VARS
@@ -61,15 +74,14 @@ export const useStyles = makeStyles((theme) => ({
   columns: {
     display: "flex",
     justifyContent: "center",
-    alignItems: "center",
     "&>*": {
       flex: 1,
+      margin: theme.spacing(2),
+      padding: theme.spacing(5),
     },
   },
   infoPanel: {
     border: "1px solid red",
-    margin: "auto",
-    padding: theme.spacing(3),
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
@@ -79,25 +91,22 @@ export const useStyles = makeStyles((theme) => ({
   //   width: "fit-content"
   // },
   paperPanel: {
-    margin: "auto",
-    padding: theme.spacing(3),
-    maxWidth: theme.breakpoints.values.sm,
+    maxWidth: theme.breakpoints.values.lg,
   },
-  title: {
-    //
+  optionsList: {
+    display: "flex",
+    flexDirection: "column",
+    marginBottom: theme.spacing(3),
   },
-  description: {
-    //
+  option: {
+    display: "flex",
+    justifyContent: "space-between",
+    "&>:last-child": {
+      fontWeight: "bold",
+    },
   },
-  code: {
-    //
-  },
-  grid: {
-    //
-  },
-  card: {
-    //
-  },
+  buttonList: {},
+  button: {},
   footer: {
     position: "absolute",
     bottom: 0,
@@ -117,11 +126,11 @@ export const useStyles = makeStyles((theme) => ({
 export default function Home() {
   const classes = useStyles();
 
-  const { contacts, timelock, cost, list, owner } = useReducer(
+  const [{ contacts, timelock, cost, list, owner }, dispatch] = useReducer(
     (state, moreState) => ({ ...state, ...moreState }),
     {
-      contacts: "",
-      timelock: "",
+      contacts: "0",
+      timelock: "30",
       cost: "",
       owner: "",
       list: "",
@@ -141,9 +150,11 @@ export default function Home() {
 
       <AppBar color="primary">
         <Toolbar className={classes.toolbar}>
-          <a href="https://www.jameshooper.io" target="_blank" rel="noreferrer">
-            <Typography variant="h6">James Hooper</Typography>
-          </a>
+          <Link passHref {...linkProps[linkBehaviour]}>
+            <a {...linkProps[linkBehaviour]}>
+              <Typography variant="h6">James Hooper</Typography>
+            </a>
+          </Link>
           <Box className={classes.tagline}>
             <Typography variant="h6">Active network:</Typography>
             <Logo network="ethereum" />
@@ -164,23 +175,23 @@ export default function Home() {
             <Box>
               <Typography variant="h3">Variables</Typography>
               <Box className={classes.optionsList}>
-                <Box>
+                <Box className={classes.option}>
                   <Typography variant="body1">Total Contacts:</Typography>
                   <Typography variant="body1">{contacts}</Typography>
                 </Box>
-                <Box>
+                <Box className={classes.option}>
                   <Typography variant="body1">Security Timelock:</Typography>
-                  <Typography variant="body1">{timelock}</Typography>
+                  <Typography variant="body1">{timelock} (seconds)</Typography>
                 </Box>
-                <Box>
+                <Box className={classes.option}>
                   <Typography variant="body1">Transfer Cost:</Typography>
                   <Typography variant="body1">{cost}</Typography>
                 </Box>
-                <Box>
+                <Box className={classes.option}>
                   <Typography variant="body1">Contacts List:</Typography>
                   <Typography variant="body1">{list}</Typography>
                 </Box>
-                <Box>
+                <Box className={classes.option}>
                   <Typography variant="body1">Contract Owner:</Typography>
                   <Typography variant="body1">{owner}</Typography>
                 </Box>
@@ -194,7 +205,7 @@ export default function Home() {
             </Box> */}
             <Box>
               <Typography variant="h3">Functions</Typography>
-              <Box className={classes.optionsList}>
+              <Box className={classes.buttonList}>
                 <Typography variant="body1">Add Contact</Typography>
                 <Typography variant="body1">
                   Remove Contact (by name)
@@ -210,15 +221,13 @@ export default function Home() {
       </main>
 
       <footer className={classes.footer}>
-        <a
-          href="https://www.jameshooper.io"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Typography variant="h6">
-            © {new Date().getFullYear()} James Hooper
-          </Typography>
-        </a>
+        <Link passHref {...linkProps[linkBehaviour]}>
+          <a {...linkProps[linkBehaviour]}>
+            <Typography variant="h6">
+              © {new Date().getFullYear()} James Hooper
+            </Typography>
+          </a>
+        </Link>
       </footer>
     </Box>
   );
