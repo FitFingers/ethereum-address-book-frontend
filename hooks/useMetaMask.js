@@ -125,7 +125,7 @@ export default function useMetaMask() {
     handleOpen("success", msg.connected(network));
   }, [handleOpen, network]);
 
-  useTransactionStatus(txHash, txSuccess);
+  useTransactionStatus(txHash, txSuccess, dispatch);
 
   return {
     network,
@@ -141,21 +141,16 @@ export default function useMetaMask() {
 // NON-CALLABLE HOOKS
 // ===================================================
 
-function useTransactionStatus(txHash, txSuccess) {
+function useTransactionStatus(txHash, txSuccess, dispatch) {
   const { handleOpen } = useFeedback();
   const pHash = useRef(null);
   const pSuccess = useRef(null);
 
   useLayoutEffect(() => {
-    // no changes
-    // if ([pHash.current, txHash].every((v) => !v)) {
-    //   return;
-    // }
-
     // on new transaction hash
     if (txHash && txHash !== pHash.current) {
       pHash.current = txHash;
-      handleOpen("success", "New transaction started"); // TODO: add hash
+      handleOpen("success", `TX ID: ${txHash}`);
       pSuccess.current = null;
     }
 
@@ -164,9 +159,11 @@ function useTransactionStatus(txHash, txSuccess) {
       pSuccess.current = txSuccess;
       handleOpen(
         txSuccess ? "success" : "error",
-        `Transaction result: ${txSuccess ? "success" : "error"}`
-      ); // TODO: add hash
+        `Transaction result: ${txSuccess ? "Success" : "Error"}`
+      );
       pHash.current = null;
+      pSuccess.current = null;
+      dispatch({ txHash: null, txSuccess: null });
     }
-  }, [handleOpen, pHash, pSuccess, txHash, txSuccess]);
+  }, [dispatch, handleOpen, pHash, pSuccess, txHash, txSuccess]);
 }
