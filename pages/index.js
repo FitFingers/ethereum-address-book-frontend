@@ -255,7 +255,7 @@ export default function Home() {
 
   const removeContactByName = useCallback(() => {
     // return contract.methods
-    //   .removeContactByNameByName("Jimmy") // fetch function
+    //   .removeContactByName("Jimmy") // fetch function
     //   .send({ from: account /*, value: txCost */ })
     //   .on("transactionHash", (txHash) => updateMetaMask({ txHash }))
     //   .on("receipt", ({ status }) => updateMetaMask({ txSuccess: status }));
@@ -267,7 +267,7 @@ export default function Home() {
       contractFunction: "removeContactByName",
       formDefaults: { name: selectedContact },
       callback: () =>
-        submitForm({ name: selectedContact }, "removeContactByNameByName"),
+        submitForm({ name: selectedContact }, "removeContactByName"),
     });
   }, [handleOpen, selectedContact, submitForm]);
 
