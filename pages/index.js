@@ -265,6 +265,7 @@ export default function Home() {
                     contactList.map((contact) => (
                       <ListItem
                         button
+                        disableRipple
                         selected={selectedContact === contact.name}
                         onClick={() => handleListItemClick(contact.name)}
                         key={`contact-list-${contact.name}`}
