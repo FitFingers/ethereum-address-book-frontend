@@ -36,7 +36,7 @@ function Alert(props) {
 }
 
 export function Snackbar() {
-  const { type, message, open, handleClose } = useFeedback();
+  const { type, message, open, persist, handleClose } = useFeedback();
   const classes = useStyles({ type });
 
   return (
@@ -47,7 +47,7 @@ export function Snackbar() {
         horizontal: "left",
       }}
       onClose={handleClose}
-      autoHideDuration={4000}
+      autoHideDuration={persist ? null : 4000}
       TransitionComponent={SlideRight}
     >
       <div>
@@ -68,17 +68,18 @@ export function Snackbar() {
 // ===================================================
 
 export function FeedbackContext({ children }) {
-  const [{ open, type, message }, dispatch] = useReducer(
+  const [{ open, type, message, persist }, dispatch] = useReducer(
     (state, newState) => ({ ...state, ...newState }),
     {
       open: false,
       type: "success",
       message: "",
+      persist: false,
     }
   );
 
-  const handleOpen = useCallback((newType, newMessage) => {
-    dispatch({ open: true, type: newType, message: newMessage });
+  const handleOpen = useCallback((newType, newMessage, persist) => {
+    dispatch({ open: true, type: newType, message: newMessage, persist });
   }, []);
 
   const handleClose = useCallback((event, reason) => {
@@ -91,6 +92,7 @@ export function FeedbackContext({ children }) {
       value={{
         open,
         type,
+        persist,
         message,
         handleOpen,
         handleClose,

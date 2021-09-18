@@ -4,6 +4,18 @@ import Web3 from "web3";
 import { ABI } from "util/abi";
 import { useFeedback } from "components/feedback";
 
+// ===================================================
+// UTIL
+// ===================================================
+
+const networks = {
+  "0x1": "Ethereum (Mainnet)",
+  "0x2a": "Kovan",
+  "0x3": "Ropsten",
+  "0x4": "Rinkeby",
+  "0x5": "Goerli",
+};
+
 // const isDev = process.env.NODE_ENV === "development";
 
 // const ETHERSCAN = {
@@ -42,31 +54,63 @@ export default function useMetaMask() {
     }
   }, []);
 
+  // show feedback on successful network connection and change
+  useEffect(() => {
+    if (!window.web3) return;
+    window.web3.currentProvider?.on("chainChanged", (chain) => {
+      handleOpen(
+        "success",
+        `Now using the ${networks[chain] || chain} network`
+      );
+      window.location.reload();
+    });
+  }, [handleOpen]);
+
+  const connectAccount = useCallback(async () => {
+    const [acc] = await window.web3.eth.requestAccounts();
+    dispatch({ account: acc });
+  }, []);
+
+  const connectNetwork = useCallback(async () => {
+    const connectedNetwork = await window.web3.eth.net.getNetworkType();
+    dispatch({ network: connectedNetwork });
+  }, []);
+
+  useEffect(() => {
+    if (!network) return;
+    handleOpen("success", `Now connected to ${network}!`);
+  }, [handleOpen, network]);
+
   // connect to user's wallet
   const connectWallet = useCallback(async () => {
     try {
+      if (network) return connectAccount();
       console.debug("Connecting to wallet...");
-      const [acc] = await window.web3.eth.requestAccounts();
-      dispatch({ account: acc });
-      const network = await window.web3.eth.net.getNetworkType();
-      dispatch({ network });
+      await connectAccount();
+      await connectNetwork();
       console.debug("Connected.");
-      handleOpen("success", `Successfully connected to ${network}!`);
     } catch (err) {
       console.debug("ERROR: couldn't connect wallet", { err });
       handleOpen("error", `Couldn't connect: ${err.message}`);
     }
-  }, [handleOpen]);
+  }, [connectAccount, connectNetwork, handleOpen, network]);
 
   // create a contract instance
   useEffect(() => {
+    if (network !== "rinkeby") {
+      return handleOpen(
+        "error",
+        "This app only works on Rinkeby. Please connect to the Rinkeby network",
+        true
+      );
+    }
     const contract = new web3.eth.Contract(
       ABI,
       CONTRACT_ADDRESS
       // { gasLimit: "1000000" }
     );
     dispatch({ contract });
-  }, []);
+  }, [handleOpen, network]);
 
   // "unpack" the requested callback from the contract and return (don't invoke)
   const fetchCallback = useCallback(
