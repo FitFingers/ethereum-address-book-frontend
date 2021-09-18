@@ -24,6 +24,7 @@ const validationSchemas = {
     name: yup.string(msg.fill).required(msg.req),
   }),
   payContact: yup.object({
+    name: yup.string(msg.fill).required(msg.req),
     amount: yup.string(msg.fill).matches(/^\d+$/).required(msg.req),
   }),
 };
@@ -59,6 +60,13 @@ const formConfigs = {
       initial: "",
       helper: "The value to send in wei",
     },
+    name: {
+      initial: "",
+      helper: "You can change this selection in the Contacts panel",
+      FieldProps: {
+        disabled: true,
+      },
+    },
     // gwei: {
     //   initial: "",
     // },
@@ -68,13 +76,13 @@ const formConfigs = {
   },
 };
 
-function createInitialValues(type, defaults) {
+function createInitialValues(type, formDefaults) {
   return Object.entries(formConfigs[type]).reduce(
     (acc, [name, field]) => ({
       ...acc,
-      [name]: field.initial || defaults[name],
+      [name]: field.initial || formDefaults[name],
     }),
-    defaults
+    formDefaults
   );
 }
 
@@ -99,16 +107,16 @@ const useStyles = makeStyles((theme) => ({
 // COMPONENTS
 // ===================================================
 
-export default function Form({ type = "addContact", defaults = {} }) {
+export default function Form({ type = "addContact", formDefaults = {} }) {
   const classes = useStyles();
   const { submitCallback } = useModal();
 
   const { validationSchema, initialValues } = useMemo(
     () => ({
       validationSchema: validationSchemas[type],
-      initialValues: createInitialValues(type, defaults),
+      initialValues: createInitialValues(type, formDefaults),
     }),
-    [defaults, type]
+    [formDefaults, type]
   );
 
   const { handleSubmit, values, handleChange, touched, errors } = useFormik({
@@ -133,7 +141,7 @@ export default function Form({ type = "addContact", defaults = {} }) {
               value={values[name]}
               onChange={handleChange}
               error={touched[name] && !!errors[name]}
-              helperText={field.helper || (touched[name] && errors[name])}
+              helperText={(touched[name] && errors[name]) || field.helper}
             />
           </Box>
         ))}

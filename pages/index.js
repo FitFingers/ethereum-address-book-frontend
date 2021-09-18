@@ -234,6 +234,7 @@ export default function Home() {
   const submitForm = useCallback(
     async (values, name, data = {}) => {
       const sortedArgs = sortArguments(values, name);
+      console.log("DEBUG submitForm", { values, name, data });
       contract.methods[name](...sortedArgs) // fetch function
         .send({ from: account, ...data /*, value: txCost */ })
         .on("transactionHash", (txHash) => updateMetaMask({ txHash }))
@@ -245,42 +246,51 @@ export default function Home() {
   // web3 / contract functions
   // ===================================================
   const addContact = useCallback(() => {
-    handleOpen(
-      "Add Contact",
-      "Use this form to add a user to your address book",
-      { type: "addContact" },
-      (values) => submitForm(values, "addContact")
-    );
+    handleOpen({
+      title: "Add Contact",
+      description: "Use this form to add a user to your address book",
+      type: "addContact",
+      submitCallback: (values) => submitForm(values, "addContact"),
+    });
   }, [handleOpen, submitForm]);
 
   const removeContact = useCallback(() => {
-    handleOpen(
-      "Remove Contact",
-      selectedContact
+    handleOpen({
+      title: "Remove Contact",
+      description: selectedContact
         ? `Are you sure you wish to remove ${selectedContact}?`
         : "No contacts selected!",
-      { type: "removeContact", defaults: { name: selectedContact } },
-      () => submitForm(selectedContact, "removeContact")
-    );
+      type: "removeContact",
+      formDefaults: { name: selectedContact },
+      submitCallback: () =>
+        submitForm({ name: selectedContact }, "removeContact"),
+    });
   }, [handleOpen, selectedContact, submitForm]);
 
   const payContact = useCallback(() => {
-    handleOpen(
-      "Send ETH",
-      selectedContact
+    handleOpen({
+      title: "Send ETH",
+      description: selectedContact
         ? `Use this form to send ETH to ${selectedContact}`
         : "Please select a contact to send ETH to",
-      { type: "payContact" },
-      (values) => submitform(values, "payContact")
-    );
+      type: "payContact",
+      formDefaults: { name: selectedContact },
+      submitCallback: (values) => submitform(values, "payContact"),
+    });
   }, [handleOpen, selectedContact]);
 
   const checkBalance = useCallback(() => {
-    handleOpen("Check Contract Balance", "View this smart contract's balance");
+    handleOpen({
+      title: "Check Contract Balance",
+      description: "View this smart contract's balance",
+    });
   }, [handleOpen]);
 
   const withdrawFunds = useCallback(() => {
-    handleOpen("Withdraw Funds", "Withdraw the funds in this smart contract");
+    handleOpen({
+      title: "Withdraw Funds",
+      description: "Withdraw the funds in this smart contract",
+    });
   }, [handleOpen]);
 
   // button / var labels
