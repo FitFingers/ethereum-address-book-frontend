@@ -2,6 +2,7 @@ import { makeStyles, Box, Button, TextField } from "@material-ui/core";
 import * as yup from "yup";
 import { useFormik } from "formik";
 import { useMemo } from "react";
+import useModal from "components/modal/context";
 
 // ===================================================
 // UTIL
@@ -24,14 +25,20 @@ const validationSchemas = {
   }),
 };
 
+// TODO: remove defaults
+const rand = Math.random();
+
 // Form field labels and init values
 const formFields = {
   addContact: {
     name: {
-      initial: "",
+      initial: rand > 0.49 ? "Jenna" : "Jimmy", // "",
     },
     address: {
-      initial: "",
+      initial:
+        rand > 0.49
+          ? "0x64252f36b734b82549042895e39e9c9C9265Db13"
+          : "0xe681B4AE322c131178e339AA77427D61509Db891", // "", // TODO: remove defaults!
       helper: "Please ensure this uses the correct network!",
     },
   },
@@ -50,9 +57,13 @@ const formFields = {
 };
 
 function createInitialValues(type) {
-  return Object.entries(formFields[type]).map(([name, field]) => ({
-    [name]: field.initial,
-  }));
+  return Object.entries(formFields[type]).reduce(
+    (acc, [name, field]) => ({
+      ...acc,
+      [name]: field.initial,
+    }),
+    {}
+  );
 }
 
 function formatLabel(str = "") {
@@ -78,6 +89,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Form({ type = "addContact" }) {
   const classes = useStyles();
+  const { submitCallback } = useModal();
 
   const { validationSchema, initialValues } = useMemo(
     () => ({
@@ -91,10 +103,7 @@ export default function Form({ type = "addContact" }) {
     enableReinitialize: true,
     initialValues,
     validationSchema,
-    onSubmit: (values) => {
-      // TODO: add form use
-      alert(JSON.stringify(values, null, 2));
-    },
+    onSubmit: (values) => submitCallback(values),
   });
 
   return (

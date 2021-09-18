@@ -19,7 +19,6 @@ import PaymentIcon from "@material-ui/icons/Payment";
 import Logo from "components/logo";
 import useMetaMask from "hooks/useMetaMask";
 import useModal from "components/modal/context";
-import Form from "components/form";
 
 // ===================================================
 // UTIL (PAGE OPTIONS)
@@ -214,25 +213,28 @@ export default function Home() {
     []
   );
 
+  const submitForm = useCallback((values) => {
+    console.log("DEBUG", values);
+  }, []);
+
   // web3 / contract functions
   // ===================================================
   const addContact = useCallback(() => {
     handleOpen(
       "Add Contact",
       "Use this form to add a user to your address book",
-      "addContact"
-      // <Form type="addContact" />
+      "addContact",
+      submitForm
     );
-  }, [handleOpen]);
+  }, [handleOpen, submitForm]);
 
   const removeContact = useCallback(() => {
     handleOpen(
       "Remove Contact",
       selectedContact
         ? `Are you sure you wish to remove ${selectedContact}?`
-        : "No contacts selected!",
-      "removeContact"
-      // <Form type="removeContact" />
+        : "No contacts selected!"
+      // "removeContact"
     );
   }, [handleOpen, selectedContact]);
 
@@ -243,7 +245,6 @@ export default function Home() {
         ? `Use this form to send ETH to ${selectedContact}`
         : "Please select a contact to send ETH to",
       "payContact"
-      // <Form type="payContact" />
     );
   }, [handleOpen, selectedContact]);
 
