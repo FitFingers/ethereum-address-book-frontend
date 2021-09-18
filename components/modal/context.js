@@ -16,22 +16,22 @@ export default function useModal() {
 // ===================================================}
 
 export function ModalContext({ children }) {
-  const [{ open, title, description, fields }, dispatch] = useReducer(
+  const [{ open, title, description, type }, dispatch] = useReducer(
     (state, newState) => ({ ...state, ...newState }),
     {
       open: false,
       title: "",
       description: null,
-      fields: null,
+      type: null,
     }
   );
 
-  const handleOpen = (newTitle, newDescription, newFields) => {
+  const handleOpen = (newTitle, newDescription, newType) => {
     dispatch({
       open: true,
       title: newTitle,
       description: newDescription,
-      fields: newFields,
+      type: newType,
     });
   };
 
@@ -46,7 +46,7 @@ export function ModalContext({ children }) {
         open,
         title,
         description,
-        fields,
+        type,
         handleOpen,
         handleClose,
         Modal,

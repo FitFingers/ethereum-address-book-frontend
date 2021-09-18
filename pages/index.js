@@ -19,6 +19,7 @@ import PaymentIcon from "@material-ui/icons/Payment";
 import Logo from "components/logo";
 import useMetaMask from "hooks/useMetaMask";
 import useModal from "components/modal/context";
+import Form from "components/form";
 
 // ===================================================
 // UTIL (PAGE OPTIONS)
@@ -68,7 +69,6 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
     "&>*": {
       flex: 1,
-      margin: theme.spacing(2),
       padding: theme.spacing(5),
     },
   },
@@ -176,9 +176,11 @@ export default function Home() {
   const { handleOpen } = useModal();
 
   // init web3 contract (NOT contract contents)
+  // ===================================================
   const { connectWallet, network, fetchCallback } = useMetaMask();
 
   // web3 variables
+  // ===================================================
   const [{ totalContacts, timelock, txCost, contactList, owner }, dispatch] =
     useReducer((state, moreState) => ({ ...state, ...moreState }), {
       totalContacts: null, // total numbers of contacts in address book
@@ -189,6 +191,7 @@ export default function Home() {
     });
 
   // initialise contract variables
+  // ===================================================
   useEffect(() => {
     if (!network) return;
     async function initialiseVariables() {
@@ -204,6 +207,7 @@ export default function Home() {
   }, [fetchCallback, network]);
 
   // UI handlers
+  // ===================================================
   const [selectedContact, setSelectedContact] = useState("");
   const handleListItemClick = useCallback(
     (name) => setSelectedContact((n) => (n === name ? null : name)),
@@ -211,10 +215,13 @@ export default function Home() {
   );
 
   // web3 / contract functions
+  // ===================================================
   const addContact = useCallback(() => {
     handleOpen(
       "Add Contact",
-      "Use this form to add a user to your address book"
+      "Use this form to add a user to your address book",
+      "addContact"
+      // <Form type="addContact" />
     );
   }, [handleOpen]);
 
@@ -223,7 +230,9 @@ export default function Home() {
       "Remove Contact",
       selectedContact
         ? `Are you sure you wish to remove ${selectedContact}?`
-        : "No contacts selected!"
+        : "No contacts selected!",
+      "removeContact"
+      // <Form type="removeContact" />
     );
   }, [handleOpen, selectedContact]);
 
@@ -232,7 +241,9 @@ export default function Home() {
       "Send ETH",
       selectedContact
         ? `Use this form to send ETH to ${selectedContact}`
-        : "Please select a contact to send ETH to"
+        : "Please select a contact to send ETH to",
+      "payContact"
+      // <Form type="payContact" />
     );
   }, [handleOpen, selectedContact]);
 
@@ -243,6 +254,18 @@ export default function Home() {
   const withdrawFunds = useCallback(() => {
     handleOpen("Withdraw Funds", "Withdraw the funds in this smart contract");
   }, [handleOpen]);
+
+  // button / var labels
+  // ===================================================
+  // TODO: use date-fns or similar to change timelock to most suitable format
+  const totalContactsLabel = totalContacts || "...";
+  const timelockLabel = timelock
+    ? `${(timelock / (timelock > 90 ? 60 : 1)).toFixed(
+        timelock > 90 ? 2 : 0
+      )} ${timelock > 90 ? "minutes" : "seconds"}`
+    : "...";
+  const txCostLabel = txCost ? `${txCost / 1000000000000000000} ETH` : "...";
+  const ownerLabel = owner || "...";
 
   return (
     <Box className={classes.container}>
@@ -345,24 +368,20 @@ export default function Home() {
                   <Box className={classes.option}>
                     <Typography variant="body1">Total Contacts:</Typography>
                     <Typography variant="body1">
-                      {totalContacts || "..."}
+                      {totalContactsLabel}
                     </Typography>
                   </Box>
                   <Box className={classes.option}>
                     <Typography variant="body1">Security Timelock:</Typography>
-                    <Typography variant="body1">
-                      {timelock ? `${timelock} seconds` : "..."}
-                    </Typography>
+                    <Typography variant="body1">{timelockLabel}</Typography>
                   </Box>
                   <Box className={classes.option}>
                     <Typography variant="body1">Transfer Cost:</Typography>
-                    <Typography variant="body1">
-                      {txCost ? `${txCost / 1000000000000000000} ETH` : "..."}
-                    </Typography>
+                    <Typography variant="body1">{txCostLabel}</Typography>
                   </Box>
                   <Box className={classes.option}>
                     <Typography variant="body1">Contract Owner:</Typography>
-                    <Typography variant="body1">{owner || "..."}</Typography>
+                    <Typography variant="body1">{ownerLabel}</Typography>
                   </Box>
                 </Box>
               </Box>

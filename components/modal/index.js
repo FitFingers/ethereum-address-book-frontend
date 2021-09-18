@@ -9,6 +9,7 @@ import {
   Paper,
   Divider,
 } from "@material-ui/core";
+import Form from "components/form";
 import useModal from "./context";
 
 // ===================================================
@@ -30,6 +31,9 @@ const useStyles = makeStyles((theme) => ({
       inset: theme.spacing(12, 1, 1),
     },
   },
+  divider: {
+    marginBottom: theme.spacing(2),
+  },
 }));
 
 // ===================================================
@@ -39,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
 export default function Modal() {
   const classes = useStyles();
   const theme = useTheme();
-  const { title, description, fields, open, handleClose } = useModal();
+  const { title, description, type, open, handleClose } = useModal();
 
   return (
     <MuiModal
@@ -74,8 +78,8 @@ export default function Modal() {
               {description}
             </Typography>
           )}
-          <Divider light />
-          {/* {fields && <Components content={fields} />} */}
+          <Divider light className={classes.divider} />
+          {type && <Form type={type} />}
         </Paper>
       </Fade>
     </MuiModal>
