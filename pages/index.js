@@ -254,11 +254,6 @@ export default function Home() {
   }, [handleOpen, submitForm]);
 
   const removeContactByName = useCallback(() => {
-    // return contract.methods
-    //   .removeContactByName("Jimmy") // fetch function
-    //   .send({ from: account /*, value: txCost */ })
-    //   .on("transactionHash", (txHash) => updateMetaMask({ txHash }))
-    //   .on("receipt", ({ status }) => updateMetaMask({ txSuccess: status }));
     handleOpen({
       title: "Remove Contact",
       description: selectedContact
