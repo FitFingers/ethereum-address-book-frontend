@@ -280,9 +280,9 @@ export default function Home() {
       contractFunction: "payContact",
       formDefaults: { name: selectedContact },
       callback: ({ wei }) =>
-        submitform({ name: selectedContact }, "payContact", { wei }),
+        submitForm({ name: selectedContact }, "payContact", { wei }),
     });
-  }, [handleOpen, selectedContact]);
+  }, [handleOpen, selectedContact, submitForm]);
 
   const checkBalance = useCallback(() => {
     handleOpen({
