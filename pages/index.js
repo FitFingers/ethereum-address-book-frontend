@@ -185,50 +185,20 @@ export default function Home() {
       contactList: [],
     });
 
-  // web3 read variable handlers
-  const readTotalContacts = useCallback(
-    () => fetchCallback("totalContacts"),
-    [fetchCallback]
-  );
-
-  const readTimelock = useCallback(
-    () => fetchCallback("securityTimelock"),
-    [fetchCallback]
-  );
-
-  const readTxCost = useCallback(
-    () => fetchCallback("transferPrice"),
-    [fetchCallback]
-  );
-
-  const readOwner = useCallback(() => fetchCallback("owner"), [fetchCallback]);
-
-  const readContactList = useCallback(
-    () => fetchCallback("readAllContacts"),
-    [fetchCallback]
-  );
-
   // initialise contract variables
   useEffect(() => {
     if (!network) return;
     async function initialiseVariables() {
       dispatch({
-        totalContacts: await readTotalContacts()(),
-        timelock: await readTimelock()(),
-        txCost: await readTxCost()(),
-        owner: await readOwner()(),
-        contactList: await readContactList()(),
+        totalContacts: await fetchCallback("totalContacts")(),
+        timelock: await fetchCallback("securityTimelock")(),
+        txCost: await fetchCallback("transferPrice")(),
+        owner: await fetchCallback("owner")(),
+        contactList: await fetchCallback("readAllContacts")(),
       });
     }
     initialiseVariables();
-  }, [
-    readContactList,
-    readOwner,
-    readTimelock,
-    readTotalContacts,
-    readTxCost,
-    network,
-  ]);
+  }, [fetchCallback, network]);
 
   // web3 / contract functions
   const addContact = useCallback(() => {}, []);
@@ -241,7 +211,7 @@ export default function Home() {
 
   const withdrawFunds = useCallback(() => {}, []);
 
-  // Contact selector handlers
+  // UI handlers
   const [selectedContact, setSelectedContact] = useState("");
   const handleListItemClick = useCallback(
     (name) => setSelectedContact((n) => (n === name ? null : name)),
