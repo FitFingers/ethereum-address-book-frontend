@@ -40,7 +40,7 @@ const linkProps = {
 // The order of the parameters to send to contract (sort order of params)
 const formConfig = {
   addContact: ["name", "address"],
-  removeContact: ["name"],
+  removeContactByName: ["name"],
   payContact: ["wei"],
 };
 
@@ -234,7 +234,6 @@ export default function Home() {
   const submitForm = useCallback(
     async (values, name, data = {}) => {
       const sortedArgs = sortArguments(values, name);
-      console.log("DEBUG submitForm", { values, name, data });
       contract.methods[name](...sortedArgs) // fetch function
         .send({ from: account, ...data /*, value: txCost */ })
         .on("transactionHash", (txHash) => updateMetaMask({ txHash }))
@@ -250,20 +249,25 @@ export default function Home() {
       title: "Add Contact",
       description: "Use this form to add a user to your address book",
       type: "addContact",
-      submitCallback: (values) => submitForm(values, "addContact"),
+      callback: (values) => submitForm(values, "addContact"),
     });
   }, [handleOpen, submitForm]);
 
-  const removeContact = useCallback(() => {
+  const removeContactByName = useCallback(() => {
+    // return contract.methods
+    //   .removeContactByNameByName("Jimmy") // fetch function
+    //   .send({ from: account /*, value: txCost */ })
+    //   .on("transactionHash", (txHash) => updateMetaMask({ txHash }))
+    //   .on("receipt", ({ status }) => updateMetaMask({ txSuccess: status }));
     handleOpen({
       title: "Remove Contact",
       description: selectedContact
         ? `Are you sure you wish to remove ${selectedContact}?`
         : "No contacts selected!",
-      type: "removeContact",
+      type: "removeContactByName",
       formDefaults: { name: selectedContact },
-      submitCallback: () =>
-        submitForm({ name: selectedContact }, "removeContact"),
+      callback: () =>
+        submitForm({ name: selectedContact }, "removeContactByNameByName"),
     });
   }, [handleOpen, selectedContact, submitForm]);
 
@@ -275,7 +279,8 @@ export default function Home() {
         : "Please select a contact to send ETH to",
       type: "payContact",
       formDefaults: { name: selectedContact },
-      submitCallback: (values) => submitform(values, "payContact"),
+      callback: ({ wei }) =>
+        submitform({ name: selectedContact }, "payContact", { wei }),
     });
   }, [handleOpen, selectedContact]);
 
@@ -373,7 +378,7 @@ export default function Home() {
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={removeContact}
+                  onClick={removeContactByName}
                   className={classes.button}
                 >
                   <PersonRemoveIcon />
@@ -437,7 +442,7 @@ export default function Home() {
                   <Button
                     variant="contained"
                     color="primary"
-                    onClick={removeContact}
+                    onClick={removeContactByName}
                     className={classes.button}
                   >
                     <Typography variant="body1">Remove Contact</Typography>

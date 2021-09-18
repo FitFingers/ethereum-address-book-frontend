@@ -20,7 +20,7 @@ const validationSchemas = {
     name: yup.string(msg.fill).required(msg.req),
     address: yup.string(msg.fill).required(msg.req),
   }),
-  removeContact: yup.object({
+  removeContactByName: yup.object({
     name: yup.string(msg.fill).required(msg.req),
   }),
   payContact: yup.object({
@@ -46,7 +46,7 @@ const formConfigs = {
       helper: "Please ensure this uses the correct network!",
     },
   },
-  removeContact: {
+  removeContactByName: {
     name: {
       initial: "",
       helper: "You can change this selection in the Contacts panel",
@@ -109,7 +109,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Form({ type = "addContact", formDefaults = {} }) {
   const classes = useStyles();
-  const { submitCallback } = useModal();
+  const { callback } = useModal();
 
   const { validationSchema, initialValues } = useMemo(
     () => ({
@@ -123,7 +123,7 @@ export default function Form({ type = "addContact", formDefaults = {} }) {
     enableReinitialize: true,
     initialValues,
     validationSchema,
-    onSubmit: submitCallback,
+    onSubmit: callback,
   });
 
   return (
