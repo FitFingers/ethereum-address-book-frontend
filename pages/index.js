@@ -40,6 +40,7 @@ const linkProps = {
 // The order of the parameters to send to contract (sort order of params)
 const formConfig = {
   addContact: ["name", "address"],
+  removeContact: ["name"],
   payContact: ["wei"],
 };
 
@@ -247,7 +248,7 @@ export default function Home() {
     handleOpen(
       "Add Contact",
       "Use this form to add a user to your address book",
-      "addContact",
+      { type: "addContact" },
       (values) => submitForm(values, "addContact")
     );
   }, [handleOpen, submitForm]);
@@ -257,10 +258,11 @@ export default function Home() {
       "Remove Contact",
       selectedContact
         ? `Are you sure you wish to remove ${selectedContact}?`
-        : "No contacts selected!"
-      // "removeContact"
+        : "No contacts selected!",
+      { type: "removeContact", defaults: { name: selectedContact } },
+      () => submitForm(selectedContact, "removeContact")
     );
-  }, [handleOpen, selectedContact]);
+  }, [handleOpen, selectedContact, submitForm]);
 
   const payContact = useCallback(() => {
     handleOpen(
@@ -268,7 +270,8 @@ export default function Home() {
       selectedContact
         ? `Use this form to send ETH to ${selectedContact}`
         : "Please select a contact to send ETH to",
-      "payContact"
+      { type: "payContact" },
+      (values) => submitform(values, "payContact")
     );
   }, [handleOpen, selectedContact]);
 

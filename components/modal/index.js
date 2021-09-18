@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
 export default function Modal() {
   const classes = useStyles();
   const theme = useTheme();
-  const { title, description, type, open, handleClose } = useModal();
+  const { title, description, options, open, handleClose } = useModal();
 
   return (
     <MuiModal
@@ -79,7 +79,9 @@ export default function Modal() {
             </Typography>
           )}
           <Divider light className={classes.divider} />
-          {type && <Form type={type} />}
+          {options?.type && (
+            <Form type={options.type} defaults={options.defaults} />
+          )}
         </Paper>
       </Fade>
     </MuiModal>

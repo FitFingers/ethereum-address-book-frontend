@@ -20,6 +20,9 @@ const validationSchemas = {
     name: yup.string(msg.fill).required(msg.req),
     address: yup.string(msg.fill).required(msg.req),
   }),
+  removeContact: yup.object({
+    name: yup.string(msg.fill).required(msg.req),
+  }),
   payContact: yup.object({
     amount: yup.string(msg.fill).matches(/^\d+$/).required(msg.req),
   }),
@@ -29,7 +32,7 @@ const validationSchemas = {
 const rand = Math.random();
 
 // Form field labels and init values
-const formFields = {
+const formConfigs = {
   addContact: {
     name: {
       initial: rand > 0.49 ? "Jenna" : "Jimmy", // "",
@@ -40,6 +43,15 @@ const formFields = {
           ? "0x64252f36b734b82549042895e39e9c9C9265Db13"
           : "0xe681B4AE322c131178e339AA77427D61509Db891", // "", // TODO: remove defaults!
       helper: "Please ensure this uses the correct network!",
+    },
+  },
+  removeContact: {
+    name: {
+      initial: "",
+      helper: "You can change this selection in the Contacts panel",
+      FieldProps: {
+        disabled: true,
+      },
     },
   },
   payContact: {
@@ -56,13 +68,13 @@ const formFields = {
   },
 };
 
-function createInitialValues(type) {
-  return Object.entries(formFields[type]).reduce(
+function createInitialValues(type, defaults) {
+  return Object.entries(formConfigs[type]).reduce(
     (acc, [name, field]) => ({
       ...acc,
-      [name]: field.initial,
+      [name]: field.initial || defaults[name],
     }),
-    {}
+    defaults
   );
 }
 
@@ -87,16 +99,16 @@ const useStyles = makeStyles((theme) => ({
 // COMPONENTS
 // ===================================================
 
-export default function Form({ type = "addContact" }) {
+export default function Form({ type = "addContact", defaults = {} }) {
   const classes = useStyles();
   const { submitCallback } = useModal();
 
   const { validationSchema, initialValues } = useMemo(
     () => ({
       validationSchema: validationSchemas[type],
-      initialValues: createInitialValues(type),
+      initialValues: createInitialValues(type, defaults),
     }),
-    [type]
+    [defaults, type]
   );
 
   const { handleSubmit, values, handleChange, touched, errors } = useFormik({
@@ -109,7 +121,7 @@ export default function Form({ type = "addContact" }) {
   return (
     <Box className={classes.formContainer}>
       <form onSubmit={handleSubmit}>
-        {Object.entries(formFields[type]).map(([name, field]) => (
+        {Object.entries(formConfigs[type]).map(([name, field]) => (
           <Box className={classes.field} key={`form-field-${name}`}>
             <TextField
               {...(field.FieldProps || {})}
