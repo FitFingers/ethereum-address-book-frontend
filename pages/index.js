@@ -173,8 +173,7 @@ export default function Home() {
   const classes = useStyles();
 
   // init web3 contract (NOT contract contents)
-  const { connectWallet, network, contract, account, fetchCallback } =
-    useMetaMask();
+  const { connectWallet, network, fetchCallback } = useMetaMask();
 
   // web3 variables
   const [{ totalContacts, timelock, txCost, contactList, owner }, dispatch] =
@@ -186,66 +185,39 @@ export default function Home() {
       contactList: [],
     });
 
+  // web3 read variable handlers
   const readTotalContacts = useCallback(
     () => fetchCallback("totalContacts"),
-    [fetchCallback, network]
+    [fetchCallback]
   );
 
   const readTimelock = useCallback(
     () => fetchCallback("securityTimelock"),
-    [fetchCallback, network]
+    [fetchCallback]
   );
 
   const readTxCost = useCallback(
     () => fetchCallback("transferPrice"),
-    [fetchCallback, network]
+    [fetchCallback]
   );
 
-  const readOwner = useCallback(
-    () => fetchCallback("owner"),
-    [fetchCallback, network]
-  );
+  const readOwner = useCallback(() => fetchCallback("owner"), [fetchCallback]);
 
   const readContactList = useCallback(
     () => fetchCallback("readAllContacts"),
-    [fetchCallback, network]
+    [fetchCallback]
   );
 
   // initialise contract variables
   useEffect(() => {
-    console.log("DEBUG FX", {
-      readContactList,
-      readOwner,
-      readTimelock,
-      readTotalContacts,
-      readTxCost,
-      network,
-    });
     if (!network) return;
     async function initialiseVariables() {
-      console.log("DEBUG init var 1", {});
-      const totalContactsRes = await readTotalContacts()();
-      console.log("DEBUG init var 2", {});
-      const timelockRes = await readTimelock()();
-      console.log("DEBUG init var 3", {});
-      const txCostRes = await readTxCost()();
-      console.log("DEBUG init var 4", {});
-      const ownerRes = await readOwner()();
-      console.log("DEBUG init var 5", {});
-      // const contactListRes = await readContactList()();
-      console.log("DEBUG fn", {
-        totalContactsRes,
-        timelockRes,
-        txCostRes,
-        ownerRes,
-        // contactListRes,
-      });
       dispatch({
         totalContacts: await readTotalContacts()(),
         timelock: await readTimelock()(),
         txCost: await readTxCost()(),
         owner: await readOwner()(),
-        // contactList: await readContactList()(),
+        contactList: await readContactList()(),
       });
     }
     initialiseVariables();
@@ -257,14 +229,6 @@ export default function Home() {
     readTxCost,
     network,
   ]);
-
-  // console.log("DEBUG", {
-  //   totalContacts,
-  //   timelock,
-  //   txCost,
-  //   owner,
-  //   contactList,
-  // });
 
   // web3 / contract functions
   const addContact = useCallback(() => {}, []);
