@@ -20,6 +20,12 @@ import Logo from "components/logo";
 import useMetaMask from "hooks/useMetaMask";
 import useModal from "components/modal/context";
 
+/*
+  TODO: new functions required:
+  1. Update variables on txSuccess (bonus points for useSWR)
+  2. 
+*/
+
 // ===================================================
 // UTIL (PAGE OPTIONS)
 // ===================================================
@@ -41,7 +47,7 @@ const linkProps = {
 const formConfig = {
   addContact: ["name", "address"],
   removeContactByName: ["name"],
-  payContact: ["wei"],
+  payContactByName: ["wei"],
 };
 
 function sortArguments(values, name) {
@@ -234,7 +240,7 @@ export default function Home() {
   const submitForm = useCallback(
     async (values, name, data = {}) => {
       const sortedArgs = sortArguments(values, name);
-      contract.methods[name](...sortedArgs) // fetch function
+      return contract.methods[name](...sortedArgs) // fetch function
         .send({ from: account, ...data /*, value: txCost */ })
         .on("transactionHash", (txHash) => updateMetaMask({ txHash }))
         .on("receipt", ({ status }) => updateMetaMask({ txSuccess: status }));
@@ -266,16 +272,16 @@ export default function Home() {
     });
   }, [handleOpen, selectedContact, submitForm]);
 
-  const payContact = useCallback(() => {
+  const payContactByName = useCallback(() => {
     handleOpen({
       title: "Send ETH",
       description: selectedContact
         ? `Use this form to send ETH to ${selectedContact}`
         : "Please select a contact to send ETH to",
-      contractFunction: "payContact",
+      contractFunction: "payContactByName",
       formDefaults: { name: selectedContact },
       callback: ({ wei }) =>
-        submitForm({ name: selectedContact }, "payContact", { wei }),
+        submitForm({ name: selectedContact }, "payContactByName", { wei }),
     });
   }, [handleOpen, selectedContact, submitForm]);
 
@@ -381,7 +387,7 @@ export default function Home() {
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={payContact}
+                  onClick={payContactByName}
                   className={classes.button}
                 >
                   <PaymentIcon />
@@ -445,7 +451,7 @@ export default function Home() {
                   <Button
                     variant="contained"
                     color="primary"
-                    onClick={payContact}
+                    onClick={payContactByName}
                     className={classes.button}
                   >
                     <Typography variant="body1">Pay Contact</Typography>

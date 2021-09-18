@@ -23,7 +23,7 @@ const validationSchemas = {
   removeContactByName: yup.object({
     name: yup.string(msg.fill).required(msg.req),
   }),
-  payContact: yup.object({
+  payContactByName: yup.object({
     name: yup.string(msg.fill).required(msg.req),
     amount: yup.string(msg.fill).matches(/^\d+$/).required(msg.req),
   }),
@@ -55,7 +55,7 @@ const formConfigs = {
       },
     },
   },
-  payContact: {
+  payContactByName: {
     wei: {
       initial: "",
       helper: "The value to send in wei",
