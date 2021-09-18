@@ -56,7 +56,7 @@ const formConfigs = {
     },
   },
   payContactByName: {
-    wei: {
+    sendValue: {
       initial: "",
       helper: "The value to send in wei",
     },

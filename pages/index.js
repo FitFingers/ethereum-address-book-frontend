@@ -47,7 +47,7 @@ const linkProps = {
 const formConfig = {
   addContact: ["name", "address"],
   removeContactByName: ["name"],
-  payContactByName: ["wei"],
+  payContactByName: ["sendValue"],
 };
 
 function sortArguments(values, name) {
@@ -281,7 +281,7 @@ export default function Home() {
       contractFunction: "payContactByName",
       formDefaults: { name: selectedContact },
       callback: ({ wei }) =>
-        submitForm({ name: selectedContact }, "payContactByName", { wei }),
+        submitForm({ name: selectedContact }, "payContactByName", { sendValue: wei }),
     });
   }, [handleOpen, selectedContact, submitForm]);
 
