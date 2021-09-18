@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useReducer } from "react";
+import { useCallback, useEffect, useReducer } from "react";
 // import Link from "next/link";
 import Web3 from "web3";
 import { ABI } from "util/abi";
@@ -68,8 +68,9 @@ export default function useMetaMask() {
     dispatch({ contract });
   }, []);
 
-  const fetchVariable = useCallback(
-    async (functionName) => {
+  // "unpack" the requested callback from the contract and return (don't invoke)
+  const fetchCallback = useCallback(
+    (functionName) => {
       try {
         if (!contract?.methods) throw new Error("No contract defined");
         const callback = contract.methods[functionName];
@@ -96,7 +97,7 @@ export default function useMetaMask() {
     network,
     account,
     contract,
-    fetchVariable,
+    fetchCallback,
   };
 }
 

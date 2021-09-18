@@ -5,9 +5,7 @@ import {
   makeStyles,
   Box,
   List,
-  ListItemButton,
   ListItemText,
-  IconButton,
   Typography,
   AppBar,
   Toolbar,
@@ -22,7 +20,7 @@ import Logo from "components/logo";
 import useMetaMask from "hooks/useMetaMask";
 
 // ===================================================
-// UTIL
+// UTIL (PAGE OPTIONS)
 // ===================================================
 
 const linkBehaviour = "samesite";
@@ -124,11 +122,15 @@ const useStyles = makeStyles((theme) => ({
   option: {
     display: "flex",
     justifyContent: "space-between",
+    whiteSpace: "nowrap",
     "&>:last-child": {
       fontWeight: "bold",
-      textOverflow: "ellipsis",
-      maxWidth: 150,
       overflow: "hidden",
+      textOverflow: "ellipsis",
+      flex: 1,
+      maxWidth: 150,
+      textAlign: "right",
+      marginLeft: theme.spacing(5),
     },
   },
   buttonList: {
@@ -167,21 +169,11 @@ const useStyles = makeStyles((theme) => ({
 // COMPONENTS
 // ===================================================
 
-async function unpackCallback(functionName, contract) {
-  try {
-    if (!contract?.methods) throw new Error("No contract defined");
-    return contract.methods[functionName];
-    // return callback// (); // .call({ from: account });
-  } catch (err) {
-    return () => console.log("DEBUG callback not set");
-  }
-}
-
 export default function Home() {
   const classes = useStyles();
 
   // init web3 contract (NOT contract contents)
-  const { connectWallet, network, contract, account, fetchVariable } =
+  const { connectWallet, network, contract, account, fetchCallback } =
     useMetaMask();
 
   // web3 variables
@@ -194,25 +186,85 @@ export default function Home() {
       contactList: [],
     });
 
+  const readTotalContacts = useCallback(
+    () => fetchCallback("totalContacts"),
+    [fetchCallback, network]
+  );
+
+  const readTimelock = useCallback(
+    () => fetchCallback("securityTimelock"),
+    [fetchCallback, network]
+  );
+
+  const readTxCost = useCallback(
+    () => fetchCallback("transferPrice"),
+    [fetchCallback, network]
+  );
+
+  const readOwner = useCallback(
+    () => fetchCallback("owner"),
+    [fetchCallback, network]
+  );
+
+  const readContactList = useCallback(
+    () => fetchCallback("readAllContacts"),
+    [fetchCallback, network]
+  );
+
   // initialise contract variables
   useEffect(() => {
+    console.log("DEBUG FX", {
+      readContactList,
+      readOwner,
+      readTimelock,
+      readTotalContacts,
+      readTxCost,
+      network,
+    });
     if (!network) return;
     async function initialiseVariables() {
-      const getTotalContacts = await fetchVariable("totalContacts");
-      const getTimelock = await fetchVariable("securityTimelock");
-      const getTxCost = await fetchVariable("transferPrice");
-      const getOwner = await fetchVariable("owner");
-      // const getContactList = await fetchVariable("contacts");
+      console.log("DEBUG init var 1", {});
+      const totalContactsRes = await readTotalContacts()();
+      console.log("DEBUG init var 2", {});
+      const timelockRes = await readTimelock()();
+      console.log("DEBUG init var 3", {});
+      const txCostRes = await readTxCost()();
+      console.log("DEBUG init var 4", {});
+      const ownerRes = await readOwner()();
+      console.log("DEBUG init var 5", {});
+      // const contactListRes = await readContactList()();
+      console.log("DEBUG fn", {
+        totalContactsRes,
+        timelockRes,
+        txCostRes,
+        ownerRes,
+        // contactListRes,
+      });
       dispatch({
-        totalContacts: await getTotalContacts(),
-        timelock: await getTimelock(),
-        txCost: await getTxCost(),
-        owner: await getOwner(),
-        // contactList: await getContactList(),
+        totalContacts: await readTotalContacts()(),
+        timelock: await readTimelock()(),
+        txCost: await readTxCost()(),
+        owner: await readOwner()(),
+        // contactList: await readContactList()(),
       });
     }
     initialiseVariables();
-  }, [network, contract, account, fetchVariable]);
+  }, [
+    readContactList,
+    readOwner,
+    readTimelock,
+    readTotalContacts,
+    readTxCost,
+    network,
+  ]);
+
+  // console.log("DEBUG", {
+  //   totalContacts,
+  //   timelock,
+  //   txCost,
+  //   owner,
+  //   contactList,
+  // });
 
   // web3 / contract functions
   const addContact = useCallback(() => {}, []);
@@ -274,16 +326,25 @@ export default function Home() {
               <Typography variant="h3">Contacts</Typography>
               <Box className={classes.contactWindow}>
                 <List>
-                  {contactList.map((contact) => (
-                    <ListItem
-                      button
-                      selected={selectedContact === contact.name}
-                      onClick={() => handleListItemClick(contact.name)}
-                      key={`contact-list-${contact.name}`}
-                    >
-                      <ListItemText primary={contact.name} />
+                  {contactList.length ? (
+                    contactList.map((contact) => (
+                      <ListItem
+                        button
+                        selected={selectedContact === contact.name}
+                        onClick={() => handleListItemClick(contact.name)}
+                        key={`contact-list-${contact.name}`}
+                      >
+                        <ListItemText primary={contact.name} />
+                      </ListItem>
+                    ))
+                  ) : (
+                    <ListItem>
+                      <ListItemText
+                        primary="Your address book appears to be empty!"
+                        secondary="Try connecting your wallet or adding a contact using the buttons on this page."
+                      />
                     </ListItem>
-                  ))}
+                  )}
                 </List>
               </Box>
               <Box className={classes.buttonRow}>
