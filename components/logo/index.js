@@ -50,7 +50,7 @@ export default function Logo({ network, handleClick }) {
         <Image alt={`${network} Logo`} src={logo} layout="intrinsic" />
       ) : (
         <Button variant="contained" color="secondary">
-          <Typography variant="body2">Connect</Typography>
+          <Typography variant="body2">{network || "Connect"}</Typography>
           <AccountBalanceWalletIcon fontSize="medium" color="primary" />
         </Button>
       )}

@@ -57,6 +57,7 @@ const useStyles = makeStyles((theme) => ({
   tagline: {
     display: "flex",
     alignItems: "center",
+    whiteSpace: "nowrap"
   },
   main: {
     position: "relative",

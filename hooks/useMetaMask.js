@@ -16,6 +16,13 @@ const networks = {
   "0x5": "Goerli",
 };
 
+const msg = {
+  connected: (network) => `Now connected to ${network}!`,
+  wrongNetwork:
+    "This app only works on Rinkeby. Please connect to the Rinkeby network",
+  genericError: (err) => `Couldn't connect: ${err.message}`,
+};
+
 // const isDev = process.env.NODE_ENV === "development";
 
 // const ETHERSCAN = {
@@ -54,55 +61,33 @@ export default function useMetaMask() {
     }
   }, []);
 
-  // show feedback on successful network connection and change
-  useEffect(() => {
-    if (!window.web3) return;
-    window.web3.currentProvider?.on("chainChanged", (chain) => {
-      handleOpen(
-        "success",
-        `Now using the ${networks[chain] || chain} network`
-      );
-      window.location.reload();
-    });
-  }, [handleOpen]);
-
+  // connect and set the user's public key
   const connectAccount = useCallback(async () => {
     const [acc] = await window.web3.eth.requestAccounts();
     dispatch({ account: acc });
   }, []);
 
+  // connect to the network
   const connectNetwork = useCallback(async () => {
     const connectedNetwork = await window.web3.eth.net.getNetworkType();
     dispatch({ network: connectedNetwork });
   }, []);
 
-  useEffect(() => {
-    if (!network) return;
-    handleOpen("success", `Now connected to ${network}!`);
-  }, [handleOpen, network]);
-
   // connect to user's wallet
   const connectWallet = useCallback(async () => {
     try {
-      if (network) return connectAccount();
-      console.debug("Connecting to wallet...");
       await connectAccount();
       await connectNetwork();
-      console.debug("Connected.");
     } catch (err) {
       console.debug("ERROR: couldn't connect wallet", { err });
-      handleOpen("error", `Couldn't connect: ${err.message}`);
+      handleOpen("error", msg.genericError(err));
     }
-  }, [connectAccount, connectNetwork, handleOpen, network]);
+  }, [connectAccount, connectNetwork, handleOpen]);
 
-  // create a contract instance
+  // create a contract instance if network is Rinkeby
   useEffect(() => {
-    if (network !== "rinkeby") {
-      return handleOpen(
-        "error",
-        "This app only works on Rinkeby. Please connect to the Rinkeby network",
-        true
-      );
+    if (network && network !== "rinkeby") {
+      return handleOpen("error", msg.wrongNetwork, true);
     }
     const contract = new web3.eth.Contract(
       ABI,
@@ -129,6 +114,24 @@ export default function useMetaMask() {
   // ===================================================
   // NON-CALLABLE HOOKS THAT RUN AUTOMATICALLY
   // ===================================================
+
+  // show feedback on network changes
+  useEffect(() => {
+    if (!network) return;
+    handleOpen("success", msg.connected(network));
+  }, [handleOpen, network]);
+
+  // // show feedback on successful network connection and change
+  // useEffect(() => {
+  //   if (!window.web3) return;
+  //   window.web3.currentProvider?.on("chainChanged", (chain) => {
+  //     handleOpen(
+  //       "success",
+  //       `Now using the ${networks[chain] || chain} network`
+  //     );
+  //     window.location.reload();
+  //   });
+  // }, [handleOpen]);
 
   // // listen for a change in the last hash emitetd and run UI feedback
   // useHashConfirmation(hash);

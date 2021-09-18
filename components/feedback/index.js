@@ -83,9 +83,10 @@ export function FeedbackContext({ children }) {
   }, []);
 
   const handleClose = useCallback((event, reason) => {
+    if (persist) return;
     if (reason === "clickaway") return;
     dispatch({ open: false });
-  }, []);
+  }, [persist]);
 
   return (
     <Context.Provider
