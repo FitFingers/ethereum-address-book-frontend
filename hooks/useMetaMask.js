@@ -2,7 +2,7 @@ import { useCallback, useEffect, useReducer } from "react";
 // import Link from "next/link";
 import Web3 from "web3";
 import { ABI } from "util/abi";
-import { useFeedback } from "components/feedback";
+import useFeedback from "components/feedback/context";
 
 // ===================================================
 // UTIL

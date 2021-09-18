@@ -18,6 +18,7 @@ import PersonRemoveIcon from "@material-ui/icons/PersonAddDisabled";
 import PaymentIcon from "@material-ui/icons/Payment";
 import Logo from "components/logo";
 import useMetaMask from "hooks/useMetaMask";
+import useModal from "components/modal/context";
 
 // ===================================================
 // UTIL (PAGE OPTIONS)
@@ -57,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
   tagline: {
     display: "flex",
     alignItems: "center",
-    whiteSpace: "nowrap"
+    whiteSpace: "nowrap",
   },
   main: {
     position: "relative",
@@ -172,6 +173,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Home() {
   const classes = useStyles();
+  const { handleOpen } = useModal();
 
   // init web3 contract (NOT contract contents)
   const { connectWallet, network, fetchCallback } = useMetaMask();
@@ -179,10 +181,10 @@ export default function Home() {
   // web3 variables
   const [{ totalContacts, timelock, txCost, contactList, owner }, dispatch] =
     useReducer((state, moreState) => ({ ...state, ...moreState }), {
-      totalContacts: 0, // total numbers of contacts in address book
-      timelock: 0, // time until address is whitelisted
-      txCost: 0, // cost to send a transaction via this service
-      owner: "...", // contract owner's address
+      totalContacts: null, // total numbers of contacts in address book
+      timelock: null, // time until address is whitelisted
+      txCost: null, // cost to send a transaction via this service
+      owner: null, // contract owner's address
       contactList: [],
     });
 
@@ -201,23 +203,46 @@ export default function Home() {
     initialiseVariables();
   }, [fetchCallback, network]);
 
-  // web3 / contract functions
-  const addContact = useCallback(() => {}, []);
-
-  const removeContact = useCallback(() => {}, []);
-
-  const payContact = useCallback(() => {}, []);
-
-  const checkBalance = useCallback(() => {}, []);
-
-  const withdrawFunds = useCallback(() => {}, []);
-
   // UI handlers
   const [selectedContact, setSelectedContact] = useState("");
   const handleListItemClick = useCallback(
     (name) => setSelectedContact((n) => (n === name ? null : name)),
     []
   );
+
+  // web3 / contract functions
+  const addContact = useCallback(() => {
+    handleOpen(
+      "Add Contact",
+      "Use this form to add a user to your address book"
+    );
+  }, [handleOpen]);
+
+  const removeContact = useCallback(() => {
+    handleOpen(
+      "Remove Contact",
+      selectedContact
+        ? `Are you sure you wish to remove ${selectedContact}?`
+        : "No contacts selected!"
+    );
+  }, [handleOpen, selectedContact]);
+
+  const payContact = useCallback(() => {
+    handleOpen(
+      "Send ETH",
+      selectedContact
+        ? `Use this form to send ETH to ${selectedContact}`
+        : "Please select a contact to send ETH to"
+    );
+  }, [handleOpen, selectedContact]);
+
+  const checkBalance = useCallback(() => {
+    handleOpen("Check Contract Balance", "View this smart contract's balance");
+  }, [handleOpen]);
+
+  const withdrawFunds = useCallback(() => {
+    handleOpen("Withdraw Funds", "Withdraw the funds in this smart contract");
+  }, [handleOpen]);
 
   return (
     <Box className={classes.container}>
@@ -319,21 +344,25 @@ export default function Home() {
                 <Box className={classes.optionsList}>
                   <Box className={classes.option}>
                     <Typography variant="body1">Total Contacts:</Typography>
-                    <Typography variant="body1">{totalContacts}</Typography>
+                    <Typography variant="body1">
+                      {totalContacts || "..."}
+                    </Typography>
                   </Box>
                   <Box className={classes.option}>
                     <Typography variant="body1">Security Timelock:</Typography>
-                    <Typography variant="body1">{timelock} seconds</Typography>
+                    <Typography variant="body1">
+                      {timelock ? `${timelock} seconds` : "..."}
+                    </Typography>
                   </Box>
                   <Box className={classes.option}>
                     <Typography variant="body1">Transfer Cost:</Typography>
                     <Typography variant="body1">
-                      {txCost / 1000000000000000000} ETH
+                      {txCost ? `${txCost / 1000000000000000000} ETH` : "..."}
                     </Typography>
                   </Box>
                   <Box className={classes.option}>
                     <Typography variant="body1">Contract Owner:</Typography>
-                    <Typography variant="body1">{owner}</Typography>
+                    <Typography variant="body1">{owner || "..."}</Typography>
                   </Box>
                 </Box>
               </Box>

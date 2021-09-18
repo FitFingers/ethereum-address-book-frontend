@@ -29,6 +29,7 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: 180,
     width: "100%",
     height: "auto",
+    // cursor: "pointer",
     padding: theme.spacing(1, 2),
     mixBlendMode: "multiply", // network === "rinkeby" ? "multiply" : "normal", // TODO: network updates, but new styles aren't applied?
     "& .MuiSvgIcon-root": {

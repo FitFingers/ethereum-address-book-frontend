@@ -1,7 +1,7 @@
-import { useContext, createContext, useCallback, useReducer } from "react";
 import MuiSnackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
 import { makeStyles, Slide } from "@material-ui/core";
+import useFeedback from "./context";
 
 // ===================================================
 // STYLES
@@ -12,16 +12,6 @@ const useStyles = makeStyles((theme) => ({
     background: ({ type }) => theme.palette[type].main,
   },
 }));
-
-// ===================================================
-// USECONTEXT => ACCESS COMPONENT, HANDLERS
-// ===================================================
-
-export const Context = createContext(null);
-
-export function useFeedback() {
-  return useContext(Context);
-}
 
 // ===================================================
 // COMPONENTS
@@ -35,7 +25,7 @@ function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-export function Snackbar() {
+export default function Snackbar() {
   const { type, message, open, persist, handleClose } = useFeedback();
   const classes = useStyles({ type });
 
@@ -60,47 +50,5 @@ export function Snackbar() {
         </Alert>
       </div>
     </MuiSnackbar>
-  );
-}
-
-// ===================================================
-// CONTEXT PROVIDER AND HANDLERS
-// ===================================================
-
-export function FeedbackContext({ children }) {
-  const [{ open, type, message, persist }, dispatch] = useReducer(
-    (state, newState) => ({ ...state, ...newState }),
-    {
-      open: false,
-      type: "success",
-      message: "",
-      persist: false,
-    }
-  );
-
-  const handleOpen = useCallback((newType, newMessage, persist) => {
-    dispatch({ open: true, type: newType, message: newMessage, persist });
-  }, []);
-
-  const handleClose = useCallback((event, reason) => {
-    if (persist) return;
-    if (reason === "clickaway") return;
-    dispatch({ open: false });
-  }, [persist]);
-
-  return (
-    <Context.Provider
-      value={{
-        open,
-        type,
-        persist,
-        message,
-        handleOpen,
-        handleClose,
-        Snackbar,
-      }}
-    >
-      {children}
-    </Context.Provider>
   );
 }
