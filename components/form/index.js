@@ -103,7 +103,7 @@ export default function Form({ type = "addContact" }) {
     enableReinitialize: true,
     initialValues,
     validationSchema,
-    onSubmit: (values) => submitCallback(values),
+    onSubmit: submitCallback,
   });
 
   return (

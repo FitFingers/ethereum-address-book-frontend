@@ -37,6 +37,16 @@ const linkProps = {
   },
 };
 
+// The order of the parameters to send to contract (sort order of params)
+const formConfig = {
+  addContact: ["name", "address"],
+  payContact: ["wei"],
+};
+
+function sortArguments(values, name) {
+  return formConfig[name].map((key) => values[key]);
+}
+
 // ===================================================
 // STYLES
 // ===================================================
@@ -176,7 +186,14 @@ export default function Home() {
 
   // init web3 contract (NOT contract contents)
   // ===================================================
-  const { connectWallet, network, fetchCallback } = useMetaMask();
+  const {
+    connectWallet,
+    network,
+    fetchCallback,
+    contract,
+    account,
+    updateMetaMask,
+  } = useMetaMask();
 
   // web3 variables
   // ===================================================
@@ -213,9 +230,16 @@ export default function Home() {
     []
   );
 
-  const submitForm = useCallback((values) => {
-    console.log("DEBUG", values);
-  }, []);
+  const submitForm = useCallback(
+    async (values, name, data = {}) => {
+      const sortedArgs = sortArguments(values, name);
+      contract.methods[name](...sortedArgs) // fetch function
+        .send({ from: account, ...data /*, value: txCost */ })
+        .on("transactionHash", (txHash) => updateMetaMask({ txHash }))
+        .on("receipt", ({ status }) => updateMetaMask({ txSuccess: status }));
+    },
+    [account, contract.methods, updateMetaMask]
+  );
 
   // web3 / contract functions
   // ===================================================
@@ -224,7 +248,7 @@ export default function Home() {
       "Add Contact",
       "Use this form to add a user to your address book",
       "addContact",
-      submitForm
+      (values) => submitForm(values, "addContact")
     );
   }, [handleOpen, submitForm]);
 
