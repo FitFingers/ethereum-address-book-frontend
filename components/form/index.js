@@ -76,8 +76,8 @@ const formConfigs = {
   },
 };
 
-function createInitialValues(type, formDefaults) {
-  return Object.entries(formConfigs[type]).reduce(
+function createInitialValues(contractFunction, formDefaults) {
+  return Object.entries(formConfigs[contractFunction]).reduce(
     (acc, [name, field]) => ({
       ...acc,
       [name]: field.initial || formDefaults[name],
@@ -107,16 +107,19 @@ const useStyles = makeStyles((theme) => ({
 // COMPONENTS
 // ===================================================
 
-export default function Form({ type = "addContact", formDefaults = {} }) {
+export default function Form({
+  contractFunction = "addContact",
+  formDefaults = {},
+}) {
   const classes = useStyles();
   const { callback } = useModal();
 
   const { validationSchema, initialValues } = useMemo(
     () => ({
-      validationSchema: validationSchemas[type],
-      initialValues: createInitialValues(type, formDefaults),
+      validationSchema: validationSchemas[contractFunction],
+      initialValues: createInitialValues(contractFunction, formDefaults),
     }),
-    [formDefaults, type]
+    [formDefaults, contractFunction]
   );
 
   const { handleSubmit, values, handleChange, touched, errors } = useFormik({
@@ -129,7 +132,7 @@ export default function Form({ type = "addContact", formDefaults = {} }) {
   return (
     <Box className={classes.formContainer}>
       <form onSubmit={handleSubmit}>
-        {Object.entries(formConfigs[type]).map(([name, field]) => (
+        {Object.entries(formConfigs[contractFunction]).map(([name, field]) => (
           <Box className={classes.field} key={`form-field-${name}`}>
             <TextField
               {...(field.FieldProps || {})}
@@ -146,7 +149,12 @@ export default function Form({ type = "addContact", formDefaults = {} }) {
           </Box>
         ))}
         <Box className={classes.field}>
-          <Button color="secondary" variant="contained" fullWidth type="submit">
+          <Button
+            color="secondary"
+            variant="contained"
+            fullWidth
+            contractFunction="submit"
+          >
             Continue
           </Button>
         </Box>

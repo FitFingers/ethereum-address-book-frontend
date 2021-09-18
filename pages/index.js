@@ -248,7 +248,7 @@ export default function Home() {
     handleOpen({
       title: "Add Contact",
       description: "Use this form to add a user to your address book",
-      type: "addContact",
+      contractFunction: "addContact",
       callback: (values) => submitForm(values, "addContact"),
     });
   }, [handleOpen, submitForm]);
@@ -264,7 +264,7 @@ export default function Home() {
       description: selectedContact
         ? `Are you sure you wish to remove ${selectedContact}?`
         : "No contacts selected!",
-      type: "removeContactByName",
+      contractFunction: "removeContactByName",
       formDefaults: { name: selectedContact },
       callback: () =>
         submitForm({ name: selectedContact }, "removeContactByNameByName"),
@@ -277,7 +277,7 @@ export default function Home() {
       description: selectedContact
         ? `Use this form to send ETH to ${selectedContact}`
         : "Please select a contact to send ETH to",
-      type: "payContact",
+      contractFunction: "payContact",
       formDefaults: { name: selectedContact },
       callback: ({ wei }) =>
         submitform({ name: selectedContact }, "payContact", { wei }),

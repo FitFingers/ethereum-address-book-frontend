@@ -16,20 +16,22 @@ export default function useModal() {
 // ===================================================}
 
 export function ModalContext({ children }) {
-  const [{ open, title, description, type, formDefaults, callback }, dispatch] =
-    useReducer((state, newState) => ({ ...state, ...newState }), {
-      open: false,
-      title: "",
-      description: null,
-      type: null,
-      formDefaults: {},
-      callback: () => {},
-    });
+  const [
+    { open, title, description, contractFunction, formDefaults, callback },
+    dispatch,
+  ] = useReducer((state, newState) => ({ ...state, ...newState }), {
+    open: false,
+    title: "",
+    description: null,
+    contractFunction: null,
+    formDefaults: {},
+    callback: () => {},
+  });
 
   const handleOpen = ({
     title: newTitle,
     description: newDescription,
-    type: newType,
+    contractFunction: newType,
     formDefaults: newFormDefaults,
     callback: newCallback,
   }) => {
@@ -38,7 +40,7 @@ export function ModalContext({ children }) {
       open: true,
       title: newTitle,
       description: newDescription,
-      type: newType,
+      contractFunction: newType,
       formDefaults: newFormDefaults,
       callback: newCallback,
     });
@@ -55,7 +57,7 @@ export function ModalContext({ children }) {
         open,
         title,
         description,
-        type,
+        contractFunction,
         formDefaults,
         callback,
         handleOpen,
