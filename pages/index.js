@@ -117,7 +117,7 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: `inset ${theme.shadows[3].replace(/\),/g, "),inset ")}`,
     marginBottom: theme.spacing(2),
     minHeight: 120,
-    maxHeight: 180,
+    height: "100%",
     overflow: "auto",
 
     "&::-webkit-scrollbar-track": {
@@ -203,6 +203,7 @@ export default function Home() {
   const {
     metamask: { network, connectWallet, submitForm },
     contract: {
+      isOwner,
       totalContacts,
       timelock,
       txCost,
@@ -260,7 +261,26 @@ export default function Home() {
       title: "Withdraw Funds",
       description: "Withdraw the funds in this smart contract",
       contractFunction: "withdraw",
-      callback: () => submitForm({}, "withdraw")
+      callback: () => submitForm({}, "withdraw"),
+    });
+  }, [handleOpen, submitForm]);
+
+  const updateTimelock = useCallback(() => {
+    handleOpen({
+      title: "Update Security Timelock",
+      description:
+        "Change the security timelock. This will change the length of time that must pass before you may transfer ETH to a new contact",
+      contractFunction: "updateTimelock",
+      callback: (values) => submitForm(values, "updateTimelock"),
+    });
+  }, [handleOpen, submitForm]);
+
+  const updateTransactionCost = useCallback(() => {
+    handleOpen({
+      title: "Update Transaction Cost",
+      description: "Change the value this service charges for each interaction",
+      contractFunction: "updateTransactionCost",
+      callback: (values) => submitForm(values, "updateTransactionCost"),
     });
   }, [handleOpen, submitForm]);
 
@@ -457,12 +477,32 @@ export default function Home() {
                   </Button>
                   <Button
                     color="secondary"
-                    tip="Withdraw the balance from the smart contract"
-                    onClick={withdrawFunds}
+                    tip="Update the security timelock"
+                    onClick={updateTimelock}
                     network={network}
                   >
-                    <Typography variant="body1">Withdraw Funds</Typography>
+                    <Typography variant="body1">Update Timelock</Typography>
                   </Button>
+                  <Button
+                    color="secondary"
+                    tip="Update the transaction cost"
+                    onClick={updateTransactionCost}
+                    network={network}
+                  >
+                    <Typography variant="body1">
+                      Update Transaction Cost
+                    </Typography>
+                  </Button>
+                  {isOwner && (
+                    <Button
+                      color="secondary"
+                      tip="Withdraw the balance from the smart contract"
+                      onClick={withdrawFunds}
+                      network={network}
+                    >
+                      <Typography variant="body1">Withdraw Funds</Typography>
+                    </Button>
+                  )}
                 </Box>
               </Box>
             </Paper>

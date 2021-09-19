@@ -1,4 +1,4 @@
-import { useCallback, useReducer } from "react";
+import { useCallback, useMemo, useReducer } from "react";
 import useFeedback from "components/feedback/context";
 import useContract from "./useContract";
 import useNetworkUpdates from "./useNetworkUpdates";
@@ -18,6 +18,8 @@ const formConfig = {
   addContact: ["name", "address"],
   removeContactByName: ["name"],
   payContactByName: ["name", "sendValue"],
+  updateTimelock: ["seconds"],
+  updateTransactionCost: ["value"],
 };
 
 function sortArguments(values, name) {
@@ -56,6 +58,8 @@ export default function useMetaMask() {
     balance: null,
     contactList: [],
   });
+
+  const isOwner = useMemo(() => account === owner, [account, owner]);
 
   // HANDLERS
   // ===================================================
@@ -127,7 +131,8 @@ export default function useMetaMask() {
       contactList: await fetchCallback("readAllContacts")(),
       balance: await fetchCallback("checkBalance")(),
     });
-  }, [fetchCallback, network]);
+    handleOpen("success", "Refreshed contract values");
+  }, [fetchCallback, handleOpen, network]);
 
   // EFFECT HOOKS
   // ===================================================
@@ -150,11 +155,12 @@ export default function useMetaMask() {
       submitForm,
     },
     contract: {
+      isOwner,
+      owner,
       totalContacts,
       timelock,
       txCost,
       contactList,
-      owner,
       balance,
       refreshVariables,
     },

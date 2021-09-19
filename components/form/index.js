@@ -28,6 +28,12 @@ const validationSchemas = {
     name: yup.string(msg.fill).required(msg.req),
     sendValue: yup.string(msg.fill).matches(/^\d+$/).required(msg.req),
   }),
+  updateTimelock: yup.object({
+    seconds: yup.string(msg.fill).matches(/^\d+$/).required(msg.req),
+  }),
+  updateTransactionCost: yup.object({
+    value: yup.string(msg.fill).matches(/^\d+$/).required(msg.req),
+  }),
 };
 
 // Form field labels and init values
@@ -68,6 +74,18 @@ const formConfigs = {
     // eth: {
     //   initial: "",
     // }
+  },
+  updateTimelock: {
+    seconds: {
+      initial: "",
+      helper: "The value to send in wei",
+    },
+  },
+  updateTransactionCost: {
+    value: {
+      initial: "",
+      helper: "The value to send in wei",
+    },
   },
 };
 
