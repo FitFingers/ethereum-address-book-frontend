@@ -49,17 +49,6 @@ const linkProps = {
   },
 };
 
-// The order of the parameters to send to contract (sort order of params)
-const formConfig = {
-  addContact: ["name", "address"],
-  removeContactByName: ["name"],
-  payContactByName: ["sendValue"],
-};
-
-function sortArguments(values, name) {
-  return formConfig[name].map((key) => values[key]);
-}
-
 // messages, descriptions etc
 const desc = {
   addContact: () => "Use this form to add a user to your address book",
@@ -213,41 +202,9 @@ export default function Home() {
   // init web3 contract (NOT contract contents)
   // ===================================================
   const {
-    connectWallet,
-    network,
-    fetchCallback,
-    contract,
-    account,
-    updateMetaMask,
+    metamask: { network, connectWallet, submitForm },
+    contract: { totalContacts, timelock, txCost, contactList, owner },
   } = useMetaMask();
-
-  // web3 variables
-  // ===================================================
-  const [{ totalContacts, timelock, txCost, contactList, owner }, dispatch] =
-    useReducer((state, moreState) => ({ ...state, ...moreState }), {
-      totalContacts: null, // total numbers of contacts in address book
-      timelock: null, // time until address is whitelisted
-      txCost: null, // cost to send a transaction via this service
-      owner: null, // contract owner's address
-      contactList: [],
-    });
-
-  // initialise contract variables
-  // ===================================================
-  const refreshVariables = useCallback(async () => {
-    if (!network) return;
-    dispatch({
-      totalContacts: await fetchCallback("totalContacts")(),
-      timelock: await fetchCallback("securityTimelock")(),
-      txCost: await fetchCallback("transferPrice")(),
-      owner: await fetchCallback("owner")(),
-      contactList: await fetchCallback("readAllContacts")(),
-    });
-  }, [fetchCallback, network]);
-
-  useEffect(() => {
-    refreshVariables();
-  }, [refreshVariables]);
 
   // UI handlers
   // ===================================================
@@ -255,18 +212,6 @@ export default function Home() {
   const handleListItemClick = useCallback(
     (name) => setSelected((n) => (n === name ? null : name)),
     []
-  );
-
-  // all-purpose submit function for Modal forms
-  const submitForm = useCallback(
-    async (values, name, data = {}) => {
-      const sortedArgs = sortArguments(values, name);
-      contract.methods[name](...sortedArgs) // fetch function
-        .send({ from: account, ...data /*, value: txCost */ })
-        .on("transactionHash", (txHash) => updateMetaMask({ txHash }))
-        .on("receipt", ({ status }) => updateMetaMask({ txSuccess: status }));
-    },
-    [account, contract.methods, updateMetaMask]
   );
 
   // web3 / contract .send functions (change state)

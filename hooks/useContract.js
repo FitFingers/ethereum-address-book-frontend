@@ -5,7 +5,7 @@ import useFeedback from "components/feedback/context";
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
 
 // create a contract instance if network is Rinkeby
-export function useContract(network, validNetworks = [], dispatch) {
+export default function useContract(network, validNetworks = [], dispatch) {
   const { handleOpen } = useFeedback();
   useEffect(() => {
     if (network && !validNetworks.includes(network)) {

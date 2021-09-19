@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import Web3 from "web3";
 
 // init web3
-export function useInitWeb3() {
+export default function useInitWeb3() {
   useEffect(() => {
     try {
       window.web3 = new Web3(window.ethereum);

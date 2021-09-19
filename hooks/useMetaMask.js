@@ -1,15 +1,27 @@
 import { useCallback, useReducer } from "react";
 import useFeedback from "components/feedback/context";
-import { useContract } from "./useContract";
-import { useNetworkUpdates } from "./useNetworkUpdates";
-import { useTransactionStatus } from "./useTransactionStatus";
-import { useInitWeb3 } from "./useInitWeb3";
+import useContract from "./useContract";
+import useNetworkUpdates from "./useNetworkUpdates";
+import useTransactionStatus from "./useTransactionStatus";
+import useInitWeb3 from "./useInitWeb3";
+import useSyncVariables from "./useSyncVariables";
 
 // ===================================================
 // UTIL / OPTIONS
 // ===================================================
 
 const validNetworks = ["rinkeby"];
+
+// The order of the parameters to send to contract (sort order of params)
+const formConfig = {
+  addContact: ["name", "address"],
+  removeContactByName: ["name"],
+  payContactByName: ["sendValue"],
+};
+
+function sortArguments(values, name) {
+  return formConfig[name].map((key) => values[key]);
+}
 
 // ===================================================
 // METAMASK HOOK
@@ -21,7 +33,7 @@ export default function useMetaMask() {
   // STATE
   // ===================================================
   // metamask / web3 state
-  const [{ account, network, contract, txHash, txSuccess }, dispatch] =
+  const [{ account, network, contract, txHash, txSuccess }, updateMetaMask] =
     useReducer((state, moreState) => ({ ...state, ...moreState }), {
       account: null,
       network: null,
@@ -30,18 +42,28 @@ export default function useMetaMask() {
       txSuccess: null,
     });
 
+  // contract variables
+  const [{ totalContacts, timelock, txCost, contactList, owner }, dispatch] =
+    useReducer((state, moreState) => ({ ...state, ...moreState }), {
+      totalContacts: null, // total numbers of contacts in address book
+      timelock: null, // time until address is whitelisted
+      txCost: null, // cost to send a transaction via this service
+      owner: null, // contract owner's address
+      contactList: [],
+    });
+
   // HANDLERS
   // ===================================================
   // connect and set the user's public key
   const connectAccount = useCallback(async () => {
     const [acc] = await window.web3.eth.requestAccounts();
-    dispatch({ account: acc });
+    updateMetaMask({ account: acc });
   }, []);
 
   // connect to the network
   const connectNetwork = useCallback(async () => {
     const connectedNetwork = await window.web3.eth.net.getNetworkType();
-    dispatch({ network: connectedNetwork });
+    updateMetaMask({ network: connectedNetwork });
   }, []);
 
   // connect to user's wallet
@@ -69,22 +91,54 @@ export default function useMetaMask() {
     [contract.methods, account]
   );
 
+  // all-purpose submit function for Modal forms
+  const submitForm = useCallback(
+    async (values, name, data = {}) => {
+      const sortedArgs = sortArguments(values, name);
+      contract.methods[name](...sortedArgs) // fetch function
+        .send({ from: account, ...data /*, value: txCost */ })
+        .on("transactionHash", (txHash) => updateMetaMask({ txHash }))
+        .on("receipt", ({ status }) => updateMetaMask({ txSuccess: status }));
+    },
+    [account, contract.methods]
+  );
+
+  // function to (re)initialise contract variables
+  const refreshVariables = useCallback(async () => {
+    if (!network) return;
+    dispatch({
+      totalContacts: await fetchCallback("totalContacts")(),
+      timelock: await fetchCallback("securityTimelock")(),
+      txCost: await fetchCallback("transferPrice")(),
+      owner: await fetchCallback("owner")(),
+      contactList: await fetchCallback("readAllContacts")(),
+    });
+  }, [fetchCallback, network]);
+
   // EFFECT HOOKS
   // ===================================================
   // init web3 and the smart contract
   useInitWeb3();
-  useContract(network, validNetworks, dispatch);
+  useContract(network, validNetworks, updateMetaMask);
+  useSyncVariables(txSuccess, refreshVariables);
 
   // show feedback on certain events
   useNetworkUpdates(network);
-  useTransactionStatus(txHash, txSuccess, dispatch);
+  useTransactionStatus(txHash, txSuccess, updateMetaMask);
 
   return {
-    network,
-    account,
-    contract,
-    connectWallet,
-    fetchCallback,
-    updateMetaMask: dispatch,
+    metamask: {
+      contract,
+      connectWallet,
+      fetchCallback,
+      submitForm,
+    },
+    contract: {
+      totalContacts,
+      timelock,
+      txCost,
+      contactList,
+      owner,
+    },
   };
 }

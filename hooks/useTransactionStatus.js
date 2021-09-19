@@ -7,7 +7,7 @@ import { etherscan } from "util/network-data";
 // ===================================================
 
 // show feedback on transaction updates (new hash, tx complete status)
-export function useTransactionStatus(txHash, txSuccess, dispatch, network) {
+export default function useTransactionStatus(txHash, txSuccess, dispatch, network) {
   const { handleOpen } = useFeedback();
   const pHash = useRef(null);
   const pSuccess = useRef(null);

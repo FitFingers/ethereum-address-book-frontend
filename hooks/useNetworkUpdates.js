@@ -3,7 +3,7 @@ import useFeedback from "components/feedback/context";
 import { chainID } from "util/network-data";
 
 // show feedback on network changes
-export function useNetworkUpdates(network) {
+export default function useNetworkUpdates(network) {
   const { handleOpen } = useFeedback();
 
   // monitor initial network connection
