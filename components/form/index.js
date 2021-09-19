@@ -30,20 +30,14 @@ const validationSchemas = {
   }),
 };
 
-// TODO: remove defaults
-const rand = Math.random();
-
 // Form field labels and init values
 const formConfigs = {
   addContact: {
     name: {
-      initial: rand > 0.49 ? "Jenna" : "Jimmy", // "",
+      initial: "",
     },
     address: {
-      initial:
-        rand > 0.49
-          ? "0x64252f36b734b82549042895e39e9c9C9265Db13"
-          : "0xe681B4AE322c131178e339AA77427D61509Db891", // "", // TODO: remove defaults!
+      initial: "",
       helper: "Please ensure this uses the correct network!",
     },
   },

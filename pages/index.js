@@ -11,6 +11,7 @@ import {
   Toolbar,
   Paper,
   ListItem,
+  Tooltip,
 } from "@material-ui/core";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import PersonRemoveIcon from "@material-ui/icons/PersonAddDisabled";
@@ -370,25 +371,52 @@ export default function Home() {
                 <Typography variant="h3">Variables</Typography>
                 <Box className={classes.optionsList}>
                   <Box className={classes.option}>
-                    <Typography variant="body1">Total Contacts:</Typography>
+                    <Tooltip
+                      title="Total number of contacts in the address book"
+                      placement="right"
+                    >
+                      <Typography variant="body1">Total Contacts:</Typography>
+                    </Tooltip>
                     <Typography variant="body1">
                       {totalContactsLabel}
                     </Typography>
                   </Box>
                   <Box className={classes.option}>
-                    <Typography variant="body1">Security Timelock:</Typography>
+                    <Tooltip
+                      title="Delay between adding contact and allowing the transfer of ETH to them"
+                      placement="right"
+                    >
+                      <Typography variant="body1">
+                        Security Timelock:
+                      </Typography>
+                    </Tooltip>
                     <Typography variant="body1">{timelockLabel}</Typography>
                   </Box>
                   <Box className={classes.option}>
-                    <Typography variant="body1">Transfer Cost:</Typography>
+                    <Tooltip
+                      title="Cost per transaction for using this service"
+                      placement="right"
+                    >
+                      <Typography variant="body1">Transfer Cost:</Typography>
+                    </Tooltip>
                     <Typography variant="body1">{txCostLabel}</Typography>
                   </Box>
                   <Box className={classes.option}>
-                    <Typography variant="body1">Contract Balance:</Typography>
+                    <Tooltip
+                      title="The balance of this smart contract"
+                      placement="right"
+                    >
+                      <Typography variant="body1">Contract Balance:</Typography>
+                    </Tooltip>
                     <Typography variant="body1">{balanceLabel}</Typography>
                   </Box>
                   <Box className={classes.option}>
-                    <Typography variant="body1">Contract Owner:</Typography>
+                    <Tooltip
+                      title="The owner of the contract"
+                      placement="right"
+                    >
+                      <Typography variant="body1">Contract Owner:</Typography>
+                    </Tooltip>
                     <Typography variant="body1">{ownerLabel}</Typography>
                   </Box>
                 </Box>
