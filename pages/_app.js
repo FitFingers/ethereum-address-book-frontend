@@ -5,18 +5,21 @@ import Modal from "components/modal";
 import Snackbar from "components/feedback";
 import { ModalContext } from "components/modal/context";
 import { FeedbackContext } from "components/feedback/context";
+import { TransactionContext } from "hooks/useTransaction";
 
 function EthereumAddressBook({ Component, pageProps }) {
   return (
     <ThemeProvider>
       <CssBaseline />
-      <ModalContext>
-        <FeedbackContext>
-          <Component {...pageProps} />
-          <Snackbar />
-          <Modal />
-        </FeedbackContext>
-      </ModalContext>
+      <TransactionContext>
+        <ModalContext>
+          <FeedbackContext>
+            <Component {...pageProps} />
+            <Snackbar />
+            <Modal />
+          </FeedbackContext>
+        </ModalContext>
+      </TransactionContext>
     </ThemeProvider>
   );
 }

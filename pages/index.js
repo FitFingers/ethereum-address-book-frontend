@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useReducer, useState } from "react";
+import { useCallback, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import {
@@ -23,7 +23,6 @@ import { etherscan } from "util/network-data";
 
 /*
   TODO: new functions required:
-  1. Update variables on txSuccess (bonus points for useSWR)
   2. Close Modal feedback (show spinner or text while waiting for response, plus "you may close this window")
   3. Investigate the short feedback duration (could be imagined)
   4. Update security timelock
@@ -199,7 +198,7 @@ export default function Home() {
   const classes = useStyles();
   const { handleOpen } = useModal();
 
-  // init web3 contract (NOT contract contents)
+  // init web3, extract state and contract content
   // ===================================================
   const {
     metamask: { network, connectWallet, submitForm },

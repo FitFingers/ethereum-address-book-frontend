@@ -5,6 +5,7 @@ import useNetworkUpdates from "./useNetworkUpdates";
 import useTransactionStatus from "./useTransactionStatus";
 import useInitWeb3 from "./useInitWeb3";
 import useSyncVariables from "./useSyncVariables";
+import useTransaction from "hooks/useTransaction";
 
 // ===================================================
 // UTIL / OPTIONS
@@ -29,18 +30,19 @@ function sortArguments(values, name) {
 
 export default function useMetaMask() {
   const { handleOpen } = useFeedback();
+  const { updateTransaction } = useTransaction();
 
   // STATE
   // ===================================================
   // metamask / web3 state
-  const [{ account, network, contract, txHash, txSuccess }, updateMetaMask] =
-    useReducer((state, moreState) => ({ ...state, ...moreState }), {
+  const [{ account, network, contract }, updateMetaMask] = useReducer(
+    (state, moreState) => ({ ...state, ...moreState }),
+    {
       account: null,
       network: null,
       contract: {},
-      txHash: null,
-      txSuccess: null,
-    });
+    }
+  );
 
   // contract variables
   const [{ totalContacts, timelock, txCost, contactList, owner }, dispatch] =
@@ -97,10 +99,12 @@ export default function useMetaMask() {
       const sortedArgs = sortArguments(values, name);
       contract.methods[name](...sortedArgs) // fetch function
         .send({ from: account, ...data /*, value: txCost */ })
-        .on("transactionHash", (txHash) => updateMetaMask({ txHash }))
-        .on("receipt", ({ status }) => updateMetaMask({ txSuccess: status }));
+        .on("transactionHash", (txHash) => updateTransaction({ txHash }))
+        .on("receipt", ({ status }) =>
+          updateTransaction({ txSuccess: status })
+        );
     },
-    [account, contract.methods]
+    [account, contract.methods, updateTransaction]
   );
 
   // function to (re)initialise contract variables
@@ -120,11 +124,11 @@ export default function useMetaMask() {
   // init web3 and the smart contract
   useInitWeb3();
   useContract(network, validNetworks, updateMetaMask);
-  useSyncVariables(txSuccess, refreshVariables);
+  useSyncVariables(refreshVariables);
 
   // show feedback on certain events
   useNetworkUpdates(network);
-  useTransactionStatus(txHash, txSuccess, updateMetaMask);
+  useTransactionStatus(network);
 
   return {
     metamask: {

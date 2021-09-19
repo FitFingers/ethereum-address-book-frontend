@@ -1,21 +1,20 @@
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect } from "react";
 import useFeedback from "components/feedback/context";
 import { etherscan } from "util/network-data";
+import useTransaction from "hooks/useTransaction";
 
 // ===================================================
 // TRANSACTION HOOK
 // ===================================================
 
 // show feedback on transaction updates (new hash, tx complete status)
-export default function useTransactionStatus(txHash, txSuccess, dispatch, network) {
+export default function useTransactionStatus(network) {
   const { handleOpen } = useFeedback();
-  const pHash = useRef(null);
-  const pSuccess = useRef(null);
+  const { txHash, txSuccess, prevHash, prevSuccess, updateTransaction } = useTransaction();
 
   useLayoutEffect(() => {
     // on new transaction hash
-    if (txHash && txHash !== pHash.current) {
-      pHash.current = txHash;
+    if (txHash && txHash !== prevHash) {
       handleOpen(
         "success",
         <a
@@ -26,19 +25,31 @@ export default function useTransactionStatus(txHash, txSuccess, dispatch, networ
           TX ID: {txHash}
         </a>
       );
-      pSuccess.current = null;
+      updateTransaction({
+        prevHash: txHash,
+        prevSuccess: null,
+      });
     }
 
     // on new transaction status
-    if (txSuccess && txSuccess !== pSuccess.current) {
-      pSuccess.current = txSuccess;
+    if (txSuccess !== null && txSuccess !== prevSuccess) {
       handleOpen(
         txSuccess ? "success" : "error",
         `Transaction result: ${txSuccess ? "Success" : "Error"}`
       );
-      pHash.current = null;
-      pSuccess.current = null;
-      dispatch({ txHash: null, txSuccess: null });
+      updateTransaction({
+        txHash: null,
+        txSuccess: null,
+        prevSuccess: txSuccess,
+      });
     }
-  }, [dispatch, handleOpen, network, pHash, pSuccess, txHash, txSuccess]);
+  }, [
+    updateTransaction,
+    handleOpen,
+    network,
+    prevHash,
+    prevSuccess,
+    txHash,
+    txSuccess,
+  ]);
 }
