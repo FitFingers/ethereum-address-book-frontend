@@ -66,6 +66,8 @@ const rootTheme = createTheme({
       fontWeight: 300,
       marginTop: 8,
       marginBottom: 8,
+      textOverflow: "ellipsis",
+      overflowX: "hidden",
     },
     body1: {
       fontSize: 16,

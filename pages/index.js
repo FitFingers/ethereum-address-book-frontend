@@ -25,9 +25,10 @@ import formatTimestamp from "util/format-date";
 
 /*
   TODO: new functions required:
+  1. mobile styles
   1. Clear form on txSuccess
   6. Create Factory (for multi user)
-  3. Remove react-spinners unused
+  4. "A controlled component is changed to uncontrolled"
 */
 
 // ===================================================
@@ -72,7 +73,7 @@ const options = [
   },
   {
     title: "Cost per transaction for using this service",
-    label: "Transfer Cost",
+    label: "Transaction Cost",
   },
   {
     title: "The balance of this smart contract",
@@ -102,15 +103,36 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     justifyContent: "space-between",
     background: theme.palette.background.toolbar,
+    "& a .MuiTypography-root": {
+      ...theme.typography.h6,
+    },
+    [theme.breakpoints.down("sm")]: {
+      flexDirection: "column",
+      paddingTop: theme.spacing(2),
+      "& a .MuiTypography-root": {
+        fontSize: 18,
+      },
+    },
   },
   tagline: {
     display: "flex",
     alignItems: "center",
     whiteSpace: "nowrap",
+    [theme.breakpoints.down("sm")]: {
+      whiteSpace: "break-spaces",
+      textAlign: "right",
+      "&>*": {
+        flex: 1,
+      },
+    },
   },
   main: {
     position: "relative",
     padding: theme.spacing(12, 0),
+    [theme.breakpoints.down("sm")]: {
+      padding: theme.spacing(0),
+      width: "100%",
+    },
   },
   columns: {
     display: "flex",
@@ -118,6 +140,12 @@ const useStyles = makeStyles((theme) => ({
     "&>*": {
       flex: 1,
       padding: theme.spacing(5),
+    },
+    [theme.breakpoints.down("sm")]: {
+      flexDirection: "column",
+      "&>*": {
+        padding: theme.spacing(2),
+      },
     },
   },
   listitem: {
@@ -147,6 +175,9 @@ const useStyles = makeStyles((theme) => ({
   titles: {
     margin: theme.spacing(4, "auto"),
     textAlign: "center",
+    [theme.breakpoints.down("sm")]: {
+      margin: theme.spacing(8, 0),
+    },
   },
   paperPanel: {
     height: "100%",
@@ -164,6 +195,9 @@ const useStyles = makeStyles((theme) => ({
     minHeight: 120,
     height: "100%",
     overflow: "auto",
+    [theme.breakpoints.down("sm")]: {
+      minHeight: 220,
+    },
 
     "&::-webkit-scrollbar-track": {
       borderRadius: theme.shape.borderRadius,
@@ -284,7 +318,7 @@ export default function Home() {
       formDefaults: { name: selected },
       callback: (values) =>
         submitForm(values, "payContactByName", {
-          value: txCost + values.sendValue, // +1
+          value: Number(txCost) + Number(values.sendValue), // +1
         }),
     });
   }, [handleOpen, selected, submitForm, txCost]);
@@ -319,13 +353,11 @@ export default function Home() {
 
   // button / var labels
   // ===================================================
-  // TODO: use date-fns or similar to change timelock to most suitable format
-
   const labels = useMemo(
     () => ({
       "Total Contacts": totalContacts || "...",
       "Security Timelock": timelock ? formatTimestamp(timelock) : "...",
-      "Transfer Cost": txCost
+      "Transaction Cost": txCost
         ? `${window?.web3?.utils.fromWei(txCost)} ETH`
         : "...",
       "Contract Balance": balance
@@ -351,7 +383,7 @@ export default function Home() {
         <Toolbar className={classes.toolbar}>
           <Link passHref {...linkProps[linkBehaviour]}>
             <a {...linkProps[linkBehaviour]}>
-              <Typography variant="h6">Ethereum Address Book</Typography>
+              <Typography>Ethereum Address Book</Typography>
             </a>
           </Link>
           <Box className={classes.tagline}>
