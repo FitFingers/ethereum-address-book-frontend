@@ -19,6 +19,7 @@ import PaymentIcon from "@material-ui/icons/Payment";
 import Logo from "components/logo";
 import useMetaMask from "hooks/useMetaMask";
 import useModal from "components/modal/context";
+import { etherscan } from "util/network-data";
 
 /*
   TODO: new functions required:
@@ -495,6 +496,16 @@ export default function Home() {
       </main>
 
       <footer className={classes.footer}>
+        <Link
+          passHref
+          href={`${etherscan[network]}${process.env.NEXT_PUBLIC_CONTRACT_ADDRESS}`}
+        >
+          <a target="_blank" rel="noreferrer">
+            <Typography variant="h6">
+              Contract address: {process.env.NEXT_PUBLIC_CONTRACT_ADDRESS}
+            </Typography>
+          </a>
+        </Link>
         <Link passHref {...linkProps[linkBehaviour]}>
           <a {...linkProps[linkBehaviour]}>
             <Typography variant="h6">

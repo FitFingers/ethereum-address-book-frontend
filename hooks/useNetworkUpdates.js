@@ -1,13 +1,6 @@
 import { useEffect } from "react";
 import useFeedback from "components/feedback/context";
-
-const networks = {
-  "0x1": "Ethereum (Mainnet)",
-  "0x2a": "Kovan",
-  "0x3": "Ropsten",
-  "0x4": "Rinkeby",
-  "0x5": "Goerli",
-};
+import { chainID } from "util/network-data";
 
 // show feedback on network changes
 export function useNetworkUpdates(network) {
@@ -23,10 +16,7 @@ export function useNetworkUpdates(network) {
   useEffect(() => {
     // if (!window.web3) return;
     window.web3?.currentProvider?.on("chainChanged", (chain) => {
-      handleOpen(
-        "success",
-        `Now using the ${networks[chain] || chain} network`
-      );
+      handleOpen("success", `Now using the ${chainID[chain] || chain} network`);
       window.location.reload();
     });
   }, [handleOpen]);

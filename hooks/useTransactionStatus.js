@@ -1,18 +1,6 @@
 import { useLayoutEffect, useRef } from "react";
 import useFeedback from "components/feedback/context";
-
-// ===================================================
-// UTIL / OPTIONS
-// ===================================================
-
-// TODO: are these URLs right? If so, change to one URL with dynamic prefix
-const etherscan = {
-  mainnet: "https://etherscan.io/tx/",
-  kovan: "https://kovan.etherscan.io/tx/",
-  ropsten: "https://ropsten.etherscan.io/tx/",
-  rinkeby: "https://rinkeby.etherscan.io/tx/",
-  goerli: "https://goerli.etherscan.io/tx/",
-};
+import { etherscan } from "util/network-data";
 
 // ===================================================
 // TRANSACTION HOOK
