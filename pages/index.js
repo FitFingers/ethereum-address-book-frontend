@@ -10,13 +10,13 @@ import {
   AppBar,
   Toolbar,
   Paper,
-  Button,
   ListItem,
 } from "@material-ui/core";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import PersonRemoveIcon from "@material-ui/icons/PersonAddDisabled";
 import PaymentIcon from "@material-ui/icons/Payment";
 import Logo from "components/logo";
+import Button from "components/button";
 import useMetaMask from "hooks/useMetaMask";
 import useModal from "components/modal/context";
 import { etherscan } from "util/network-data";
@@ -24,7 +24,6 @@ import { etherscan } from "util/network-data";
 /*
   TODO: new functions required:
   2. Close Modal feedback (show spinner or text while waiting for response, plus "you may close this window")
-  3. Investigate the short feedback duration (could be imagined)
   4. Update security timelock
   5. Security timelock should apply to changing the security timelock
   6. Create Factory (for multi user)
@@ -162,7 +161,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
-    "&>$button": {
+    "&>span": {
       margin: theme.spacing(1, 0),
       "&:last-child": {
         marginBottom: 0,
@@ -172,7 +171,7 @@ const useStyles = makeStyles((theme) => ({
   buttonRow: {
     display: "flex",
     margin: theme.spacing(0, -1),
-    "&>$button": {
+    "&>span": {
       margin: theme.spacing(0, 1),
       flex: 1,
     },
@@ -337,26 +336,23 @@ export default function Home() {
               </Box>
               <Box className={classes.buttonRow}>
                 <Button
-                  variant="contained"
-                  color="primary"
                   onClick={removeContactByName}
-                  className={classes.button}
+                  tip="Remove the selected contact"
+                  network={network}
                 >
                   <PersonRemoveIcon />
                 </Button>
                 <Button
-                  variant="contained"
-                  color="primary"
                   onClick={payContactByName}
-                  className={classes.button}
+                  tip="Pay the selected contact"
+                  network={network}
                 >
                   <PaymentIcon />
                 </Button>
                 <Button
-                  variant="contained"
-                  color="primary"
                   onClick={addContact}
-                  className={classes.button}
+                  tip="Add a new contact"
+                  network={network}
                 >
                   <PersonAddIcon />
                 </Button>
@@ -393,42 +389,39 @@ export default function Home() {
                 <Typography variant="h3">Functions</Typography>
                 <Box className={classes.buttonList}>
                   <Button
-                    variant="contained"
-                    color="primary"
                     onClick={addContact}
-                    className={classes.button}
+                    tip="Add a new contact"
+                    network={network}
                   >
                     <Typography variant="body1">Add Contact</Typography>
                   </Button>
                   <Button
-                    variant="contained"
-                    color="primary"
                     onClick={removeContactByName}
-                    className={classes.button}
+                    tip="Remove the selected contact"
+                    network={network}
                   >
                     <Typography variant="body1">Remove Contact</Typography>
                   </Button>
                   <Button
-                    variant="contained"
-                    color="primary"
                     onClick={payContactByName}
-                    className={classes.button}
+                    tip="Pay the selected contact"
+                    network={network}
                   >
                     <Typography variant="body1">Pay Contact</Typography>
                   </Button>
                   <Button
-                    variant="contained"
                     color="secondary"
+                    tip="Check the smart contract's balance"
                     onClick={checkBalance}
-                    className={classes.button}
+                    network={network}
                   >
                     <Typography variant="body1">Check Balance</Typography>
                   </Button>
                   <Button
-                    variant="contained"
                     color="secondary"
+                    tip="Withdraw the balance from the smart contract"
                     onClick={withdrawFunds}
-                    className={classes.button}
+                    network={network}
                   >
                     <Typography variant="body1">Withdraw Funds</Typography>
                   </Button>

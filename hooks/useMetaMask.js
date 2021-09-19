@@ -132,6 +132,7 @@ export default function useMetaMask() {
 
   return {
     metamask: {
+      network,
       contract,
       connectWallet,
       fetchCallback,
