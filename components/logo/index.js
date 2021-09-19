@@ -29,11 +29,11 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: 180,
     width: "100%",
     height: "auto",
-    // cursor: "pointer",
     padding: theme.spacing(1, 2),
     mixBlendMode: "multiply", // network === "rinkeby" ? "multiply" : "normal", // TODO: network updates, but new styles aren't applied?
     "& .MuiSvgIcon-root": {
       marginLeft: theme.spacing(1),
+      color: theme.palette.background.toolbar,
     },
   },
 }));
@@ -50,9 +50,9 @@ export default function Logo({ network, handleClick }) {
       {logo ? (
         <Image alt={`${network} Logo`} src={logo} layout="intrinsic" />
       ) : (
-        <Button variant="contained" color="secondary">
+        <Button variant="contained" color="primary">
           <Typography variant="body2">{network || "Connect"}</Typography>
-          <AccountBalanceWalletIcon fontSize="medium" color="primary" />
+          <AccountBalanceWalletIcon fontSize="medium" />
         </Button>
       )}
     </Box>

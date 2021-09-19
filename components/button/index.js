@@ -15,7 +15,7 @@ export default function MyButton({ children, network, tip, ...props }) {
           disabled={!network}
           variant="contained"
           fullWidth
-          color="primary"
+          color="secondary"
           {...props}
         >
           {children}

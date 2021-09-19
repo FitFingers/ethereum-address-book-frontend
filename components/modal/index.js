@@ -117,7 +117,7 @@ function TransactionStatus() {
     <Box className={classes.txStatus}>
       <Box className={classes.spinner}>
         <PropagateLoader
-          color={theme.palette.text.secondary}
+          color={theme.palette.secondary.main}
           loading={prevHash && prevSuccess === null}
           size={15}
         />

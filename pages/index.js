@@ -101,6 +101,7 @@ const useStyles = makeStyles((theme) => ({
   toolbar: {
     display: "flex",
     justifyContent: "space-between",
+    background: theme.palette.background.toolbar,
   },
   tagline: {
     display: "flex",
@@ -138,6 +139,7 @@ const useStyles = makeStyles((theme) => ({
   },
   contactWindow: {
     borderRadius: theme.shape.borderRadius,
+    background: theme.palette.background.default,
     boxShadow: `inset ${theme.shadows[3].replace(/\),/g, "),inset ")}`,
     marginBottom: theme.spacing(2),
     minHeight: 120,
@@ -156,7 +158,7 @@ const useStyles = makeStyles((theme) => ({
       background: "#f5f5f5",
     },
     "&::-webkit-scrollbar-thumb": {
-      backgroundColor: theme.palette.text.secondary,
+      backgroundColor: theme.palette.secondary.main,
       borderRadius: theme.shape.borderRadius,
       "-webkit-box-shadow": `inset 0 0 ${theme.spacing(
         0.5
@@ -196,7 +198,7 @@ const useStyles = makeStyles((theme) => ({
     left: 0,
     right: 0,
     padding: theme.spacing(2, 3),
-    background: theme.palette.primary.main,
+    background: theme.palette.background.toolbar,
     color: theme.palette.text.secondary,
     textAlign: "center",
   },
@@ -326,7 +328,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <AppBar color="primary" position="relative">
+      <AppBar color="transparent" position="relative">
         <Toolbar className={classes.toolbar}>
           <Link passHref {...linkProps[linkBehaviour]}>
             <a {...linkProps[linkBehaviour]}>
@@ -345,7 +347,7 @@ export default function Home() {
           <Box className={classes.infoPanel}>
             <Box className={classes.titles}>
               <Typography variant="h1">Ethereum Address Book</Typography>
-              <Typography variant="h2" color="textSecondary">
+              <Typography variant="h2" color="secondary">
                 Manage contacts and send transactions
               </Typography>
             </Box>
@@ -445,7 +447,7 @@ export default function Home() {
                     <Typography variant="body1">Pay Contact</Typography>
                   </Button>
                   <Button
-                    color="secondary"
+                    color="primary"
                     tip="Refresh the contract data"
                     onClick={refreshVariables}
                     network={network}
@@ -453,7 +455,7 @@ export default function Home() {
                     <Typography variant="body1">Refresh Data</Typography>
                   </Button>
                   <Button
-                    color="secondary"
+                    color="primary"
                     tip="Update the security timelock"
                     onClick={updateTimelock}
                     network={network}
@@ -461,7 +463,7 @@ export default function Home() {
                     <Typography variant="body1">Update Timelock</Typography>
                   </Button>
                   <Button
-                    color="secondary"
+                    color="primary"
                     tip="Update the transaction cost"
                     onClick={updateTransactionCost}
                     network={network}
@@ -472,7 +474,7 @@ export default function Home() {
                   </Button>
                   {isOwner && (
                     <Button
-                      color="secondary"
+                      color="primary"
                       tip="Withdraw the balance from the smart contract"
                       onClick={withdrawFunds}
                       network={network}
