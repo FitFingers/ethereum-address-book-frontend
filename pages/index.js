@@ -27,6 +27,7 @@ import { etherscan } from "util/network-data";
   4. Update security timelock
   5. Security timelock should apply to changing the security timelock
   6. Create Factory (for multi user)
+  7. Change txCost func
 */
 
 // ===================================================
@@ -200,7 +201,15 @@ export default function Home() {
   // ===================================================
   const {
     metamask: { network, connectWallet, submitForm },
-    contract: { totalContacts, timelock, txCost, contactList, owner },
+    contract: {
+      totalContacts,
+      timelock,
+      txCost,
+      contactList,
+      owner,
+      balance,
+      refreshVariables,
+    },
   } = useMetaMask();
 
   // UI handlers
@@ -238,16 +247,12 @@ export default function Home() {
       description: desc.payContactByName[!!selected](selected),
       contractFunction: "payContactByName",
       formDefaults: { name: selected },
-      callback: (values) => submitForm(values, "payContactByName"),
+      callback: (values) =>
+        submitForm(values, "payContactByName", {
+          value: txCost + values.sendValue + 1,
+        }),
     });
-  }, [handleOpen, selected, submitForm]);
-
-  const checkBalance = useCallback(() => {
-    handleOpen({
-      title: "Check Contract Balance",
-      description: "View this smart contract's balance",
-    });
-  }, [handleOpen]);
+  }, [handleOpen, selected, submitForm, txCost]);
 
   const withdrawFunds = useCallback(() => {
     handleOpen({
@@ -266,6 +271,7 @@ export default function Home() {
       )} ${timelock > 90 ? "minutes" : "seconds"}`
     : "...";
   const txCostLabel = txCost ? `${txCost / 1000000000000000000} ETH` : "...";
+  const balanceLabel = balance ? `${balance / 1000000000000000000} ETH` : "...";
   const ownerLabel = owner || "...";
 
   return (
@@ -378,6 +384,10 @@ export default function Home() {
                     <Typography variant="body1">{txCostLabel}</Typography>
                   </Box>
                   <Box className={classes.option}>
+                    <Typography variant="body1">Contract Balance:</Typography>
+                    <Typography variant="body1">{balanceLabel}</Typography>
+                  </Box>
+                  <Box className={classes.option}>
                     <Typography variant="body1">Contract Owner:</Typography>
                     <Typography variant="body1">{ownerLabel}</Typography>
                   </Box>
@@ -409,11 +419,11 @@ export default function Home() {
                   </Button>
                   <Button
                     color="secondary"
-                    tip="Check the smart contract's balance"
-                    onClick={checkBalance}
+                    tip="Refresh the contract data"
+                    onClick={refreshVariables}
                     network={network}
                   >
-                    <Typography variant="body1">Check Balance</Typography>
+                    <Typography variant="body1">Refresh Data</Typography>
                   </Button>
                   <Button
                     color="secondary"

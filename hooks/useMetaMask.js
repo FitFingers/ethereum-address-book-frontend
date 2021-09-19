@@ -45,12 +45,13 @@ export default function useMetaMask() {
   );
 
   // contract variables
-  const [{ totalContacts, timelock, txCost, contactList, owner }, dispatch] =
+  const [{ totalContacts, timelock, txCost, contactList, owner, balance }, dispatch] =
     useReducer((state, moreState) => ({ ...state, ...moreState }), {
       totalContacts: null, // total numbers of contacts in address book
       timelock: null, // time until address is whitelisted
       txCost: null, // cost to send a transaction via this service
       owner: null, // contract owner's address
+      balance: null,
       contactList: [],
     });
 
@@ -122,6 +123,7 @@ export default function useMetaMask() {
       txCost: await fetchCallback("transferPrice")(),
       owner: await fetchCallback("owner")(),
       contactList: await fetchCallback("readAllContacts")(),
+      balance: await fetchCallback("checkBalance")(),
     });
   }, [fetchCallback, network]);
 
@@ -138,6 +140,7 @@ export default function useMetaMask() {
 
   return {
     metamask: {
+      account,
       network,
       contract,
       connectWallet,
@@ -150,6 +153,8 @@ export default function useMetaMask() {
       txCost,
       contactList,
       owner,
+      balance,
+      refreshVariables,
     },
   };
 }
