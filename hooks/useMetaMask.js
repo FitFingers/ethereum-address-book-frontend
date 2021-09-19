@@ -17,7 +17,7 @@ const validNetworks = ["rinkeby"];
 const formConfig = {
   addContact: ["name", "address"],
   removeContactByName: ["name"],
-  payContactByName: ["sendValue"],
+  payContactByName: ["name", "sendValue"],
 };
 
 function sortArguments(values, name) {
@@ -96,15 +96,21 @@ export default function useMetaMask() {
   // all-purpose submit function for Modal forms
   const submitForm = useCallback(
     async (values, name, data = {}) => {
-      const sortedArgs = sortArguments(values, name);
-      contract.methods[name](...sortedArgs) // fetch function
-        .send({ from: account, ...data /*, value: txCost */ })
-        .on("transactionHash", (txHash) => updateTransaction({ txHash }))
-        .on("receipt", ({ status }) =>
-          updateTransaction({ txSuccess: status })
-        );
+      try {
+        const sortedArgs = sortArguments(values, name);
+        await contract.methods[name](...sortedArgs) // fetch function
+          .send({ from: account, ...data /*, value: txCost */ })
+          .on("transactionHash", (txHash) => updateTransaction({ txHash }))
+          .on("error", () => updateTransaction({ txSuccess: false }))
+          .on("receipt", ({ status }) =>
+            updateTransaction({ txSuccess: status })
+          );
+      } catch (err) {
+        console.debug("DEBUG catch error", { err });
+        handleOpen("error", `TX error: ${err.message}`);
+      }
     },
-    [account, contract.methods, updateTransaction]
+    [account, contract.methods, handleOpen, updateTransaction]
   );
 
   // function to (re)initialise contract variables

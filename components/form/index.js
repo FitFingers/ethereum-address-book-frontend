@@ -26,7 +26,7 @@ const validationSchemas = {
   }),
   payContactByName: yup.object({
     name: yup.string(msg.fill).required(msg.req),
-    amount: yup.string(msg.fill).matches(/^\d+$/).required(msg.req),
+    sendValue: yup.string(msg.fill).matches(/^\d+$/).required(msg.req),
   }),
 };
 

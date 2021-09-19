@@ -23,6 +23,8 @@ export function TransactionContext({ children }) {
       prevSuccess: null,
     });
 
+    console.log('DEBUG', { prevSuccess, prevHash, txSuccess })
+
   return (
     <Context.Provider
       value={{

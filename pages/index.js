@@ -23,7 +23,7 @@ import { etherscan } from "util/network-data";
 
 /*
   TODO: new functions required:
-  2. Close Modal feedback (show spinner or text while waiting for response, plus "you may close this window")
+  1. Clear form on success
   4. Update security timelock
   5. Security timelock should apply to changing the security timelock
   6. Create Factory (for multi user)
@@ -228,7 +228,7 @@ export default function Home() {
       description: desc.removeContactByName[!!selected](selected),
       contractFunction: "removeContactByName",
       formDefaults: { name: selected },
-      callback: () => submitForm({ name: selected }, "removeContactByName"),
+      callback: (values) => submitForm(values, "removeContactByName"),
     });
   }, [handleOpen, selected, submitForm]);
 
@@ -238,8 +238,7 @@ export default function Home() {
       description: desc.payContactByName[!!selected](selected),
       contractFunction: "payContactByName",
       formDefaults: { name: selected },
-      callback: ({ wei }) =>
-        submitForm({ name: selected }, "payContactByName", { sendValue: wei }),
+      callback: (values) => submitForm(values, "payContactByName"),
     });
   }, [handleOpen, selected, submitForm]);
 
