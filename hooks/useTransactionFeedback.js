@@ -8,7 +8,7 @@ import useTransaction from "hooks/useTransaction";
 // ===================================================
 
 // show feedback on transaction updates (new hash, tx complete status)
-export default function useTransactionStatus(network) {
+export default function useTransactionFeedback(network) {
   const { handleOpen } = useFeedback();
   const { txHash, txSuccess, prevHash, prevSuccess, updateTransaction } = useTransaction();
 

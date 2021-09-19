@@ -2,7 +2,7 @@ import { useCallback, useReducer } from "react";
 import useFeedback from "components/feedback/context";
 import useContract from "./useContract";
 import useNetworkUpdates from "./useNetworkUpdates";
-import useTransactionStatus from "./useTransactionStatus";
+import useTransactionFeedback from "./useTransactionFeedback";
 import useInitWeb3 from "./useInitWeb3";
 import useSyncVariables from "./useSyncVariables";
 import useTransaction from "hooks/useTransaction";
@@ -128,7 +128,7 @@ export default function useMetaMask() {
 
   // show feedback on certain events
   useNetworkUpdates(network);
-  useTransactionStatus(network);
+  useTransactionFeedback(network);
 
   return {
     metamask: {
