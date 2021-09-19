@@ -259,8 +259,10 @@ export default function Home() {
     handleOpen({
       title: "Withdraw Funds",
       description: "Withdraw the funds in this smart contract",
+      contractFunction: "withdraw",
+      callback: () => submitForm({}, "withdraw")
     });
-  }, [handleOpen]);
+  }, [handleOpen, submitForm]);
 
   // button / var labels
   // ===================================================

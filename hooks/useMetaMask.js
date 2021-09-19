@@ -21,7 +21,7 @@ const formConfig = {
 };
 
 function sortArguments(values, name) {
-  return formConfig[name].map((key) => values[key]);
+  return (formConfig[name] || []).map((key) => values[key]);
 }
 
 // ===================================================
@@ -45,15 +45,17 @@ export default function useMetaMask() {
   );
 
   // contract variables
-  const [{ totalContacts, timelock, txCost, contactList, owner, balance }, dispatch] =
-    useReducer((state, moreState) => ({ ...state, ...moreState }), {
-      totalContacts: null, // total numbers of contacts in address book
-      timelock: null, // time until address is whitelisted
-      txCost: null, // cost to send a transaction via this service
-      owner: null, // contract owner's address
-      balance: null,
-      contactList: [],
-    });
+  const [
+    { totalContacts, timelock, txCost, contactList, owner, balance },
+    dispatch,
+  ] = useReducer((state, moreState) => ({ ...state, ...moreState }), {
+    totalContacts: null, // total numbers of contacts in address book
+    timelock: null, // time until address is whitelisted
+    txCost: null, // cost to send a transaction via this service
+    owner: null, // contract owner's address
+    balance: null,
+    contactList: [],
+  });
 
   // HANDLERS
   // ===================================================

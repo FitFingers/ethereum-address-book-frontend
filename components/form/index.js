@@ -1,7 +1,7 @@
-import { makeStyles, Box, Button, TextField } from "@material-ui/core";
-import * as yup from "yup";
-import { useFormik } from "formik";
 import { useMemo } from "react";
+import { makeStyles, Box, Button, TextField } from "@material-ui/core";
+import { useFormik } from "formik";
+import * as yup from "yup";
 import useModal from "components/modal/context";
 import useTransaction from "hooks/useTransaction";
 
@@ -72,7 +72,7 @@ const formConfigs = {
 };
 
 function createInitialValues(contractFunction, formDefaults) {
-  return Object.entries(formConfigs[contractFunction]).reduce(
+  return Object.entries(formConfigs[contractFunction] || {}).reduce(
     (acc, [name, field]) => ({
       ...acc,
       [name]: field.initial || formDefaults[name],
@@ -104,7 +104,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Form() {
   const classes = useStyles();
-  const { contractFunction, formDefaults, callback } = useModal();
+  const { contractFunction, formDefaults = {}, callback } = useModal();
   const { prevHash, prevSuccess } = useTransaction();
 
   const { validationSchema, initialValues } = useMemo(
@@ -125,22 +125,24 @@ export default function Form() {
   return (
     <Box className={classes.formContainer}>
       <form onSubmit={handleSubmit}>
-        {Object.entries(formConfigs[contractFunction]).map(([name, field]) => (
-          <Box className={classes.field} key={`form-field-${name}`}>
-            <TextField
-              {...(field.FieldProps || {})}
-              fullWidth
-              id={name}
-              name={name}
-              placeholder={formatLabel(field.placeholder)}
-              label={formatLabel(name)}
-              value={values[name]}
-              onChange={handleChange}
-              error={touched[name] && !!errors[name]}
-              helperText={(touched[name] && errors[name]) || field.helper}
-            />
-          </Box>
-        ))}
+        {Object.entries(formConfigs[contractFunction] || {}).map(
+          ([name, field]) => (
+            <Box className={classes.field} key={`form-field-${name}`}>
+              <TextField
+                {...(field.FieldProps || {})}
+                fullWidth
+                id={name}
+                name={name}
+                placeholder={formatLabel(field.placeholder)}
+                label={formatLabel(name)}
+                value={values[name]}
+                onChange={handleChange}
+                error={touched[name] && !!errors[name]}
+                helperText={(touched[name] && errors[name]) || field.helper}
+              />
+            </Box>
+          )
+        )}
         <Box className={classes.field}>
           <Button
             color="secondary"
