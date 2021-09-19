@@ -126,12 +126,12 @@ export default function useMetaMask() {
     dispatch({
       totalContacts: await fetchCallback("totalContacts")(),
       timelock: await fetchCallback("securityTimelock")(),
-      txCost: await fetchCallback("transferPrice")(),
+      txCost: await fetchCallback("txCost")(),
       owner: await fetchCallback("owner")(),
       contactList: await fetchCallback("readAllContacts")(),
       balance: await fetchCallback("checkBalance")(),
     });
-    handleOpen("success", "Refreshed contract values");
+    handleOpen("success", "Contract variables up-to-date!");
   }, [fetchCallback, handleOpen, network]);
 
   // EFFECT HOOKS

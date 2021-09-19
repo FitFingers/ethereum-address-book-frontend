@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import {
@@ -11,13 +11,13 @@ import {
   Toolbar,
   Paper,
   ListItem,
-  Tooltip,
 } from "@material-ui/core";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import PersonRemoveIcon from "@material-ui/icons/PersonAddDisabled";
 import PaymentIcon from "@material-ui/icons/Payment";
 import Logo from "components/logo";
 import Button from "components/button";
+import Option from "components/option";
 import useMetaMask from "hooks/useMetaMask";
 import useModal from "components/modal/context";
 import { etherscan } from "util/network-data";
@@ -60,6 +60,30 @@ const desc = {
     false: () => "Please select a contact to send ETH to",
   },
 };
+
+const options = [
+  {
+    title: "Total number of contacts in the address book",
+    label: "Total Contacts",
+  },
+  {
+    title:
+      "Delay between adding contact and allowing the transfer of ETH to them",
+    label: "Security Timelock",
+  },
+  {
+    title: "Cost per transaction for using this service",
+    label: "Transfer Cost",
+  },
+  {
+    title: "The balance of this smart contract",
+    label: "Contract Balance",
+  },
+  {
+    title: "The owner of the contract",
+    label: "Contract Owner",
+  },
+];
 
 // ===================================================
 // STYLES
@@ -144,20 +168,6 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     marginBottom: theme.spacing(3),
   },
-  option: {
-    display: "flex",
-    justifyContent: "space-between",
-    whiteSpace: "nowrap",
-    "&>:last-child": {
-      fontWeight: "bold",
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-      flex: 1,
-      maxWidth: 150,
-      textAlign: "right",
-      marginLeft: theme.spacing(5),
-    },
-  },
   buttonList: {
     display: "flex",
     flexDirection: "column",
@@ -187,6 +197,11 @@ const useStyles = makeStyles((theme) => ({
     background: theme.palette.primary.main,
     color: theme.palette.text.secondary,
     textAlign: "center",
+    "&>a": {
+      display: "block",
+      width: "max-content",
+      margin: "auto"
+    }
   },
 }));
 
@@ -251,7 +266,7 @@ export default function Home() {
       formDefaults: { name: selected },
       callback: (values) =>
         submitForm(values, "payContactByName", {
-          value: txCost + values.sendValue + 1,
+          value: txCost + values.sendValue, // +1
         }),
     });
   }, [handleOpen, selected, submitForm, txCost]);
@@ -287,15 +302,23 @@ export default function Home() {
   // button / var labels
   // ===================================================
   // TODO: use date-fns or similar to change timelock to most suitable format
-  const totalContactsLabel = totalContacts || "...";
-  const timelockLabel = timelock
-    ? `${(timelock / (timelock > 90 ? 60 : 1)).toFixed(
-        timelock > 90 ? 2 : 0
-      )} ${timelock > 90 ? "minutes" : "seconds"}`
-    : "...";
-  const txCostLabel = txCost ? `${txCost / 1000000000000000000} ETH` : "...";
-  const balanceLabel = balance ? `${balance / 1000000000000000000} ETH` : "...";
-  const ownerLabel = owner || "...";
+
+  const labels = useMemo(
+    () => ({
+      "Total Contacts": totalContacts || "...",
+      "Security Timelock": timelock
+        ? `${(timelock / (timelock > 90 ? 60 : 1)).toFixed(
+            timelock > 90 ? 2 : 0
+          )} ${timelock > 90 ? "minutes" : "seconds"}`
+        : "...",
+      "Transfer Cost": txCost ? `${txCost / 1000000000000000000} ETH` : "...",
+      "Contract Balance": balance
+        ? `${balance / 1000000000000000000} ETH`
+        : "...",
+      "Contract Owner": owner || "...",
+    }),
+    [balance, owner, timelock, totalContacts, txCost]
+  );
 
   return (
     <Box className={classes.container}>
@@ -392,55 +415,14 @@ export default function Home() {
               <Box>
                 <Typography variant="h3">Variables</Typography>
                 <Box className={classes.optionsList}>
-                  <Box className={classes.option}>
-                    <Tooltip
-                      title="Total number of contacts in the address book"
-                      placement="right"
-                    >
-                      <Typography variant="body1">Total Contacts:</Typography>
-                    </Tooltip>
-                    <Typography variant="body1">
-                      {totalContactsLabel}
-                    </Typography>
-                  </Box>
-                  <Box className={classes.option}>
-                    <Tooltip
-                      title="Delay between adding contact and allowing the transfer of ETH to them"
-                      placement="right"
-                    >
-                      <Typography variant="body1">
-                        Security Timelock:
-                      </Typography>
-                    </Tooltip>
-                    <Typography variant="body1">{timelockLabel}</Typography>
-                  </Box>
-                  <Box className={classes.option}>
-                    <Tooltip
-                      title="Cost per transaction for using this service"
-                      placement="right"
-                    >
-                      <Typography variant="body1">Transfer Cost:</Typography>
-                    </Tooltip>
-                    <Typography variant="body1">{txCostLabel}</Typography>
-                  </Box>
-                  <Box className={classes.option}>
-                    <Tooltip
-                      title="The balance of this smart contract"
-                      placement="right"
-                    >
-                      <Typography variant="body1">Contract Balance:</Typography>
-                    </Tooltip>
-                    <Typography variant="body1">{balanceLabel}</Typography>
-                  </Box>
-                  <Box className={classes.option}>
-                    <Tooltip
-                      title="The owner of the contract"
-                      placement="right"
-                    >
-                      <Typography variant="body1">Contract Owner:</Typography>
-                    </Tooltip>
-                    <Typography variant="body1">{ownerLabel}</Typography>
-                  </Box>
+                  {options.map(({ tip, label }) => (
+                    <Option
+                      tip={tip}
+                      label={label}
+                      value={labels[label]}
+                      key={`option-${label}`}
+                    />
+                  ))}
                 </Box>
               </Box>
               <Box>
@@ -513,7 +495,7 @@ export default function Home() {
       <footer className={classes.footer}>
         <Link
           passHref
-          href={`${etherscan[network]}${process.env.NEXT_PUBLIC_CONTRACT_ADDRESS}`}
+          href={`${etherscan[network]}address/${process.env.NEXT_PUBLIC_CONTRACT_ADDRESS}`}
         >
           <a target="_blank" rel="noreferrer">
             <Typography variant="h6">

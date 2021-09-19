@@ -1,10 +1,10 @@
 // TODO: are these URLs right? If so, change to one URL with dynamic prefix
 export const etherscan = {
-  mainnet: "https://etherscan.io/tx/",
-  kovan: "https://kovan.etherscan.io/tx/",
-  ropsten: "https://ropsten.etherscan.io/tx/",
-  rinkeby: "https://rinkeby.etherscan.io/tx/",
-  goerli: "https://goerli.etherscan.io/tx/",
+  mainnet: "https://etherscan.io/",
+  kovan: "https://kovan.etherscan.io/",
+  ropsten: "https://ropsten.etherscan.io/",
+  rinkeby: "https://rinkeby.etherscan.io/",
+  goerli: "https://goerli.etherscan.io/",
 };
 
 export const chainID = {

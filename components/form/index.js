@@ -78,13 +78,13 @@ const formConfigs = {
   updateTimelock: {
     seconds: {
       initial: "",
-      helper: "The value to send in wei",
+      helper: "How long (in seconds) before transfers to new contacts are permitted",
     },
   },
   updateTransactionCost: {
     value: {
       initial: "",
-      helper: "The value to send in wei",
+      helper: "The price we charge per transaction made through this service",
     },
   },
 };

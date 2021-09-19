@@ -22,6 +22,7 @@ exports.ABI = [
     ],
     stateMutability: "view",
     type: "function",
+    constant: true,
   },
   {
     inputs: [
@@ -51,6 +52,21 @@ exports.ABI = [
     ],
     stateMutability: "view",
     type: "function",
+    constant: true,
+  },
+  {
+    inputs: [],
+    name: "lastTimelockUpdate",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+    constant: true,
   },
   {
     inputs: [
@@ -70,6 +86,7 @@ exports.ABI = [
     ],
     stateMutability: "view",
     type: "function",
+    constant: true,
   },
   {
     inputs: [],
@@ -83,6 +100,7 @@ exports.ABI = [
     ],
     stateMutability: "view",
     type: "function",
+    constant: true,
   },
   {
     inputs: [],
@@ -96,6 +114,7 @@ exports.ABI = [
     ],
     stateMutability: "view",
     type: "function",
+    constant: true,
   },
   {
     inputs: [],
@@ -109,10 +128,11 @@ exports.ABI = [
     ],
     stateMutability: "view",
     type: "function",
+    constant: true,
   },
   {
     inputs: [],
-    name: "transferPrice",
+    name: "txCost",
     outputs: [
       {
         internalType: "uint256",
@@ -122,6 +142,7 @@ exports.ABI = [
     ],
     stateMutability: "view",
     type: "function",
+    constant: true,
   },
   {
     inputs: [
@@ -214,6 +235,33 @@ exports.ABI = [
     ],
     stateMutability: "view",
     type: "function",
+    constant: true,
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "duration",
+        type: "uint256",
+      },
+    ],
+    name: "updateTimelock",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "newTxCost",
+        type: "uint256",
+      },
+    ],
+    name: "updateTransactionCost",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
     inputs: [
@@ -238,6 +286,7 @@ exports.ABI = [
     ],
     stateMutability: "payable",
     type: "function",
+    payable: true,
   },
   {
     inputs: [],
@@ -251,6 +300,7 @@ exports.ABI = [
     ],
     stateMutability: "view",
     type: "function",
+    constant: true,
   },
   {
     inputs: [],

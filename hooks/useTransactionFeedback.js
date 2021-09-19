@@ -18,7 +18,7 @@ export default function useTransactionFeedback(network) {
       handleOpen(
         "success",
         <a
-          href={`${etherscan[network]}${txHash}`}
+          href={`${etherscan[network]}tx/${txHash}`}
           target="_blank"
           rel="noreferrer"
         >
