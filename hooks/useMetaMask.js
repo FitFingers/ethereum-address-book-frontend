@@ -22,6 +22,8 @@ const networks = {
   "0x5": "Goerli",
 };
 
+const validNetworks = ["rinkeby"];
+
 const msg = {
   connected: (network) => `Now connected to ${network}!`,
   wrongNetwork:
@@ -43,12 +45,13 @@ const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
 // }
 
 // ===================================================
-// METAMASK
+// METAMASK HOOK
 // ===================================================
 
 export default function useMetaMask() {
   const { handleOpen } = useFeedback();
 
+  // metamask / web3 state
   const [{ account, network, contract, txHash, txSuccess }, dispatch] =
     useReducer((state, moreState) => ({ ...state, ...moreState }), {
       account: null,
@@ -58,14 +61,9 @@ export default function useMetaMask() {
       txSuccess: false,
     });
 
-  // init web3
-  useEffect(() => {
-    try {
-      window.web3 = new Web3(window.ethereum);
-    } catch (err) {
-      console.debug("ERROR: failed to initialise web3", { err });
-    }
-  }, []);
+  // init web3 and the smart contract
+  useInitWeb3();
+  useContract(network, validNetworks, dispatch);
 
   // connect and set the user's public key
   const connectAccount = useCallback(async () => {
@@ -89,17 +87,6 @@ export default function useMetaMask() {
       handleOpen("error", msg.genericError(err));
     }
   }, [connectAccount, connectNetwork, handleOpen]);
-
-  // create a contract instance if network is Rinkeby
-  useEffect(() => {
-    if (network && network !== "rinkeby") {
-      return handleOpen("error", msg.wrongNetwork, true);
-    }
-    const contract = new web3.eth.Contract(ABI, CONTRACT_ADDRESS, {
-      gasLimit: 10000000,
-    });
-    dispatch({ contract });
-  }, [handleOpen, network]);
 
   // "unpack" the requested callback from the contract and return (don't invoke)
   const fetchCallback = useCallback(
@@ -135,6 +122,31 @@ export default function useMetaMask() {
 // ===================================================
 // NON-CALLABLE HOOKS
 // ===================================================
+
+// init web3
+function useInitWeb3() {
+  useEffect(() => {
+    try {
+      window.web3 = new Web3(window.ethereum);
+    } catch (err) {
+      console.debug("ERROR: failed to initialise web3", { err });
+    }
+  }, []);
+}
+
+// create a contract instance if network is Rinkeby
+function useContract(network, validNetworks = [], dispatch) {
+  const { handleOpen } = useFeedback();
+  useEffect(() => {
+    if (network && !validNetworks.includes(network)) {
+      return handleOpen("error", msg.wrongNetwork, true);
+    }
+    const contract = new web3.eth.Contract(ABI, CONTRACT_ADDRESS, {
+      gasLimit: 10000000,
+    });
+    dispatch({ contract });
+  }, [dispatch, handleOpen, network, validNetworks]);
+}
 
 // show feedback on network changes
 function useNetworkUpdates(network) {
