@@ -21,14 +21,13 @@ import Option from "components/option";
 import useMetaMask from "hooks/useMetaMask";
 import useModal from "components/modal/context";
 import { etherscan } from "util/network-data";
+import formatTimestamp from "util/format-date";
 
 /*
   TODO: new functions required:
-  1. Clear form on success
-  4. Update security timelock
-  5. Security timelock should apply to changing the security timelock
+  1. Clear form on txSuccess
   6. Create Factory (for multi user)
-  7. Change txCost func
+  3. Remove react-spinners unused
 */
 
 // ===================================================
@@ -96,7 +95,7 @@ const useStyles = makeStyles((theme) => ({
     background: theme.palette.background.default,
     display: "flex",
     flexDirection: "column",
-    justifyContent: "center",
+    justifyContent: "space-between",
     alignItems: "center",
   },
   toolbar: {
@@ -110,6 +109,7 @@ const useStyles = makeStyles((theme) => ({
   },
   main: {
     position: "relative",
+    padding: theme.spacing(12, 0)
   },
   columns: {
     display: "flex",
@@ -189,7 +189,9 @@ const useStyles = makeStyles((theme) => ({
   },
   button: {},
   footer: {
-    position: "absolute",
+    position: "relative",
+    width: "100vw",
+    marginBottom: 0,
     bottom: 0,
     left: 0,
     right: 0,
@@ -197,11 +199,6 @@ const useStyles = makeStyles((theme) => ({
     background: theme.palette.primary.main,
     color: theme.palette.text.secondary,
     textAlign: "center",
-    "&>a": {
-      display: "block",
-      width: "max-content",
-      margin: "auto"
-    }
   },
 }));
 
@@ -306,11 +303,7 @@ export default function Home() {
   const labels = useMemo(
     () => ({
       "Total Contacts": totalContacts || "...",
-      "Security Timelock": timelock
-        ? `${(timelock / (timelock > 90 ? 60 : 1)).toFixed(
-            timelock > 90 ? 2 : 0
-          )} ${timelock > 90 ? "minutes" : "seconds"}`
-        : "...",
+      "Security Timelock": timelock ? formatTimestamp(timelock) : "...",
       "Transfer Cost": txCost ? `${txCost / 1000000000000000000} ETH` : "...",
       "Contract Balance": balance
         ? `${balance / 1000000000000000000} ETH`
@@ -331,7 +324,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <AppBar color="primary">
+      <AppBar color="primary" position="relative">
         <Toolbar className={classes.toolbar}>
           <Link passHref {...linkProps[linkBehaviour]}>
             <a {...linkProps[linkBehaviour]}>
