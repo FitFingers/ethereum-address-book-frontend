@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { makeStyles, Box, Typography, Tooltip } from "@material-ui/core";
 
 // ===================================================
@@ -5,7 +6,19 @@ import { makeStyles, Box, Typography, Tooltip } from "@material-ui/core";
 // ===================================================
 
 const useStyles = makeStyles((theme) => ({
-  option: {
+  option: ({ didUpdate }) => ({
+    background: didUpdate
+      ? theme.palette.background.toolbar
+      : theme.palette.background.paper,
+    padding: theme.spacing(0, 1),
+    margin: theme.spacing(0, -1),
+    borderRadius: theme.shape.borderRadius,
+    color: didUpdate
+      ? theme.palette.secondary.main
+      : theme.palette.text.primary,
+    transition: theme.transitions.create("color", {
+      duration: theme.transitions.duration.standard,
+    }),
     display: "flex",
     justifyContent: "space-between",
     whiteSpace: "nowrap",
@@ -18,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
       textAlign: "right",
       marginLeft: theme.spacing(5),
     },
-  },
+  }),
 }));
 
 // ===================================================
@@ -26,7 +39,14 @@ const useStyles = makeStyles((theme) => ({
 // ===================================================
 
 export default function Option({ tip, label, value }) {
-  const classes = useStyles();
+  const [didUpdate, setDidUpdate] = useState(true);
+  const classes = useStyles({ didUpdate });
+
+  useEffect(() => {
+    setDidUpdate(true);
+    setTimeout(() => setDidUpdate(false), 4000);
+  }, [value]);
+
   return (
     <Box className={classes.option}>
       <Tooltip title={tip} placement="right">

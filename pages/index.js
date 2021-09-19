@@ -20,8 +20,8 @@ import Button from "components/button";
 import Option from "components/option";
 import useMetaMask from "hooks/useMetaMask";
 import useModal from "components/modal/context";
-import { etherscan } from "util/network-data";
 import formatTimestamp from "util/format-date";
+import { etherscan } from "util/network-data";
 
 /*
   TODO: new functions required:
@@ -60,27 +60,26 @@ const desc = {
   },
 };
 
-const options = [
+const variables = [
   {
-    title: "Total number of contacts in the address book",
     label: "Total Contacts",
+    tip: "Total number of contacts in the address book",
   },
   {
-    title:
-      "Delay between adding contact and allowing the transfer of ETH to them",
     label: "Security Timelock",
+    tip: "Delay between adding contact and allowing the transfer of ETH to them",
   },
   {
-    title: "Cost per transaction for using this service",
     label: "Transaction Cost",
+    tip: "Cost per transaction for using this service",
   },
   {
-    title: "The balance of this smart contract",
     label: "Contract Balance",
+    tip: "The balance of this smart contract",
   },
   {
-    title: "The owner of the contract",
     label: "Contract Owner",
+    tip: "The owner of the contract",
   },
 ];
 
@@ -217,7 +216,7 @@ const useStyles = makeStyles((theme) => ({
       )} rgba(0, 0, 0, 0.3)`,
     },
   },
-  optionsList: {
+  variablesList: {
     display: "flex",
     flexDirection: "column",
     marginBottom: theme.spacing(3),
@@ -462,8 +461,8 @@ export default function Home() {
             <Paper elevation={5} className={classes.paperPanel}>
               <Box>
                 <Typography variant="h3">Variables</Typography>
-                <Box className={classes.optionsList}>
-                  {options.map(({ tip, label }) => (
+                <Box className={classes.variablesList}>
+                  {variables.map(({ tip, label }) => (
                     <Option
                       tip={tip}
                       label={label}
