@@ -326,7 +326,7 @@ export default function Home() {
   return (
     <Box className={classes.container}>
       <Head>
-        <title>Address Book Whitelist</title>
+        <title>Ethereum Address Book</title>
         <meta
           name="description"
           content="Address book for Ethereum users. Add and remove contacts and send transactions to them"

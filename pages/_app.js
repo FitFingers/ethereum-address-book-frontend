@@ -6,7 +6,7 @@ import Snackbar from "components/feedback";
 import { ModalContext } from "components/modal/context";
 import { FeedbackContext } from "components/feedback/context";
 
-function AddressBookWhitelist({ Component, pageProps }) {
+function EthereumAddressBook({ Component, pageProps }) {
   return (
     <ThemeProvider>
       <CssBaseline />
@@ -21,4 +21,4 @@ function AddressBookWhitelist({ Component, pageProps }) {
   );
 }
 
-export default AddressBookWhitelist;
+export default EthereumAddressBook;
