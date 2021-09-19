@@ -3,6 +3,7 @@ import * as yup from "yup";
 import { useFormik } from "formik";
 import { useMemo } from "react";
 import useModal from "components/modal/context";
+import useTransaction from "hooks/useTransaction";
 
 // ===================================================
 // UTIL
@@ -110,6 +111,7 @@ const useStyles = makeStyles((theme) => ({
 export default function Form() {
   const classes = useStyles();
   const { contractFunction, formDefaults, callback } = useModal();
+  const { prevHash, prevSuccess } = useTransaction();
 
   const { validationSchema, initialValues } = useMemo(
     () => ({
@@ -146,7 +148,13 @@ export default function Form() {
           </Box>
         ))}
         <Box className={classes.field}>
-          <Button color="secondary" variant="contained" fullWidth type="submit">
+          <Button
+            color="secondary"
+            variant="contained"
+            fullWidth
+            type="submit"
+            disabled={prevHash && prevSuccess === null}
+          >
             Continue
           </Button>
         </Box>

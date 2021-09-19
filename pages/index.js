@@ -27,7 +27,6 @@ import { etherscan } from "util/network-data";
   4. Update security timelock
   5. Security timelock should apply to changing the security timelock
   6. Create Factory (for multi user)
-  7. Disable content until connected
 */
 
 // ===================================================
