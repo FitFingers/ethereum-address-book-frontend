@@ -43,6 +43,7 @@ export default function Option({ tip, label, value }) {
   const classes = useStyles({ didUpdate });
 
   useEffect(() => {
+    if (!value) return;
     setDidUpdate(true);
     setTimeout(() => setDidUpdate(false), 4000);
   }, [value]);
