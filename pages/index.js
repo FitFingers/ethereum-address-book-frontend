@@ -120,6 +120,25 @@ const useStyles = makeStyles((theme) => ({
       padding: theme.spacing(5),
     },
   },
+  listitem: {
+    "& .MuiTypography-root": {
+      transition: theme.transitions.create("color", {
+        duration: theme.transitions.duration.shorter,
+      }),
+    },
+    "&:hover": {
+      color: theme.palette.getContrastText(theme.palette.secondary.main),
+      background: theme.palette.secondary.light,
+    },
+    "&.Mui-selected": {
+      color: theme.palette.getContrastText(theme.palette.secondary.main),
+      background: theme.palette.secondary.main,
+      "&:hover": {
+        color: theme.palette.getContrastText(theme.palette.secondary.main),
+        background: theme.palette.secondary.main,
+      },
+    },
+  },
   infoPanel: {
     display: "flex",
     flexDirection: "column",
@@ -362,6 +381,7 @@ export default function Home() {
                   {contactList.length ? (
                     contactList.map((contact) => (
                       <ListItem
+                        className={classes.listitem}
                         button
                         disableRipple
                         selected={selected === contact.name}
