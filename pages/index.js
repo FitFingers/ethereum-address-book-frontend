@@ -23,7 +23,11 @@ import useModal from "components/modal/context";
 /*
   TODO: new functions required:
   1. Update variables on txSuccess (bonus points for useSWR)
-  2. 
+  2. Close Modal feedback (show spinner or text while waiting for response, plus "you may close this window")
+  3. Investigate the short feedback duration (could be imagined)
+  4. Update security timelock
+  5. Security timelock should apply to changing the security timelock
+  6. Create Factory (for multi user)
 */
 
 // ===================================================
@@ -53,6 +57,19 @@ const formConfig = {
 function sortArguments(values, name) {
   return formConfig[name].map((key) => values[key]);
 }
+
+// messages, descriptions etc
+const desc = {
+  addContact: () => "Use this form to add a user to your address book",
+  removeContactByName: {
+    true: (contact) => `Are you sure you wish to remove ${contact}?`,
+    false: () => "No contacts selected!",
+  },
+  payContactByName: {
+    true: (contact) => `Use this form to send ETH to ${contact}`,
+    false: () => "Please select a contact to send ETH to",
+  },
+};
 
 // ===================================================
 // STYLES
@@ -231,16 +248,16 @@ export default function Home() {
 
   // UI handlers
   // ===================================================
-  const [selectedContact, setSelectedContact] = useState("");
+  const [selected, setSelected] = useState("");
   const handleListItemClick = useCallback(
-    (name) => setSelectedContact((n) => (n === name ? null : name)),
+    (name) => setSelected((n) => (n === name ? null : name)),
     []
   );
 
   const submitForm = useCallback(
     async (values, name, data = {}) => {
       const sortedArgs = sortArguments(values, name);
-      return contract.methods[name](...sortedArgs) // fetch function
+      contract.methods[name](...sortedArgs) // fetch function
         .send({ from: account, ...data /*, value: txCost */ })
         .on("transactionHash", (txHash) => updateMetaMask({ txHash }))
         .on("receipt", ({ status }) => updateMetaMask({ txSuccess: status }));
@@ -253,7 +270,7 @@ export default function Home() {
   const addContact = useCallback(() => {
     handleOpen({
       title: "Add Contact",
-      description: "Use this form to add a user to your address book",
+      description: desc.addContact(),
       contractFunction: "addContact",
       callback: (values) => submitForm(values, "addContact"),
     });
@@ -262,28 +279,23 @@ export default function Home() {
   const removeContactByName = useCallback(() => {
     handleOpen({
       title: "Remove Contact",
-      description: selectedContact
-        ? `Are you sure you wish to remove ${selectedContact}?`
-        : "No contacts selected!",
+      description: desc.removeContactByName[!!selected](selected),
       contractFunction: "removeContactByName",
-      formDefaults: { name: selectedContact },
-      callback: () =>
-        submitForm({ name: selectedContact }, "removeContactByName"),
+      formDefaults: { name: selected },
+      callback: () => submitForm({ name: selected }, "removeContactByName"),
     });
-  }, [handleOpen, selectedContact, submitForm]);
+  }, [handleOpen, selected, submitForm]);
 
   const payContactByName = useCallback(() => {
     handleOpen({
       title: "Send ETH",
-      description: selectedContact
-        ? `Use this form to send ETH to ${selectedContact}`
-        : "Please select a contact to send ETH to",
+      description: desc.payContactByName[!!selected](selected),
       contractFunction: "payContactByName",
-      formDefaults: { name: selectedContact },
+      formDefaults: { name: selected },
       callback: ({ wei }) =>
-        submitForm({ name: selectedContact }, "payContactByName", { sendValue: wei }),
+        submitForm({ name: selected }, "payContactByName", { sendValue: wei }),
     });
-  }, [handleOpen, selectedContact, submitForm]);
+  }, [handleOpen, selected, submitForm]);
 
   const checkBalance = useCallback(() => {
     handleOpen({
@@ -358,7 +370,7 @@ export default function Home() {
                       <ListItem
                         button
                         disableRipple
-                        selected={selectedContact === contact.name}
+                        selected={selected === contact.name}
                         onClick={() => handleListItemClick(contact.name)}
                         key={`contact-list-${contact.name}`}
                       >

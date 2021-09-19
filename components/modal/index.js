@@ -1,6 +1,5 @@
 import {
   Backdrop,
-  Box,
   Typography,
   makeStyles,
   Modal as MuiModal,
@@ -47,7 +46,6 @@ export default function Modal() {
     title,
     description,
     contractFunction,
-    formDefaults,
     open,
     handleClose,
   } = useModal();
@@ -86,12 +84,7 @@ export default function Modal() {
             </Typography>
           )}
           <Divider light className={classes.divider} />
-          {contractFunction && (
-            <Form
-              contractFunction={contractFunction}
-              formDefaults={formDefaults}
-            />
-          )}
+          {contractFunction && <Form />}
         </Paper>
       </Fade>
     </MuiModal>

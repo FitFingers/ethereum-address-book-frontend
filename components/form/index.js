@@ -107,12 +107,9 @@ const useStyles = makeStyles((theme) => ({
 // COMPONENTS
 // ===================================================
 
-export default function Form({
-  contractFunction = "addContact",
-  formDefaults = {},
-}) {
+export default function Form() {
   const classes = useStyles();
-  const { callback } = useModal();
+  const { contractFunction, formDefaults, callback } = useModal();
 
   const { validationSchema, initialValues } = useMemo(
     () => ({
@@ -149,12 +146,7 @@ export default function Form({
           </Box>
         ))}
         <Box className={classes.field}>
-          <Button
-            color="secondary"
-            variant="contained"
-            fullWidth
-            contractFunction="submit"
-          >
+          <Button color="secondary" variant="contained" fullWidth type="submit">
             Continue
           </Button>
         </Box>
