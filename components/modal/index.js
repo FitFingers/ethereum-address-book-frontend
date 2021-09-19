@@ -32,9 +32,10 @@ const useStyles = makeStyles((theme) => ({
       inset: theme.spacing(12, 5, 5),
     },
     [theme.breakpoints.down("xs")]: {
-      inset: theme.spacing(12, 1, 1),
+      inset: theme.spacing(12, 2, 2),
     },
   },
+  // titles: {},
   divider: {
     marginBottom: theme.spacing(2),
   },
@@ -80,26 +81,28 @@ export default function Modal() {
     >
       <Fade in={open}>
         <Paper elevation={9} className={classes.modal}>
-          {title && (
-            <Typography
-              variant="h5"
-              component="span"
-              display="block"
-              color="textPrimary"
-            >
-              {title}
-            </Typography>
-          )}
-          {description && (
-            <Typography
-              variant="h6"
-              component="span"
-              display="block"
-              color="textSecondary"
-            >
-              {description}
-            </Typography>
-          )}
+          <Box className={classes.titles}>
+            {title && (
+              <Typography
+                variant="h5"
+                component="span"
+                display="block"
+                color="textPrimary"
+              >
+                {title}
+              </Typography>
+            )}
+            {description && (
+              <Typography
+                variant="h6"
+                component="span"
+                display="block"
+                color="textSecondary"
+              >
+                {description}
+              </Typography>
+            )}
+          </Box>
           <Divider light className={classes.divider} />
           {contractFunction && <Form />}
           <TransactionStatus />
