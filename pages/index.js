@@ -233,19 +233,20 @@ export default function Home() {
 
   // initialise contract variables
   // ===================================================
-  useEffect(() => {
+  const refreshVariables = useCallback(async () => {
     if (!network) return;
-    async function initialiseVariables() {
-      dispatch({
-        totalContacts: await fetchCallback("totalContacts")(),
-        timelock: await fetchCallback("securityTimelock")(),
-        txCost: await fetchCallback("transferPrice")(),
-        owner: await fetchCallback("owner")(),
-        contactList: await fetchCallback("readAllContacts")(),
-      });
-    }
-    initialiseVariables();
+    dispatch({
+      totalContacts: await fetchCallback("totalContacts")(),
+      timelock: await fetchCallback("securityTimelock")(),
+      txCost: await fetchCallback("transferPrice")(),
+      owner: await fetchCallback("owner")(),
+      contactList: await fetchCallback("readAllContacts")(),
+    });
   }, [fetchCallback, network]);
+
+  useEffect(() => {
+    refreshVariables();
+  }, [refreshVariables]);
 
   // UI handlers
   // ===================================================

@@ -119,12 +119,7 @@ export default function useMetaMask() {
   // NON-CALLABLE HOOKS THAT RUN AUTOMATICALLY
   // ===================================================
 
-  // show feedback on network changes
-  useEffect(() => {
-    if (!network) return;
-    handleOpen("success", msg.connected(network));
-  }, [handleOpen, network]);
-
+  useNetworkUpdates(network);
   useTransactionStatus(txHash, txSuccess, dispatch);
 
   return {
@@ -141,6 +136,16 @@ export default function useMetaMask() {
 // NON-CALLABLE HOOKS
 // ===================================================
 
+// show feedback on network changes
+function useNetworkUpdates(network) {
+  const { handleOpen } = useFeedback();
+  useEffect(() => {
+    if (!network) return;
+    handleOpen("success", msg.connected(network));
+  }, [handleOpen, network]);
+}
+
+// show feedback on transaction updates (new hash, tx complete status)
 function useTransactionStatus(txHash, txSuccess, dispatch) {
   const { handleOpen } = useFeedback();
   const pHash = useRef(null);
