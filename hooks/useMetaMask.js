@@ -59,6 +59,7 @@ export default function useMetaMask() {
     contactList: [],
   });
 
+  // UI variables
   const isOwner = useMemo(() => account === owner, [account, owner]);
 
   // HANDLERS

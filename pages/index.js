@@ -109,7 +109,7 @@ const useStyles = makeStyles((theme) => ({
   },
   main: {
     position: "relative",
-    padding: theme.spacing(12, 0)
+    padding: theme.spacing(12, 0),
   },
   columns: {
     display: "flex",
@@ -304,9 +304,11 @@ export default function Home() {
     () => ({
       "Total Contacts": totalContacts || "...",
       "Security Timelock": timelock ? formatTimestamp(timelock) : "...",
-      "Transfer Cost": txCost ? `${txCost / 1000000000000000000} ETH` : "...",
+      "Transfer Cost": txCost
+        ? `${window?.web3?.utils.fromWei(txCost)} ETH`
+        : "...",
       "Contract Balance": balance
-        ? `${balance / 1000000000000000000} ETH`
+        ? `${window?.web3?.utils.fromWei(balance)} ETH`
         : "...",
       "Contract Owner": owner || "...",
     }),
