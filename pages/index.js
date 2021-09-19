@@ -25,7 +25,6 @@ import formatTimestamp from "util/format-date";
 
 /*
   TODO: new functions required:
-  1. mobile styles
   1. Clear form on txSuccess
   6. Create Factory (for multi user)
   4. "A controlled component is changed to uncontrolled"

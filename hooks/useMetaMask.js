@@ -60,7 +60,7 @@ export default function useMetaMask() {
   });
 
   // UI variables
-  const isOwner = useMemo(() => account === owner, [account, owner]);
+  const isOwner = useMemo(() => account && account === owner, [account, owner]);
 
   // HANDLERS
   // ===================================================
