@@ -354,15 +354,15 @@ export default function Home() {
   // ===================================================
   const labels = useMemo(
     () => ({
-      "Total Contacts": totalContacts || "...",
-      "Security Timelock": timelock ? formatTimestamp(timelock) : "...",
+      "Total Contacts": totalContacts || null,
+      "Security Timelock": timelock ? formatTimestamp(timelock) : null,
       "Transaction Cost": txCost
         ? `${window?.web3?.utils.fromWei(txCost)} ETH`
-        : "...",
+        : null,
       "Contract Balance": balance
         ? `${window?.web3?.utils.fromWei(balance)} ETH`
-        : "...",
-      "Contract Owner": owner || "...",
+        : null,
+      "Contract Owner": owner || null,
     }),
     [balance, owner, timelock, totalContacts, txCost]
   );

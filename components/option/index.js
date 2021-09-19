@@ -32,7 +32,7 @@ export default function Option({ tip, label, value }) {
       <Tooltip title={tip} placement="right">
         <Typography variant="body1">{label}:</Typography>
       </Tooltip>
-      <Typography variant="body1">{value}</Typography>
+      <Typography variant="body1">{value || "..."}</Typography>
     </Box>
   );
 }

@@ -24,18 +24,19 @@ const logos = {
 // ===================================================
 
 const useStyles = makeStyles((theme) => ({
-  logo: {
+  logo: ({ network }) => ({
     position: "relative",
     maxWidth: 180,
     width: "100%",
     height: "auto",
-    padding: theme.spacing(1, 2),
-    mixBlendMode: "multiply", // network === "rinkeby" ? "multiply" : "normal", // TODO: network updates, but new styles aren't applied?
+    padding: theme.spacing(network === "rinkeby" ? 1 : 0, 2),
+    margin: theme.spacing(network === "rinkeby" ? -2 : 0, 0),
+    mixBlendMode: network === "rinkeby" ? "multiply" : "normal",
     "& .MuiSvgIcon-root": {
       marginLeft: theme.spacing(1),
       color: theme.palette.background.toolbar,
     },
-  },
+  }),
 }));
 
 // ===================================================
