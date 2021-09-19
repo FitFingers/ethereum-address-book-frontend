@@ -28,6 +28,7 @@ import useModal from "components/modal/context";
   4. Update security timelock
   5. Security timelock should apply to changing the security timelock
   6. Create Factory (for multi user)
+  7. Disable content until connected
 */
 
 // ===================================================
@@ -254,6 +255,7 @@ export default function Home() {
     []
   );
 
+  // all-purpose submit function for Modal forms
   const submitForm = useCallback(
     async (values, name, data = {}) => {
       const sortedArgs = sortArguments(values, name);
@@ -265,7 +267,7 @@ export default function Home() {
     [account, contract.methods, updateMetaMask]
   );
 
-  // web3 / contract functions
+  // web3 / contract .send functions (change state)
   // ===================================================
   const addContact = useCallback(() => {
     handleOpen({

@@ -13,7 +13,7 @@ export default function useModal() {
 
 // ===================================================
 // MODAL CONTEXT => PROVIDER AND HANDLERS
-// ===================================================}
+// ===================================================
 
 export function ModalContext({ children }) {
   const [
@@ -29,13 +29,12 @@ export function ModalContext({ children }) {
   });
 
   const handleOpen = ({
-    title: newTitle,
-    description: newDescription,
-    contractFunction: newType,
-    formDefaults: newFormDefaults,
-    callback: newCallback,
+    title: newTitle,                // Modal heading
+    description: newDescription,    // Modal subheading
+    contractFunction: newType,      // Name of function as it appears in the smart contract
+    formDefaults: newFormDefaults,  // JSON Object of default field values (used to pass dynamic initial vars)
+    callback: newCallback,          // Function to call on submit (allows custom construction of params etc)
   }) => {
-    // const handleOpen = (newTitle, newDescription, newType, newCallback) => {
     dispatch({
       open: true,
       title: newTitle,
