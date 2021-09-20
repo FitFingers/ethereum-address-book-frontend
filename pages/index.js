@@ -267,7 +267,7 @@ export default function Home() {
   // ===================================================
   const {
     metamask: { network, connectWallet, submitForm },
-    contract: {
+    addressBookContract: {
       isOwner,
       totalContacts,
       timelock,
@@ -277,6 +277,7 @@ export default function Home() {
       balance,
       refreshVariables,
     },
+    factoryContract,
   } = useMetaMask();
 
   // UI handlers

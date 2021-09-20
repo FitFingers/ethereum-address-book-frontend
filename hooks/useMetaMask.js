@@ -40,16 +40,17 @@ export default function useMetaMask() {
   // STATE
   // ===================================================
   // metamask / web3 state
-  const [{ account, network, contract }, updateMetaMask] = useReducer(
-    (state, moreState) => ({ ...state, ...moreState }),
-    {
-      account: null,
-      network: null,
-      contract: {},
-    }
-  );
+  const [
+    { account, network, factoryContract, addressBookContract },
+    updateMetaMask,
+  ] = useReducer((state, moreState) => ({ ...state, ...moreState }), {
+    account: null,
+    network: null,
+    factoryContract: {},
+    addressBookContract: {},
+  });
 
-  // contract variables
+  // factoryContract variables
   const [
     { totalContacts, timelock, txCost, contactList, owner, balance },
     dispatch,
@@ -92,7 +93,7 @@ export default function useMetaMask() {
 
   // "unpack" the requested callback from the contract and return (don't invoke)
   const fetchCallback = useCallback(
-    (functionName) => {
+    (functionName, contract) => {
       try {
         if (!contract?.methods) throw new Error("No contract defined");
         const callback = contract.methods[functionName];
@@ -102,12 +103,12 @@ export default function useMetaMask() {
         return () => console.log("DEBUG callback not set");
       }
     },
-    [contract.methods, account]
+    [account]
   );
 
   // all-purpose submit function for Modal forms
   const submitForm = useCallback(
-    async (values, name, data = {}) => {
+    async (values, name, data = {}, contract) => {
       try {
         const sortedArgs = sortArguments(values, name);
         await contract.methods[name](...sortedArgs) // fetch function
@@ -122,7 +123,7 @@ export default function useMetaMask() {
         handleOpen("error", `TX error: ${err.message}`);
       }
     },
-    [account, contract.methods, handleOpen, updateTransaction]
+    [account, handleOpen, updateTransaction]
   );
 
   // function to (re)initialise contract variables
@@ -155,18 +156,24 @@ export default function useMetaMask() {
 
   // listen for wallet connect, check whether user has address book, save address and create contract instance
   useEffect(() => {
-    if (!account || !contract.methods?.fetchAddressBook) return;
+    if (!account || !factoryContract.methods?.fetchAddressBook) return;
     async function fetchAddressBook() {
-      const addressBookAddress = await contract.methods
+      const addressBookAddress = await factoryContract.methods
         ?.fetchAddressBook()
         .call({ from: account });
       handleAuth(addressBookAddress);
     }
     fetchAddressBook();
-  }, [account, contract.methods, handleAuth]);
-  console.log("DEBUG", { isAuthenticated });
-  // init address book contract once auth'd
+  }, [account, factoryContract.methods, handleAuth]);
 
+  console.log("DEBUG all", {
+    isAuthenticated,
+    factoryContract,
+    addressBookContract,
+    account,
+  });
+
+  // init address book contract once auth'd
   useContract(
     network,
     validNetworks,
@@ -186,12 +193,13 @@ export default function useMetaMask() {
     metamask: {
       account,
       network,
-      contract,
+      factoryContract,
+      addressBookContract,
       connectWallet,
       fetchCallback,
       submitForm,
     },
-    contract: {
+    addressBookContract: {
       isOwner,
       owner,
       totalContacts,
@@ -201,5 +209,6 @@ export default function useMetaMask() {
       balance,
       refreshVariables,
     },
+    factoryContract: {},
   };
 }
