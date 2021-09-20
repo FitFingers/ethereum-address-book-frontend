@@ -16,7 +16,7 @@ export default function useAuth() {
 // ===================================================
 
 export function AuthContext({ children }) {
-  const [{ isAuthenticated }, updateAuth] = useReducer(
+  const [{ isAuthenticated, contractAddress }, updateAuth] = useReducer(
     (state, newState) => ({ ...state, ...newState }),
     {
       isAuthenticated: false,
@@ -31,6 +31,7 @@ export function AuthContext({ children }) {
     <Context.Provider
       value={{
         isAuthenticated,
+        contractAddress,
         handleAuth,
       }}
     >

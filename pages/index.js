@@ -25,8 +25,7 @@ import { etherscan } from "util/network-data";
 
 /*
   TODO: new functions required:
-  1. Clear form on txSuccess
-  6. Create Factory (for multi user)
+  1. Remove "you must sign in" feedback on page load OR change to "welcome"
   4. "A controlled component is changed to uncontrolled"
 */
 

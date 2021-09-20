@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useMemo, useReducer } from "react";
 import useFeedback from "components/feedback/context";
-import useContract from "./useContract";
+import useFactory from "./useFactory";
+import useAddressBook from "./useAddressBook";
 import useNetworkUpdates from "./useNetworkUpdates";
 import useTransactionFeedback from "./useTransactionFeedback";
 import useInitWeb3 from "./useInitWeb3";
 import useSyncVariables from "./useSyncVariables";
 import useTransaction from "hooks/useTransaction";
-import { FACTORY_ABI, ADDRESS_BOOK_ABI } from "util/abi";
 import useAuth from "components/auth/context";
 
 // ===================================================
@@ -35,7 +35,7 @@ function sortArguments(values, name) {
 export default function useMetaMask() {
   const { handleOpen } = useFeedback();
   const { updateTransaction } = useTransaction();
-  const { isAuthenticated, handleAuth } = useAuth();
+  const { contractAddress, handleAuth } = useAuth();
 
   // STATE
   // ===================================================
@@ -146,41 +146,29 @@ export default function useMetaMask() {
   useInitWeb3();
 
   // init factory contract
-  useContract(
-    network,
-    validNetworks,
-    updateMetaMask,
-    FACTORY_ABI,
-    "factoryContract"
-  );
+  useFactory(network, validNetworks, updateMetaMask);
 
   // listen for wallet connect, check whether user has address book, save address and create contract instance
   useEffect(() => {
     if (!account || !factoryContract.methods?.fetchAddressBook) return;
     async function fetchAddressBook() {
-      const addressBookAddress = await factoryContract.methods
+      const contractAddress = await factoryContract.methods
         ?.fetchAddressBook()
         .call({ from: account });
-      handleAuth(addressBookAddress);
+      handleAuth({ contractAddress });
     }
     fetchAddressBook();
   }, [account, factoryContract.methods, handleAuth]);
 
   console.log("DEBUG all", {
-    isAuthenticated,
+    contractAddress,
     factoryContract,
     addressBookContract,
     account,
   });
 
   // init address book contract once auth'd
-  useContract(
-    network,
-    validNetworks,
-    updateMetaMask,
-    isAuthenticated ? ADDRESS_BOOK_ABI : null,
-    "addressBookContract"
-  );
+  useAddressBook(network, validNetworks, updateMetaMask);
 
   // sync
   useSyncVariables(refreshVariables);
