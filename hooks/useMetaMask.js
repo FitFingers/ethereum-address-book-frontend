@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useReducer } from "react";
+import { useCallback, useEffect, useMemo, useReducer } from "react";
 import useFeedback from "components/feedback/context";
 import useContract from "./useContract";
 import useNetworkUpdates from "./useNetworkUpdates";
@@ -6,6 +6,8 @@ import useTransactionFeedback from "./useTransactionFeedback";
 import useInitWeb3 from "./useInitWeb3";
 import useSyncVariables from "./useSyncVariables";
 import useTransaction from "hooks/useTransaction";
+import { FACTORY_ABI, ADDRESS_BOOK_ABI } from "util/abi";
+import useAuth from "components/auth/context";
 
 // ===================================================
 // UTIL / OPTIONS
@@ -33,6 +35,7 @@ function sortArguments(values, name) {
 export default function useMetaMask() {
   const { handleOpen } = useFeedback();
   const { updateTransaction } = useTransaction();
+  const { isAuthenticated, handleAuth } = useAuth();
 
   // STATE
   // ===================================================
@@ -93,7 +96,8 @@ export default function useMetaMask() {
       try {
         if (!contract?.methods) throw new Error("No contract defined");
         const callback = contract.methods[functionName];
-        return () => callback().call({ from: account });
+        return () => callback?.().call({ from: account });
+        // return () => callback().call({ from: account });
       } catch (err) {
         return () => console.log("DEBUG callback not set");
       }
@@ -129,7 +133,7 @@ export default function useMetaMask() {
       timelock: await fetchCallback("securityTimelock")(),
       txCost: await fetchCallback("txCost")(),
       owner: await fetchCallback("owner")(),
-      contactList: await fetchCallback("readAllContacts")(),
+      // contactList: await fetchCallback("readAllContacts")(),
       balance: await fetchCallback("checkBalance")(),
     });
     handleOpen("success", "Contract variables up-to-date!");
@@ -137,9 +141,41 @@ export default function useMetaMask() {
 
   // EFFECT HOOKS
   // ===================================================
-  // init web3 and the smart contract
+  // init web3
   useInitWeb3();
-  useContract(network, validNetworks, updateMetaMask);
+
+  // init factory contract
+  useContract(
+    network,
+    validNetworks,
+    updateMetaMask,
+    FACTORY_ABI,
+    "factoryContract"
+  );
+
+  // listen for wallet connect, check whether user has address book, save address and create contract instance
+  useEffect(() => {
+    if (!account || !contract.methods?.fetchAddressBook) return;
+    async function fetchAddressBook() {
+      const addressBookAddress = await contract.methods
+        ?.fetchAddressBook()
+        .call({ from: account });
+      handleAuth(addressBookAddress);
+    }
+    fetchAddressBook();
+  }, [account, contract.methods, handleAuth]);
+  console.log("DEBUG", { isAuthenticated });
+  // init address book contract once auth'd
+
+  useContract(
+    network,
+    validNetworks,
+    updateMetaMask,
+    isAuthenticated ? ADDRESS_BOOK_ABI : null,
+    "addressBookContract"
+  );
+
+  // sync
   useSyncVariables(refreshVariables);
 
   // show feedback on certain events

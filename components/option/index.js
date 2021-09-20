@@ -48,6 +48,8 @@ export default function Option({ tip, label, value }) {
     setTimeout(() => setDidUpdate(false), 4000);
   }, [value]);
 
+  console.log('DEBUG', { label, value})
+
   return (
     <Box className={classes.option}>
       <Tooltip title={tip} placement="right">

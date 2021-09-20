@@ -5,6 +5,7 @@ import Modal from "components/modal";
 import Snackbar from "components/feedback";
 import { ModalContext } from "components/modal/context";
 import { FeedbackContext } from "components/feedback/context";
+import { AuthContext } from "components/auth/context";
 import { TransactionContext } from "hooks/useTransaction";
 
 function EthereumAddressBook({ Component, pageProps }) {
@@ -14,9 +15,11 @@ function EthereumAddressBook({ Component, pageProps }) {
       <TransactionContext>
         <ModalContext>
           <FeedbackContext>
-            <Component {...pageProps} />
-            <Snackbar />
-            <Modal />
+            <AuthContext>
+              <Component {...pageProps} />
+              <Snackbar />
+              <Modal />
+            </AuthContext>
           </FeedbackContext>
         </ModalContext>
       </TransactionContext>

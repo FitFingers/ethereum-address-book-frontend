@@ -1,13 +1,16 @@
 import { useEffect } from "react";
-import { FACTORY_ABI } from "util/abi";
 import useFeedback from "components/feedback/context";
-
-console.log("DEBUG", FACTORY_ABI);
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
 
 // create a contract instance if network is Rinkeby
-export default function useContract(network, validNetworks = [], dispatch) {
+export default function useContract(
+  network,
+  validNetworks = [],
+  dispatch,
+  ABI,
+  name
+) {
   const { handleOpen } = useFeedback();
   useEffect(() => {
     if (network && !validNetworks.includes(network)) {
@@ -17,9 +20,16 @@ export default function useContract(network, validNetworks = [], dispatch) {
         true
       );
     }
-    const contract = new web3.eth.Contract(FACTORY_ABI, CONTRACT_ADDRESS, {
+    if (!ABI) {
+      return handleOpen(
+        "error",
+        "You must sign in or create an account to use this feature"
+      );
+    }
+
+    const contract = new web3.eth.Contract(ABI, CONTRACT_ADDRESS, {
       gasLimit: 10000000,
     });
-    dispatch({ contract });
-  }, [dispatch, handleOpen, network, validNetworks]);
+    dispatch({ [name]: contract });
+  }, [ABI, dispatch, handleOpen, name, network, validNetworks]);
 }
