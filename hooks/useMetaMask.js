@@ -52,13 +52,13 @@ export default function useMetaMask() {
 
   // address book contract variables
   const [
-    { totalContacts, timelock, contactList, owner, balance },
+    { totalContacts, timelock, contactList, owner, addressBookBalance },
     updateAddressBook,
   ] = useReducer((state, moreState) => ({ ...state, ...moreState }), {
     totalContacts: null, // total numbers of contacts in address book
     timelock: null, // time until address is whitelisted
     owner: null, // contract owner's address
-    balance: null,
+    addressBookBalance: null,
     contactList: [],
   });
 
@@ -150,10 +150,10 @@ export default function useMetaMask() {
     // update address book values
     try {
       updateAddressBook({
-        totalContacts: await fetchCallback("totalContacts", addressBookContract)(),
-        timelock: await fetchCallback("securityTimelock", addressBookContract)(),
+        totalContacts: await fetchCallback("readTotalContacts", addressBookContract)(),
+        timelock: await fetchCallback("readSecurityTimelock", addressBookContract)(),
         owner: await fetchCallback("owner", addressBookContract)(),
-        balance: await fetchCallback("checkBalance", addressBookContract)(),
+        addressBookBalance: await fetchCallback("checkBalance", addressBookContract)(),
         // contactList: await fetchCallback("readAllContacts", addressBookContract)(),
       });
     } catch (err) {
@@ -165,7 +165,7 @@ export default function useMetaMask() {
         txCost: await fetchCallback("txCost", factoryContract)(),
         totalAddressBooks: await fetchCallback("totalAddressBooks", factoryContract)(),
         accountOpenCost: await fetchCallback("accountOpenCost", factoryContract)(),
-        factoryBalance: await fetchCallback("factoryBalance", factoryContract)(),
+        factoryBalance: await fetchCallback("checkBalance", factoryContract)(),
         factoryOwner: await fetchCallback("factoryOwner", factoryContract)(),
       });
     } catch (err) {
@@ -227,7 +227,7 @@ export default function useMetaMask() {
       totalContacts,
       timelock,
       contactList,
-      balance,
+      addressBookBalance,
       refreshVariables,
     },
     factoryContract: {

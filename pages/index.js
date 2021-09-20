@@ -73,7 +73,11 @@ const variables = [
     tip: "Cost per transaction for using this service",
   },
   {
-    label: "Contract Balance",
+    label: "Balance (Address Book)",
+    tip: "The balance of this smart contract",
+  },
+  {
+    label: "Balance (Factory)",
     tip: "The balance of this smart contract",
   },
   {
@@ -278,7 +282,7 @@ export default function Home() {
       timelock,
       contactList,
       owner,
-      balance,
+      addressBookBalance,
       refreshVariables,
     },
     factoryContract: {
@@ -306,9 +310,9 @@ export default function Home() {
       description: desc.addContact(),
       contractFunction: "addContact",
       callback: (values) =>
-        submitForm(values, "addContact", {}, factoryContract),
+        submitForm(values, "addContact", {}, addressBookContract),
     });
-  }, [handleOpen, factoryContract, submitForm]);
+  }, [handleOpen, addressBookContract, submitForm]);
 
   const removeContactByName = useCallback(() => {
     handleOpen({
@@ -317,9 +321,9 @@ export default function Home() {
       contractFunction: "removeContactByName",
       formDefaults: { name: selected },
       callback: (values) =>
-        submitForm(values, "removeContactByName", {}, factoryContract),
+        submitForm(values, "removeContactByName", {}, addressBookContract),
     });
-  }, [handleOpen, selected, factoryContract, submitForm]);
+  }, [handleOpen, selected, addressBookContract, submitForm]);
 
   const payContactByName = useCallback(() => {
     handleOpen({
@@ -334,10 +338,10 @@ export default function Home() {
           {
             value: Number(txCost) + Number(values.sendValue), // +1
           },
-          factoryContract
+          addressBookContract
         ),
     });
-  }, [handleOpen, selected, factoryContract, submitForm, txCost]);
+  }, [handleOpen, selected, addressBookContract, submitForm, txCost]);
 
   const withdrawAddressBookFunds = useCallback(() => {
     handleOpen({
@@ -355,9 +359,9 @@ export default function Home() {
         "Change the security timelock. This will change the length of time that must pass before you may transfer ETH to a new contact",
       contractFunction: "updateTimelock",
       callback: (values) =>
-        submitForm(values, "updateTimelock", {}, factoryContract),
+        submitForm(values, "updateTimelock", {}, addressBookContract),
     });
-  }, [handleOpen, factoryContract, submitForm]);
+  }, [handleOpen, addressBookContract, submitForm]);
 
   // factory .send functions
   // ===================================================
@@ -393,12 +397,15 @@ export default function Home() {
       "Transaction Cost": txCost
         ? `${window?.web3?.utils.fromWei(txCost)} ETH`
         : null,
-      "Contract Balance": balance
-        ? `${window?.web3?.utils.fromWei(balance)} ETH`
+      "Balance (Address Book)": addressBookBalance
+        ? `${window?.web3?.utils.fromWei(addressBookBalance)} ETH`
+        : null,
+      "Balance (Factory)": factoryBalance
+        ? `${window?.web3?.utils.fromWei(factoryBalance)} ETH`
         : null,
       "Contract Owner": owner || null,
     }),
-    [balance, owner, timelock, totalContacts, txCost]
+    [addressBookBalance, factoryBalance, owner, timelock, totalContacts, txCost]
   );
 
   return (
