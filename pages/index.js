@@ -339,14 +339,14 @@ export default function Home() {
     });
   }, [handleOpen, selected, factoryContract, submitForm, txCost]);
 
-  const withdrawFunds = useCallback(() => {
+  const withdrawAddressBookFunds = useCallback(() => {
     handleOpen({
       title: "Withdraw Funds",
       description: "Withdraw the funds in this smart contract",
       contractFunction: "withdraw",
-      callback: () => submitForm({}, "withdraw", {}, factoryContract),
+      callback: () => submitForm({}, "withdraw", {}, addressBookContract),
     });
-  }, [handleOpen, factoryContract, submitForm]);
+  }, [addressBookContract, handleOpen, submitForm]);
 
   const updateTimelock = useCallback(() => {
     handleOpen({
@@ -359,6 +359,12 @@ export default function Home() {
     });
   }, [handleOpen, factoryContract, submitForm]);
 
+  // factory .send functions
+  // ===================================================
+  // createAddressBook
+  // updateAccountOpenCost
+  // checkBalance
+
   const updateTransactionCost = useCallback(() => {
     handleOpen({
       title: "Update Transaction Cost",
@@ -369,13 +375,14 @@ export default function Home() {
     });
   }, [handleOpen, factoryContract, submitForm]);
 
-  // factory .send functions
-  // ===================================================
-  // createAddressBook
-  // updateAccountOpenCost
-  // updateTransactionCost
-  // checkBalance
-  // withdraw
+  const withdrawFactoryFunds = useCallback(() => {
+    handleOpen({
+      title: "Withdraw Funds",
+      description: "Withdraw the funds in this smart contract",
+      contractFunction: "withdraw",
+      callback: () => submitForm({}, "withdraw", {}, factoryContract),
+    });
+  }, [factoryContract, handleOpen, submitForm]);
 
   // button / var labels
   // ===================================================
@@ -550,14 +557,27 @@ export default function Home() {
                       Update Transaction Cost
                     </Typography>
                   </Button>
+                  <Button
+                    color="primary"
+                    tip="Withdraw the balance from the smart contract"
+                    onClick={withdrawAddressBookFunds}
+                    network={network}
+                  >
+                    <Typography variant="body1">
+                      Withdraw Funds (Address Book)
+                    </Typography>
+                  </Button>
+
                   {isOwner && (
                     <Button
                       color="primary"
                       tip="Withdraw the balance from the smart contract"
-                      onClick={withdrawFunds}
+                      onClick={withdrawFactoryFunds}
                       network={network}
                     >
-                      <Typography variant="body1">Withdraw Funds</Typography>
+                      <Typography variant="body1">
+                        Withdraw Funds (Factory)
+                      </Typography>
                     </Button>
                   )}
                 </Box>
