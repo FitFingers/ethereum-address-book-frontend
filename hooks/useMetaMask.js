@@ -117,7 +117,6 @@ export default function useMetaMask() {
         if (!contract?.methods) throw new Error("No contract defined");
         const callback = contract.methods[functionName];
         return () => callback?.().call({ from: account });
-        // return () => callback().call({ from: account });
       } catch (err) {
         return () => console.log("DEBUG callback not set");
       }
@@ -164,7 +163,10 @@ export default function useMetaMask() {
           "checkBalance",
           addressBookContract
         )(),
-        // contactList: await fetchCallback("readAllContacts", addressBookContract)(),
+        contactList: await fetchCallback(
+          "readAllContacts",
+          addressBookContract
+        )(),
       });
     } catch (err) {
       handleOpen("error", "Failed to update global variables");

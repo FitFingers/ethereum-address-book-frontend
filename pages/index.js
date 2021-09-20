@@ -24,9 +24,12 @@ import formatTimestamp from "util/format-date";
 import { etherscan } from "util/network-data";
 
 /*
-  TODO: new functions required:
+  TODO:
   1. Remove "you must sign in" feedback on page load OR change to "welcome"
+  2. Add required functions from this page > "factory .send functions"
+  3. Add missing var displays "totalAddressBooks, accountOpenCost, factoryOwner"
   4. "A controlled component is changed to uncontrolled"
+  5. Add stacking snackbars
 */
 
 // ===================================================
