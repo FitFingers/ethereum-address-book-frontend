@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
 // ===================================================
 
 export default function Option({ tip, label, value }) {
-  const [didUpdate, setDidUpdate] = useState(true);
+  const [didUpdate, setDidUpdate] = useState(false);
   const classes = useStyles({ didUpdate });
 
   useEffect(() => {
