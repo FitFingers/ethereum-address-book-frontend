@@ -65,16 +65,16 @@ export default function useMetaMask() {
   // factory contract variables
   const [
     {
-      totalAddressBooks,
       txCost,
+      totalAddressBooks,
       accountOpenCost,
       factoryBalance,
       factoryOwner,
     },
     updateFactory,
   ] = useReducer((state, moreState) => ({ ...state, ...moreState }), {
-    totalAddressBooks: null, // total numbers of address books created
     txCost: null, // cost to send a transaction via this service
+    totalAddressBooks: null, // total numbers of address books created
     accountOpenCost: null, // cost to start using this service
     factoryOwner: null, // factory contract owner's address
     factoryBalance: null,
@@ -145,17 +145,34 @@ export default function useMetaMask() {
 
   // function to (re)initialise contract variables
   const refreshVariables = useCallback(async () => {
+    console.log('DEBUG updating vars...', {})
     if (!network) return;
-    updateAddressBook({
-      totalContacts: await fetchCallback("totalContacts")(),
-      timelock: await fetchCallback("securityTimelock")(),
-      txCost: await fetchCallback("txCost")(),
-      owner: await fetchCallback("owner")(),
-      // contactList: await fetchCallback("readAllContacts")(),
-      balance: await fetchCallback("checkBalance")(),
-    });
+    // update address book values
+    try {
+      updateAddressBook({
+        totalContacts: await fetchCallback("totalContacts", addressBookContract)(),
+        timelock: await fetchCallback("securityTimelock", addressBookContract)(),
+        owner: await fetchCallback("owner", addressBookContract)(),
+        balance: await fetchCallback("checkBalance", addressBookContract)(),
+        // contactList: await fetchCallback("readAllContacts", addressBookContract)(),
+      });
+    } catch (err) {
+      handleOpen("error", "Failed to update global variables");
+    }
+    // update factory values
+    try {
+      updateFactory({
+        txCost: await fetchCallback("txCost", factoryContract)(),
+        totalAddressBooks: await fetchCallback("totalAddressBooks", factoryContract)(),
+        accountOpenCost: await fetchCallback("accountOpenCost", factoryContract)(),
+        factoryBalance: await fetchCallback("factoryBalance", factoryContract)(),
+        factoryOwner: await fetchCallback("factoryOwner", factoryContract)(),
+      });
+    } catch (err) {
+      handleOpen("error", "Failed to refresh your address book");
+    }
     handleOpen("success", "Contract variables up-to-date!");
-  }, [fetchCallback, handleOpen, network]);
+  }, [addressBookContract, factoryContract, fetchCallback, handleOpen, network]);
 
   // EFFECT HOOKS
   // ===================================================
@@ -209,11 +226,16 @@ export default function useMetaMask() {
       owner,
       totalContacts,
       timelock,
-      txCost,
       contactList,
       balance,
       refreshVariables,
     },
-    factoryContract: {},
+    factoryContract: {
+      txCost,
+      totalAddressBooks,
+      accountOpenCost,
+      factoryBalance,
+      factoryOwner,
+    },
   };
 }

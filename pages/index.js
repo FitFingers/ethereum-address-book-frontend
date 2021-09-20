@@ -265,18 +265,29 @@ export default function Home() {
   // init web3, extract state and contract content
   // ===================================================
   const {
-    metamask: { network, connectWallet, submitForm },
+    metamask: {
+      network,
+      connectWallet,
+      submitForm,
+      factoryContract,
+      addressBookContract,
+    },
     addressBookContract: {
       isOwner,
       totalContacts,
       timelock,
-      txCost,
       contactList,
       owner,
       balance,
       refreshVariables,
     },
-    factoryContract,
+    factoryContract: {
+      txCost,
+      totalAddressBooks,
+      accountOpenCost,
+      factoryBalance,
+      factoryOwner,
+    },
   } = useMetaMask();
 
   // UI handlers
