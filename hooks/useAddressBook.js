@@ -4,7 +4,11 @@ import useAuth from "components/auth/context";
 import { ADDRESS_BOOK_ABI } from "util/abi";
 
 // create a contract instance if network is Rinkeby
-export default function useAddressBook(network, validNetworks = [], dispatch) {
+export default function useAddressBook(
+  network,
+  validNetworks = [],
+  updateMetaMask
+) {
   const { handleOpen } = useFeedback();
   const { contractAddress } = useAuth();
 
@@ -30,6 +34,6 @@ export default function useAddressBook(network, validNetworks = [], dispatch) {
         gasLimit: 10000000,
       }
     );
-    dispatch({ addressBookContract });
-  }, [contractAddress, dispatch, handleOpen, network, validNetworks]);
+    updateMetaMask({ addressBookContract });
+  }, [contractAddress, updateMetaMask, handleOpen, network, validNetworks]);
 }

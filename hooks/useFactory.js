@@ -6,7 +6,7 @@ import { FACTORY_ABI } from "util/abi";
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
 
 // create a contract instance if network is Rinkeby
-export default function useFactory(network, validNetworks = [], dispatch) {
+export default function useFactory(network, validNetworks = [], updateMetaMask) {
   const { handleOpen } = useFeedback();
 
   useEffect(() => {
@@ -28,6 +28,6 @@ export default function useFactory(network, validNetworks = [], dispatch) {
         gasLimit: 10000000,
       }
     );
-    dispatch({ factoryContract });
-  }, [dispatch, handleOpen, network, validNetworks]);
+    updateMetaMask({ factoryContract });
+  }, [updateMetaMask, handleOpen, network, validNetworks]);
 }

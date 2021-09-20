@@ -50,17 +50,34 @@ export default function useMetaMask() {
     addressBookContract: {},
   });
 
-  // factoryContract variables
+  // address book contract variables
   const [
-    { totalContacts, timelock, txCost, contactList, owner, balance },
-    dispatch,
+    { totalContacts, timelock, contactList, owner, balance },
+    updateAddressBook,
   ] = useReducer((state, moreState) => ({ ...state, ...moreState }), {
     totalContacts: null, // total numbers of contacts in address book
     timelock: null, // time until address is whitelisted
-    txCost: null, // cost to send a transaction via this service
     owner: null, // contract owner's address
     balance: null,
     contactList: [],
+  });
+
+  // factory contract variables
+  const [
+    {
+      totalAddressBooks,
+      txCost,
+      accountOpenCost,
+      factoryBalance,
+      factoryOwner,
+    },
+    updateFactory,
+  ] = useReducer((state, moreState) => ({ ...state, ...moreState }), {
+    totalAddressBooks: null, // total numbers of address books created
+    txCost: null, // cost to send a transaction via this service
+    accountOpenCost: null, // cost to start using this service
+    factoryOwner: null, // factory contract owner's address
+    factoryBalance: null,
   });
 
   // UI variables
@@ -129,7 +146,7 @@ export default function useMetaMask() {
   // function to (re)initialise contract variables
   const refreshVariables = useCallback(async () => {
     if (!network) return;
-    dispatch({
+    updateAddressBook({
       totalContacts: await fetchCallback("totalContacts")(),
       timelock: await fetchCallback("securityTimelock")(),
       txCost: await fetchCallback("txCost")(),

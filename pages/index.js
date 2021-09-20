@@ -287,16 +287,17 @@ export default function Home() {
     []
   );
 
-  // web3 / contract .send functions (change state)
+  // address book .send functions (change state)
   // ===================================================
   const addContact = useCallback(() => {
     handleOpen({
       title: "Add Contact",
       description: desc.addContact(),
       contractFunction: "addContact",
-      callback: (values) => submitForm(values, "addContact"),
+      callback: (values) =>
+        submitForm(values, "addContact", {}, factoryContract),
     });
-  }, [handleOpen, submitForm]);
+  }, [handleOpen, factoryContract, submitForm]);
 
   const removeContactByName = useCallback(() => {
     handleOpen({
@@ -304,9 +305,10 @@ export default function Home() {
       description: desc.removeContactByName[!!selected](selected),
       contractFunction: "removeContactByName",
       formDefaults: { name: selected },
-      callback: (values) => submitForm(values, "removeContactByName"),
+      callback: (values) =>
+        submitForm(values, "removeContactByName", {}, factoryContract),
     });
-  }, [handleOpen, selected, submitForm]);
+  }, [handleOpen, selected, factoryContract, submitForm]);
 
   const payContactByName = useCallback(() => {
     handleOpen({
@@ -315,20 +317,25 @@ export default function Home() {
       contractFunction: "payContactByName",
       formDefaults: { name: selected },
       callback: (values) =>
-        submitForm(values, "payContactByName", {
-          value: Number(txCost) + Number(values.sendValue), // +1
-        }),
+        submitForm(
+          values,
+          "payContactByName",
+          {
+            value: Number(txCost) + Number(values.sendValue), // +1
+          },
+          factoryContract
+        ),
     });
-  }, [handleOpen, selected, submitForm, txCost]);
+  }, [handleOpen, selected, factoryContract, submitForm, txCost]);
 
   const withdrawFunds = useCallback(() => {
     handleOpen({
       title: "Withdraw Funds",
       description: "Withdraw the funds in this smart contract",
       contractFunction: "withdraw",
-      callback: () => submitForm({}, "withdraw"),
+      callback: () => submitForm({}, "withdraw", {}, factoryContract),
     });
-  }, [handleOpen, submitForm]);
+  }, [handleOpen, factoryContract, submitForm]);
 
   const updateTimelock = useCallback(() => {
     handleOpen({
@@ -336,18 +343,28 @@ export default function Home() {
       description:
         "Change the security timelock. This will change the length of time that must pass before you may transfer ETH to a new contact",
       contractFunction: "updateTimelock",
-      callback: (values) => submitForm(values, "updateTimelock"),
+      callback: (values) =>
+        submitForm(values, "updateTimelock", {}, factoryContract),
     });
-  }, [handleOpen, submitForm]);
+  }, [handleOpen, factoryContract, submitForm]);
 
   const updateTransactionCost = useCallback(() => {
     handleOpen({
       title: "Update Transaction Cost",
       description: "Change the value this service charges for each interaction",
       contractFunction: "updateTransactionCost",
-      callback: (values) => submitForm(values, "updateTransactionCost"),
+      callback: (values) =>
+        submitForm(values, "updateTransactionCost", {}, factoryContract),
     });
-  }, [handleOpen, submitForm]);
+  }, [handleOpen, factoryContract, submitForm]);
+
+  // factory .send functions
+  // ===================================================
+  // createAddressBook
+  // updateAccountOpenCost
+  // updateTransactionCost
+  // checkBalance
+  // withdraw
 
   // button / var labels
   // ===================================================
