@@ -1,4 +1,4 @@
-import { useLayoutEffect } from "react";
+import { useEffect } from "react";
 import useFeedback from "components/feedback/context";
 import { etherscan } from "util/network-data";
 import useTransaction from "hooks/useTransaction";
@@ -12,7 +12,7 @@ export default function useTransactionFeedback(network) {
   const { handleOpen } = useFeedback();
   const { txHash, txSuccess, prevHash, prevSuccess, updateTransaction } = useTransaction();
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     // on new transaction hash
     if (txHash && txHash !== prevHash) {
       handleOpen(
