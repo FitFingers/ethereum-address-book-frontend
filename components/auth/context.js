@@ -19,6 +19,7 @@ export function AuthContext({ children }) {
     (state, newState) => ({ ...state, ...newState }),
     {
       isAuthenticated: false,
+      contractAddress: null,
     }
   );
 
