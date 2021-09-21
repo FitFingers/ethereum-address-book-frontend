@@ -27,7 +27,6 @@ import useAuth from "components/auth/context";
 /*
   TODO:
   1. Remove "you must sign in" feedback on page load OR change to "welcome"
-  2. Add required functions from this page > "factory .send functions"
   3. Add missing var displays "totalAddressBooks, accountOpenCost, factoryOwner"
   4. "A controlled component is changed to uncontrolled"
   5. Add stacking snackbars
@@ -230,6 +229,7 @@ const useStyles = makeStyles((theme) => ({
   },
   buttonColumns: {
     display: "flex",
+    margin: theme.spacing(-1),
     [theme.breakpoints.down("sm")]: {
       display: "flex",
       flexDirection: "column",
@@ -240,6 +240,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     justifyContent: "center",
     flex: 1,
+    margin: theme.spacing(1),
     "&>span": {
       margin: theme.spacing(1, 0),
       "&:last-child": {
@@ -357,15 +358,15 @@ export default function Home() {
     });
   }, [handleOpen, selected, addressBookContract, submitForm, txCost]);
 
-  const checkAddressBookBalance = useCallback(() => {
-    handleOpen({
-      title: "Check Balance (Address Book)",
-      description: "Check the balance of this smart contract",
-      contractFunction: "checkAddressBookBalance",
-      callback: (values) =>
-        submitForm(values, "checkAddressBookBalance", {}, addressBookContract),
-    });
-  }, [handleOpen, addressBookContract, submitForm]);
+  // const checkAddressBookBalance = useCallback(() => {
+  //   handleOpen({
+  //     title: "Check Balance (Address Book)",
+  //     description: "Check the balance of this smart contract",
+  //     contractFunction: "checkAddressBookBalance",
+  //     callback: (values) =>
+  //       submitForm(values, "checkAddressBookBalance", {}, addressBookContract),
+  //   });
+  // }, [handleOpen, addressBookContract, submitForm]);
 
   const withdrawAddressBookFunds = useCallback(() => {
     handleOpen({
@@ -409,15 +410,15 @@ export default function Home() {
     });
   }, [handleOpen, factoryContract, submitForm]);
 
-  const checkFactoryBalance = useCallback(() => {
-    handleOpen({
-      title: "Check Balance (Factory)",
-      description: "Check the balance of this smart contract",
-      contractFunction: "checkFactoryBalance",
-      callback: (values) =>
-        submitForm(values, "checkFactoryBalance", {}, factoryContract),
-    });
-  }, [handleOpen, factoryContract, submitForm]);
+  // const checkFactoryBalance = useCallback(() => {
+  //   handleOpen({
+  //     title: "Check Balance (Factory)",
+  //     description: "Check the balance of this smart contract",
+  //     contractFunction: "checkFactoryBalance",
+  //     callback: (values) =>
+  //       submitForm(values, "checkFactoryBalance", {}, factoryContract),
+  //   });
+  // }, [handleOpen, factoryContract, submitForm]);
 
   const updateTransactionCost = useCallback(() => {
     handleOpen({
