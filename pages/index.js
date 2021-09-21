@@ -27,7 +27,7 @@ import useAuth from "components/auth/context";
 /*
   TODO:
   1. Remove "you must sign in" feedback on page load OR change to "welcome"
-  3. Add missing var displays "totalAddressBooks, accountOpenCost, factoryOwner"
+  2. Disable icon buttons before login / show disabled address buttons instead of hide
   4. "A controlled component is changed to uncontrolled"
   5. Add stacking snackbars
 */
@@ -64,6 +64,18 @@ const desc = {
 
 const variables = [
   {
+    label: "Account Open Cost",
+    tip: "The cost to start using this service",
+  },
+  {
+    label: "Transaction Cost",
+    tip: "Cost per transaction for using this service",
+  },
+  {
+    label: "Total Address Books",
+    tip: "The total number of active users of this service",
+  },
+  {
     label: "Total Contacts",
     tip: "Total number of contacts in the address book",
   },
@@ -72,24 +84,12 @@ const variables = [
     tip: "Delay between adding contact and allowing the transfer of ETH to them",
   },
   {
-    label: "Transaction Cost",
-    tip: "Cost per transaction for using this service",
-  },
-  {
     label: "Balance (Address Book)",
     tip: "The balance of this smart contract",
   },
   {
     label: "Contract Owner",
     tip: "The owner of the contract",
-  },
-  {
-    label: "Total Address Books",
-    tip: "The total number of active users of this service",
-  },
-  {
-    label: "Account Open Cost",
-    tip: "The cost to start using this service",
   },
   {
     label: "Balance (Factory)",
@@ -410,9 +410,16 @@ export default function Home() {
       description: "Open an account to start using this service",
       contractFunction: "createAddressBook",
       callback: (values) =>
-        submitForm(values, "createAddressBook", {}, factoryContract),
+        submitForm(
+          values,
+          "createAddressBook",
+          {
+            value: Number(accountOpenCost),
+          },
+          factoryContract
+        ),
     });
-  }, [handleOpen, factoryContract, submitForm]);
+  }, [handleOpen, submitForm, factoryContract, accountOpenCost]);
 
   const updateAccountOpenCost = useCallback(() => {
     handleOpen({
@@ -457,11 +464,14 @@ export default function Home() {
   // ===================================================
   const labels = useMemo(
     () => ({
-      "Total Contacts": totalContacts || null,
-      "Security Timelock": timelock ? formatTimestamp(timelock) : null,
+      "Account Open Cost": accountOpenCost
+        ? `${window?.web3?.utils.fromWei(accountOpenCost)} ETH`
+        : null,
       "Transaction Cost": txCost
         ? `${window?.web3?.utils.fromWei(txCost)} ETH`
         : null,
+      "Total Contacts": totalContacts || null,
+      "Security Timelock": timelock ? formatTimestamp(timelock) : null,
       "Balance (Address Book)": addressBookBalance
         ? `${window?.web3?.utils.fromWei(addressBookBalance)} ETH`
         : null,
@@ -470,7 +480,6 @@ export default function Home() {
         : null,
       "Contract Owner": owner || null,
       "Total Address Books": totalAddressBooks || null,
-      "Account Open Cost": accountOpenCost || null,
       "Factory Owner": factoryOwner || null,
     }),
     [
@@ -528,7 +537,7 @@ export default function Home() {
               <Typography variant="h3">Contacts</Typography>
               <Box className={classes.contactWindow}>
                 <List>
-                  {contactList.length ? (
+                  {contactList?.length ? (
                     contactList.map((contact) => (
                       <ListItem
                         className={classes.listitem}

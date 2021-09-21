@@ -114,23 +114,31 @@ export default function useMetaMask() {
     }
   }, [connectAccount, connectNetwork, handleOpen]);
 
-  // "unpack" the requested callback from the contract and return (don't invoke)
-  const fetchCallback = useCallback(
-    (functionName, contract) => {
+  // read the requested value from the provided contract
+  const readVariable = useCallback(
+    async (functionName, contract) => {
+      console.log("DEBUG reading var", { functionName });
       try {
         if (!contract?.methods) throw new Error("No contract defined");
         const callback = contract.methods[functionName];
-        return () => callback?.().call({ from: account });
+        const result = await callback?.().call({ from: account });
+        return result;
       } catch (err) {
-        return () => console.log("DEBUG callback not set");
+        console.log("DEBUG callback not set", {
+          functionName,
+          address: contract._address,
+        });
+        handleOpen("error", `Couldn't read from ${functionName}`);
       }
     },
-    [account]
+    [account, handleOpen]
   );
 
   // all-purpose submit function for Modal forms
   const submitForm = useCallback(
     async (values, name, data = {}, contract) => {
+      console.log("DEBUG submitting form", { values, name, data, contract });
+
       try {
         const sortedArgs = sortArguments(values, name);
         await contract.methods[name](...sortedArgs) // fetch function
@@ -151,56 +159,58 @@ export default function useMetaMask() {
   // function to (re)initialise contract variables
   const refreshVariables = useCallback(async () => {
     if (!network) return;
+
+    console.log("DEBUG refresh vars", { factoryContract, addressBookContract });
+
     // update address book values
-    try {
-      updateAddressBook({
-        totalContacts: await fetchCallback(
-          "readTotalContacts",
-          addressBookContract
-        )(),
-        timelock: await fetchCallback(
-          "readSecurityTimelock",
-          addressBookContract
-        )(),
-        owner: await fetchCallback("owner", addressBookContract)(),
-        addressBookBalance: await fetchCallback(
-          "checkBalance",
-          addressBookContract
-        )(),
-        contactList: await fetchCallback(
-          "readAllContacts",
-          addressBookContract
-        )(),
-      });
-    } catch (err) {
-      handleOpen("error", "Failed to update global variables");
+    if (addressBookContract._address) {
+      try {
+        updateAddressBook({
+          totalContacts: await readVariable(
+            "readTotalContacts",
+            addressBookContract
+          ),
+          timelock: await readVariable(
+            "readSecurityTimelock",
+            addressBookContract
+          ),
+          owner: await readVariable("owner", addressBookContract),
+          addressBookBalance: await readVariable(
+            "checkBalance",
+            addressBookContract
+          ),
+          contactList: await readVariable(
+            "readAllContacts",
+            addressBookContract
+          ),
+        });
+      } catch (err) {
+        handleOpen("error", "Failed to update global variables");
+      }
     }
+
     // update factory values
-    try {
-      updateFactory({
-        txCost: await fetchCallback("txCost", factoryContract)(),
-        totalAddressBooks: await fetchCallback(
-          "totalAddressBooks",
-          factoryContract
-        )(),
-        accountOpenCost: await fetchCallback(
-          "accountOpenCost",
-          factoryContract
-        )(),
-        factoryBalance: await fetchCallback("checkBalance", factoryContract)(),
-        factoryOwner: await fetchCallback("owner", factoryContract)(),
-      });
-    } catch (err) {
-      handleOpen("error", "Failed to refresh your address book");
+    if (factoryContract._address) {
+      try {
+        updateFactory({
+          txCost: await readVariable("txCost", factoryContract),
+          totalAddressBooks: await readVariable(
+            "totalAddressBooks",
+            factoryContract
+          ),
+          accountOpenCost: await readVariable(
+            "accountOpenCost",
+            factoryContract
+          ),
+          factoryBalance: await readVariable("checkBalance", factoryContract),
+          factoryOwner: await readVariable("owner", factoryContract),
+        });
+      } catch (err) {
+        handleOpen("error", "Failed to refresh your address book");
+      }
     }
     handleOpen("success", "Contract variables up-to-date!");
-  }, [
-    addressBookContract,
-    factoryContract,
-    fetchCallback,
-    handleOpen,
-    network,
-  ]);
+  }, [addressBookContract, factoryContract, readVariable, handleOpen, network]);
 
   // EFFECT HOOKS
   // ===================================================
@@ -210,17 +220,31 @@ export default function useMetaMask() {
   // init factory contract
   useFactory(network, validNetworks, updateMetaMask);
 
+  // TODO: THIS FUNCTION DOESN'T UPDATE THE PAGE ON ACCOUNT CREATION!
   // listen for wallet connect, check whether user has address book, save address and create contract instance
   useEffect(() => {
-    if (!account || !factoryContract.methods?.fetchAddressBook) return;
+    console.log("DEBUG run FX", { contractAddress });
+    if (!account || contractAddress) return;
+    console.log("DEBUG run FX continue", { contractAddress });
     async function fetchAddressBook() {
-      const contractAddress = await factoryContract.methods
-        ?.fetchAddressBook()
-        .call({ from: account });
-      handleAuth(contractAddress);
+      try {
+        const addressBook = await factoryContract.methods
+          ?.fetchAddressBook()
+          .call({ from: account });
+        handleAuth(addressBook);
+      } catch (err) {
+        console.debug("DEBUG catch error", { err });
+        handleOpen("error", "You must sign up to continue");
+      }
     }
     fetchAddressBook();
-  }, [account, factoryContract.methods, handleAuth]);
+  }, [
+    account,
+    contractAddress,
+    factoryContract.methods,
+    handleAuth,
+    handleOpen,
+  ]);
 
   // init address book contract once auth'd
   useAddressBook(network, validNetworks, updateMetaMask);
@@ -239,7 +263,6 @@ export default function useMetaMask() {
       factoryContract,
       addressBookContract,
       connectWallet,
-      fetchCallback,
       submitForm,
     },
     addressBookContract: {

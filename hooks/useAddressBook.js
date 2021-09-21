@@ -27,6 +27,8 @@ export default function useAddressBook(
       );
     }
 
+    console.log('DEBUG init address book', { contractAddress })
+
     const addressBookContract = new web3.eth.Contract(
       ADDRESS_BOOK_ABI,
       contractAddress,
