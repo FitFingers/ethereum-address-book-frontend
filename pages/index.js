@@ -238,7 +238,7 @@ const useStyles = makeStyles((theme) => ({
   buttonList: {
     display: "flex",
     flexDirection: "column",
-    justifyContent: "center",
+    justifyContent: "flex-end",
     flex: 1,
     margin: theme.spacing(1),
     "&>span": {
@@ -278,7 +278,7 @@ const useStyles = makeStyles((theme) => ({
 export default function Home() {
   const classes = useStyles();
   const { handleOpen } = useModal();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, contractAddress } = useAuth();
 
   // init web3, extract state and contract content
   // ===================================================
@@ -624,16 +624,16 @@ export default function Home() {
                           </Typography>
                         </Button>
                         {/* <Button
-                      color="primary"
-                      tip="Check the balance of this smart contract"
-                      onClick={checkAddressBookBalance}
-                      network={network}
-                      >
-                      <Typography variant="body1">Check Balance</Typography>
-                    </Button> */}
+                          color="primary"
+                          tip="Check the balance of this smart contract"
+                          onClick={checkAddressBookBalance}
+                          network={network}
+                        >
+                          <Typography variant="body1">Check Balance</Typography>
+                        </Button> */}
                         <Button
                           color="primary"
-                          tip="Withdraw the balance from the smart contract"
+                          tip="Withdraw the balance from the smart contract. Please note that this will be 0 unless you sent ETH to your address book directly!"
                           onClick={withdrawAddressBookFunds}
                           network={network}
                         >
@@ -681,9 +681,7 @@ export default function Home() {
                         onClick={withdrawFactoryFunds}
                         network={network}
                       >
-                        <Typography variant="body1">
-                          Withdraw Funds (Factory)
-                        </Typography>
+                        <Typography variant="body1">Withdraw Funds</Typography>
                       </Button>
                     </Box>
                   )}
@@ -695,13 +693,31 @@ export default function Home() {
       </main>
 
       <footer className={classes.footer}>
+        {contractAddress && (
+          <Link
+            passHref
+            href={`${etherscan[network]}address/${contractAddress}`}
+          >
+            <a target="_blank" rel="noreferrer">
+              <Typography variant="h6">
+                Your address book:{" "}
+                <Typography variant="h6" component="span" color="secondary">
+                  {contractAddress}
+                </Typography>
+              </Typography>
+            </a>
+          </Link>
+        )}
         <Link
           passHref
           href={`${etherscan[network]}address/${process.env.NEXT_PUBLIC_CONTRACT_ADDRESS}`}
         >
           <a target="_blank" rel="noreferrer">
             <Typography variant="h6">
-              Contract address: {process.env.NEXT_PUBLIC_CONTRACT_ADDRESS}
+              Contract address:{" "}
+              <Typography variant="h6" component="span" color="secondary">
+                {process.env.NEXT_PUBLIC_CONTRACT_ADDRESS}
+              </Typography>
             </Typography>
           </a>
         </Link>
