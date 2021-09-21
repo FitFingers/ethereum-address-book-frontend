@@ -26,6 +26,7 @@ import useAuth from "components/auth/context";
 
 /*
   TODO:
+  2. Refresh on account change
   1. Remove "you must sign in" feedback on page load OR change to "welcome"
   2. Disable icon buttons before login / show disabled address buttons instead of hide
   4. "A controlled component is changed to uncontrolled"
@@ -320,6 +321,7 @@ export default function Home() {
       factoryBalance,
       factoryOwner,
       isFactoryOwner,
+      fetchAddressBook,
     },
   } = useMetaMask();
 
@@ -416,10 +418,17 @@ export default function Home() {
           {
             value: Number(accountOpenCost),
           },
-          factoryContract
+          factoryContract,
+          fetchAddressBook // onSuccess
         ),
     });
-  }, [handleOpen, submitForm, factoryContract, accountOpenCost]);
+  }, [
+    handleOpen,
+    submitForm,
+    accountOpenCost,
+    factoryContract,
+    fetchAddressBook,
+  ]);
 
   const updateAccountOpenCost = useCallback(() => {
     handleOpen({

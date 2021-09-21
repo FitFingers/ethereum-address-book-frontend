@@ -35,7 +35,7 @@ function sortArguments(values, name) {
 export default function useMetaMask() {
   const { handleOpen } = useFeedback();
   const { updateTransaction } = useTransaction();
-  const { contractAddress, handleAuth } = useAuth();
+  const { isAuthenticated, handleAuth } = useAuth();
 
   // STATE
   // ===================================================
@@ -114,20 +114,27 @@ export default function useMetaMask() {
     }
   }, [connectAccount, connectNetwork, handleOpen]);
 
+  // search the DB to see if user has an address book already
+  const fetchAddressBook = useCallback(async () => {
+    try {
+      const addressBook = await factoryContract.methods
+        ?.fetchAddressBook()
+        .call({ from: account });
+      handleAuth(addressBook);
+    } catch (err) {
+      handleOpen("error", "You must sign up to continue");
+    }
+  }, [account, factoryContract.methods, handleAuth, handleOpen, ,]);
+
   // read the requested value from the provided contract
   const readVariable = useCallback(
     async (functionName, contract) => {
-      console.log("DEBUG reading var", { functionName });
       try {
         if (!contract?.methods) throw new Error("No contract defined");
         const callback = contract.methods[functionName];
         const result = await callback?.().call({ from: account });
         return result;
       } catch (err) {
-        console.log("DEBUG callback not set", {
-          functionName,
-          address: contract._address,
-        });
         handleOpen("error", `Couldn't read from ${functionName}`);
       }
     },
@@ -136,20 +143,18 @@ export default function useMetaMask() {
 
   // all-purpose submit function for Modal forms
   const submitForm = useCallback(
-    async (values, name, data = {}, contract) => {
-      console.log("DEBUG submitting form", { values, name, data, contract });
-
+    async (values, name, data = {}, contract, onSuccess) => {
       try {
         const sortedArgs = sortArguments(values, name);
         await contract.methods[name](...sortedArgs) // fetch function
           .send({ from: account, ...data /*, value: txCost */ })
           .on("transactionHash", (txHash) => updateTransaction({ txHash }))
           .on("error", () => updateTransaction({ txSuccess: false }))
-          .on("receipt", ({ status }) =>
-            updateTransaction({ txSuccess: status })
-          );
+          .on("receipt", ({ status }) => {
+            updateTransaction({ txSuccess: status });
+            if (onSuccess) onSuccess();
+          });
       } catch (err) {
-        console.debug("DEBUG catch error", { err });
         handleOpen("error", `TX error: ${err.message}`);
       }
     },
@@ -160,10 +165,8 @@ export default function useMetaMask() {
   const refreshVariables = useCallback(async () => {
     if (!network) return;
 
-    console.log("DEBUG refresh vars", { factoryContract, addressBookContract });
-
     // update address book values
-    if (addressBookContract._address) {
+    if (isAuthenticated) {
       try {
         updateAddressBook({
           totalContacts: await readVariable(
@@ -210,7 +213,14 @@ export default function useMetaMask() {
       }
     }
     handleOpen("success", "Contract variables up-to-date!");
-  }, [addressBookContract, factoryContract, readVariable, handleOpen, network]);
+  }, [
+    network,
+    isAuthenticated,
+    factoryContract,
+    handleOpen,
+    readVariable,
+    addressBookContract,
+  ]);
 
   // EFFECT HOOKS
   // ===================================================
@@ -220,31 +230,11 @@ export default function useMetaMask() {
   // init factory contract
   useFactory(network, validNetworks, updateMetaMask);
 
-  // TODO: THIS FUNCTION DOESN'T UPDATE THE PAGE ON ACCOUNT CREATION!
-  // listen for wallet connect, check whether user has address book, save address and create contract instance
+  // fetch user's address book on connect, if available
   useEffect(() => {
-    console.log("DEBUG run FX", { contractAddress });
-    if (!account || contractAddress) return;
-    console.log("DEBUG run FX continue", { contractAddress });
-    async function fetchAddressBook() {
-      try {
-        const addressBook = await factoryContract.methods
-          ?.fetchAddressBook()
-          .call({ from: account });
-        handleAuth(addressBook);
-      } catch (err) {
-        console.debug("DEBUG catch error", { err });
-        handleOpen("error", "You must sign up to continue");
-      }
-    }
+    if (!account || isAuthenticated) return;
     fetchAddressBook();
-  }, [
-    account,
-    contractAddress,
-    factoryContract.methods,
-    handleAuth,
-    handleOpen,
-  ]);
+  }, [account, fetchAddressBook, isAuthenticated]);
 
   // init address book contract once auth'd
   useAddressBook(network, validNetworks, updateMetaMask);
@@ -281,6 +271,7 @@ export default function useMetaMask() {
       accountOpenCost,
       factoryBalance,
       factoryOwner,
+      fetchAddressBook,
     },
   };
 }
