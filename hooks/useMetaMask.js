@@ -50,8 +50,6 @@ export default function useMetaMask() {
     addressBookContract: {},
   });
 
-  console.log("DEBUG", { addressBookContract, factoryContract });
-
   // address book contract variables
   const [
     { totalContacts, timelock, contactList, owner, addressBookBalance },
@@ -83,7 +81,13 @@ export default function useMetaMask() {
   });
 
   // UI variables
-  const isOwner = useMemo(() => account && account === owner, [account, owner]);
+  const { isOwner, isFactoryOwner } = useMemo(
+    () => ({
+      isOwner: account && account === owner,
+      isFactoryOwner: account && account === factoryOwner,
+    }),
+    [account, factoryOwner, owner]
+  );
 
   // HANDLERS
   // ===================================================
@@ -184,7 +188,7 @@ export default function useMetaMask() {
           factoryContract
         )(),
         factoryBalance: await fetchCallback("checkBalance", factoryContract)(),
-        factoryOwner: await fetchCallback("factoryOwner", factoryContract)(),
+        factoryOwner: await fetchCallback("owner", factoryContract)(),
       });
     } catch (err) {
       handleOpen("error", "Failed to refresh your address book");
@@ -248,6 +252,7 @@ export default function useMetaMask() {
       refreshVariables,
     },
     factoryContract: {
+      isFactoryOwner,
       txCost,
       totalAddressBooks,
       accountOpenCost,

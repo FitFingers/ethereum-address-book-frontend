@@ -22,6 +22,7 @@ import useMetaMask from "hooks/useMetaMask";
 import useModal from "components/modal/context";
 import formatTimestamp from "util/format-date";
 import { etherscan } from "util/network-data";
+import useAuth from "components/auth/context";
 
 /*
   TODO:
@@ -189,7 +190,7 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: theme.breakpoints.values.lg,
     display: "flex",
     flexDirection: "column",
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
   },
   contactWindow: {
     borderRadius: theme.shape.borderRadius,
@@ -227,10 +228,18 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     marginBottom: theme.spacing(3),
   },
+  buttonColumns: {
+    display: "flex",
+    [theme.breakpoints.down("sm")]: {
+      display: "flex",
+      flexDirection: "column",
+    },
+  },
   buttonList: {
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
+    flex: 1,
     "&>span": {
       margin: theme.spacing(1, 0),
       "&:last-child": {
@@ -268,6 +277,7 @@ const useStyles = makeStyles((theme) => ({
 export default function Home() {
   const classes = useStyles();
   const { handleOpen } = useModal();
+  const { isAuthenticated } = useAuth();
 
   // init web3, extract state and contract content
   // ===================================================
@@ -280,11 +290,11 @@ export default function Home() {
       addressBookContract,
     },
     addressBookContract: {
+      owner,
       isOwner,
-      totalContacts,
       timelock,
       contactList,
-      owner,
+      totalContacts,
       addressBookBalance,
       refreshVariables,
     },
@@ -294,6 +304,7 @@ export default function Home() {
       accountOpenCost,
       factoryBalance,
       factoryOwner,
+      isFactoryOwner,
     },
   } = useMetaMask();
 
@@ -346,6 +357,16 @@ export default function Home() {
     });
   }, [handleOpen, selected, addressBookContract, submitForm, txCost]);
 
+  const checkAddressBookBalance = useCallback(() => {
+    handleOpen({
+      title: "Check Balance (Address Book)",
+      description: "Check the balance of this smart contract",
+      contractFunction: "checkAddressBookBalance",
+      callback: (values) =>
+        submitForm(values, "checkAddressBookBalance", {}, addressBookContract),
+    });
+  }, [handleOpen, addressBookContract, submitForm]);
+
   const withdrawAddressBookFunds = useCallback(() => {
     handleOpen({
       title: "Withdraw Funds",
@@ -368,9 +389,35 @@ export default function Home() {
 
   // factory .send functions
   // ===================================================
-  // createAddressBook
-  // updateAccountOpenCost
-  // checkBalance
+  const createAddressBook = useCallback(() => {
+    handleOpen({
+      title: "Create Address Book",
+      description: "Open an account to start using this service",
+      contractFunction: "createAddressBook",
+      callback: (values) =>
+        submitForm(values, "createAddressBook", {}, factoryContract),
+    });
+  }, [handleOpen, factoryContract, submitForm]);
+
+  const updateAccountOpenCost = useCallback(() => {
+    handleOpen({
+      title: "Update Account Cost",
+      description: "Change the price charged to start using this service",
+      contractFunction: "updateAccountOpenCost",
+      callback: (values) =>
+        submitForm(values, "updateAccountOpenCost", {}, factoryContract),
+    });
+  }, [handleOpen, factoryContract, submitForm]);
+
+  const checkFactoryBalance = useCallback(() => {
+    handleOpen({
+      title: "Check Balance (Factory)",
+      description: "Check the balance of this smart contract",
+      contractFunction: "checkFactoryBalance",
+      callback: (values) =>
+        submitForm(values, "checkFactoryBalance", {}, factoryContract),
+    });
+  }, [handleOpen, factoryContract, submitForm]);
 
   const updateTransactionCost = useCallback(() => {
     handleOpen({
@@ -519,76 +566,125 @@ export default function Home() {
               </Box>
               <Box>
                 <Typography variant="h3">Functions</Typography>
-                <Box className={classes.buttonList}>
-                  <Button
-                    onClick={addContact}
-                    tip="Add a new contact"
-                    network={network}
-                  >
-                    <Typography variant="body1">Add Contact</Typography>
-                  </Button>
-                  <Button
-                    onClick={removeContactByName}
-                    tip="Remove the selected contact"
-                    network={network}
-                  >
-                    <Typography variant="body1">Remove Contact</Typography>
-                  </Button>
-                  <Button
-                    onClick={payContactByName}
-                    tip="Pay the selected contact"
-                    network={network}
-                  >
-                    <Typography variant="body1">Pay Contact</Typography>
-                  </Button>
-                  <Button
-                    color="primary"
-                    tip="Refresh the contract data"
-                    onClick={refreshVariables}
-                    network={network}
-                  >
-                    <Typography variant="body1">Refresh Data</Typography>
-                  </Button>
-                  <Button
-                    color="primary"
-                    tip="Update the security timelock"
-                    onClick={updateTimelock}
-                    network={network}
-                  >
-                    <Typography variant="body1">Update Timelock</Typography>
-                  </Button>
-                  <Button
-                    color="primary"
-                    tip="Update the transaction cost"
-                    onClick={updateTransactionCost}
-                    network={network}
-                  >
-                    <Typography variant="body1">
-                      Update Transaction Cost
-                    </Typography>
-                  </Button>
-                  <Button
-                    color="primary"
-                    tip="Withdraw the balance from the smart contract"
-                    onClick={withdrawAddressBookFunds}
-                    network={network}
-                  >
-                    <Typography variant="body1">
-                      Withdraw Funds (Address Book)
-                    </Typography>
-                  </Button>
-
-                  {isOwner && (
-                    <Button
+                <Box className={classes.buttonColumns}>
+                  <Box className={classes.buttonList}>
+                    {!isAuthenticated ? (
+                      <Button
+                        color="primary"
+                        tip="Create a new address book"
+                        onClick={createAddressBook}
+                        network={network}
+                      >
+                        <Typography variant="body1">
+                          Create Address Book
+                        </Typography>
+                      </Button>
+                    ) : (
+                      <>
+                        <Button
+                          onClick={addContact}
+                          tip="Add a new contact"
+                          network={network}
+                        >
+                          <Typography variant="body1">Add Contact</Typography>
+                        </Button>
+                        <Button
+                          onClick={removeContactByName}
+                          tip="Remove the selected contact"
+                          network={network}
+                        >
+                          <Typography variant="body1">
+                            Remove Contact
+                          </Typography>
+                        </Button>
+                        <Button
+                          onClick={payContactByName}
+                          tip="Pay the selected contact"
+                          network={network}
+                        >
+                          <Typography variant="body1">Pay Contact</Typography>
+                        </Button>
+                        <Button
+                          color="primary"
+                          tip="Refresh the contract data"
+                          onClick={refreshVariables}
+                          network={network}
+                        >
+                          <Typography variant="body1">Refresh Data</Typography>
+                        </Button>
+                        <Button
+                          color="primary"
+                          tip="Update the security timelock"
+                          onClick={updateTimelock}
+                          network={network}
+                        >
+                          <Typography variant="body1">
+                            Update Timelock
+                          </Typography>
+                        </Button>
+                        {/* <Button
                       color="primary"
-                      tip="Withdraw the balance from the smart contract"
-                      onClick={withdrawFactoryFunds}
+                      tip="Check the balance of this smart contract"
+                      onClick={checkAddressBookBalance}
                       network={network}
-                    >
-                      <Typography variant="body1">
-                        Withdraw Funds (Factory)
-                      </Typography>
-                    </Button>
+                      >
+                      <Typography variant="body1">Check Balance</Typography>
+                    </Button> */}
+                        <Button
+                          color="primary"
+                          tip="Withdraw the balance from the smart contract"
+                          onClick={withdrawAddressBookFunds}
+                          network={network}
+                        >
+                          <Typography variant="body1">
+                            Withdraw Funds
+                          </Typography>
+                        </Button>
+                      </>
+                    )}
+                  </Box>
+
+                  {isFactoryOwner && (
+                    <Box className={classes.buttonList}>
+                      <Button
+                        color="primary"
+                        tip="Update the account open cost"
+                        onClick={updateAccountOpenCost}
+                        network={network}
+                      >
+                        <Typography variant="body1">
+                          Update Account Cost
+                        </Typography>
+                      </Button>
+                      <Button
+                        color="primary"
+                        tip="Update the transaction cost"
+                        onClick={updateTransactionCost}
+                        network={network}
+                      >
+                        <Typography variant="body1">
+                          Update Transaction Cost
+                        </Typography>
+                      </Button>
+                      {/* <Button
+                        color="primary"
+                        tip="Check the balance of this smart contract"
+                        onClick={checkFactoryBalance}
+                        network={network}
+                      >
+                        <Typography variant="body1">Check Balance</Typography>
+                      </Button> */}
+                      <Button
+                        color="primary"
+                        tip="Withdraw the balance from the smart contract"
+                        onClick={withdrawFactoryFunds}
+                        network={network}
+                      >
+                        <Typography variant="body1">
+                          Withdraw Funds (Factory)
+                        </Typography>
+                      </Button>
+                    </Box>
                   )}
                 </Box>
               </Box>
