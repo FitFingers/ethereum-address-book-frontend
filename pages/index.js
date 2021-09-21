@@ -80,12 +80,26 @@ const variables = [
     tip: "The balance of this smart contract",
   },
   {
-    label: "Balance (Factory)",
-    tip: "The balance of this smart contract",
-  },
-  {
     label: "Contract Owner",
     tip: "The owner of the contract",
+  },
+  {
+    label: "Total Address Books",
+    tip: "The total number of active users of this service",
+  },
+  {
+    label: "Account Open Cost",
+    tip: "The cost to start using this service",
+  },
+  {
+    label: "Balance (Factory)",
+    tip: "The balance of this smart contract",
+    onlyOwner: true,
+  },
+  {
+    label: "Factory Owner",
+    tip: "The creator of this service",
+    onlyOwner: true,
   },
 ];
 
@@ -455,8 +469,21 @@ export default function Home() {
         ? `${window?.web3?.utils.fromWei(factoryBalance)} ETH`
         : null,
       "Contract Owner": owner || null,
+      "Total Address Books": totalAddressBooks || null,
+      "Account Open Cost": accountOpenCost || null,
+      "Factory Owner": factoryOwner || null,
     }),
-    [addressBookBalance, factoryBalance, owner, timelock, totalContacts, txCost]
+    [
+      accountOpenCost,
+      addressBookBalance,
+      factoryBalance,
+      factoryOwner,
+      owner,
+      timelock,
+      totalAddressBooks,
+      totalContacts,
+      txCost,
+    ]
   );
 
   return (
@@ -555,11 +582,13 @@ export default function Home() {
               <Box>
                 <Typography variant="h3">Variables</Typography>
                 <Box className={classes.variablesList}>
-                  {variables.map(({ tip, label }) => (
+                  {variables.map(({ tip, label, onlyOwner }) => (
                     <Option
                       tip={tip}
                       label={label}
                       value={labels[label]}
+                      onlyOwner={onlyOwner}
+                      isFactoryOwner={isFactoryOwner}
                       key={`option-${label}`}
                     />
                   ))}
@@ -663,9 +692,7 @@ export default function Home() {
                         onClick={updateTransactionCost}
                         network={network}
                       >
-                        <Typography variant="body1">
-                          Update Transaction Cost
-                        </Typography>
+                        <Typography variant="body1">Update TX Cost</Typography>
                       </Button>
                       {/* <Button
                         color="primary"
