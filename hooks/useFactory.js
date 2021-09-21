@@ -1,9 +1,11 @@
 import { useEffect } from "react";
 import useFeedback from "components/feedback/context";
 import { FACTORY_ABI } from "util/abi";
+import { getFactoryAddress } from "util/env-funcs";
 
 // Factory address
-const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
+const FACTORY_ADDRESS = getFactoryAddress("dev") // or "rinkeby"
+// const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
 
 // create a contract instance if network is Rinkeby
 export default function useFactory(network, validNetworks = [], updateMetaMask) {
@@ -23,11 +25,12 @@ export default function useFactory(network, validNetworks = [], updateMetaMask) 
 
     const factoryContract = new web3.eth.Contract(
       FACTORY_ABI,
-      CONTRACT_ADDRESS,
+      FACTORY_ADDRESS,
       {
         gasLimit: 10000000,
       }
     );
+
     updateMetaMask({ factoryContract });
   }, [updateMetaMask, handleOpen, network, validNetworks]);
 }

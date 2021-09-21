@@ -23,6 +23,7 @@ import useModal from "components/modal/context";
 import formatTimestamp from "util/format-date";
 import { etherscan } from "util/network-data";
 import useAuth from "components/auth/context";
+import { getFactoryAddress } from "util/env-funcs";
 
 /*
   TODO:
@@ -36,6 +37,8 @@ import useAuth from "components/auth/context";
 // ===================================================
 // UTIL (PAGE OPTIONS)
 // ===================================================
+
+const FACTORY_ADDRESS = getFactoryAddress("dev");
 
 const linkBehaviour = "samesite";
 
@@ -753,15 +756,12 @@ export default function Home() {
             </a>
           </Link>
         )}
-        <Link
-          passHref
-          href={`${etherscan[network]}address/${process.env.NEXT_PUBLIC_CONTRACT_ADDRESS}`}
-        >
+        <Link passHref href={`${etherscan[network]}address/${FACTORY_ADDRESS}`}>
           <a target="_blank" rel="noreferrer">
             <Typography variant="h6">
               Contract address:{" "}
               <Typography variant="h6" component="span" color="secondary">
-                {process.env.NEXT_PUBLIC_CONTRACT_ADDRESS}
+                {FACTORY_ADDRESS}
               </Typography>
             </Typography>
           </a>
