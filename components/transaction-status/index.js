@@ -1,5 +1,6 @@
 import { Typography, makeStyles, useTheme, Box } from "@material-ui/core";
 import useTransaction from "hooks/useTransaction";
+import { useMemo } from "react";
 import PropagateLoader from "react-spinners/PropagateLoader";
 
 // ===================================================
@@ -30,10 +31,16 @@ const useStyles = makeStyles((theme) => ({
 // COMPONENTS
 // ===================================================
 
+// Shows a loading animation while transaction status props are not at default
 export default function TransactionStatus() {
   const { prevHash, prevSuccess } = useTransaction();
   const classes = useStyles();
   const theme = useTheme();
+  const txLabel = useMemo(() => {
+    if (!prevHash) return "" // default => no tx
+    if (prevSuccess === null) return "Pending"; // in progress
+    return prevSuccess ? "Success" : "Error";
+  }, [prevHash, prevSuccess]);
   return (
     <Box className={classes.txStatus}>
       <Box className={classes.spinner}>
@@ -45,14 +52,7 @@ export default function TransactionStatus() {
       </Box>
       <Box>
         <Typography variant="body1">Transaction hash: {prevHash}</Typography>
-        <Typography variant="body1">
-          Transaction status:{" "}
-          {prevSuccess !== null
-            ? prevSuccess
-              ? "Success"
-              : "Error"
-            : "Pending"}
-        </Typography>
+        <Typography variant="body1">Transaction status: {txLabel}</Typography>
       </Box>
     </Box>
   );
