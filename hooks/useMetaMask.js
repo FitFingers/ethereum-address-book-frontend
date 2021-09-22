@@ -247,12 +247,6 @@ export function MetaMaskContext({ children }) {
   // init factory contract
   useFactory(network, validNetworks, updateMetaMask);
 
-  // fetch user's address book on connect, if available
-  // useEffect(() => {
-  //   if (!account || isAuthenticated) return;
-  //   fetchAddressBook();
-  // }, [account, fetchAddressBook, isAuthenticated]);
-
   // init address book contract once auth'd
   useAddressBook(
     account,
@@ -262,7 +256,7 @@ export function MetaMaskContext({ children }) {
     fetchAddressBook
   );
 
-  // sync
+  // sync / hydrate vars
   useSyncVariables(refreshVariables);
 
   // show feedback on certain events
