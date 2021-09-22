@@ -13,7 +13,7 @@ import useAuth from "components/auth/context";
 // UTIL / OPTIONS
 // ===================================================
 
-const validNetworks = ["rinkeby"];
+const validNetworks = ["rinkeby", "private"];
 
 // The order of the parameters to send to contract (sort order of params)
 const formConfig = {
