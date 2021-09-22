@@ -20,7 +20,10 @@ export default function useTransactionFeedback(network) {
   useEffect(() => {
     // on new transaction hash
     if (isNewState(txHash, prevHash)) {
-      handleOpen("success", <FeedbackLink id={txHash} network={network} />);
+      handleOpen(
+        "success",
+        <FeedbackLink id={txHash} network={network} short />
+      );
       updateTransaction({
         prevHash: txHash,
         prevSuccess: null,

@@ -1,4 +1,5 @@
 import { Typography, makeStyles, useTheme, Box } from "@material-ui/core";
+import FeedbackLink from "components/feedback-link";
 import useTransaction from "hooks/useTransaction";
 import { useMemo } from "react";
 import PropagateLoader from "react-spinners/PropagateLoader";
@@ -37,7 +38,7 @@ export default function TransactionStatus() {
   const classes = useStyles();
   const theme = useTheme();
   const txLabel = useMemo(() => {
-    if (!prevHash) return "" // default => no tx
+    if (!prevHash) return ""; // default => no tx
     if (prevSuccess === null) return "Pending"; // in progress
     return prevSuccess ? "Success" : "Error";
   }, [prevHash, prevSuccess]);
@@ -51,7 +52,7 @@ export default function TransactionStatus() {
         />
       </Box>
       <Box>
-        <Typography variant="body1">Transaction hash: {prevHash}</Typography>
+        <FeedbackLink id={prevHash} />
         <Typography variant="body1">Transaction status: {txLabel}</Typography>
       </Box>
     </Box>
