@@ -30,9 +30,9 @@ export default function useAddressBook(
     const addressBookContract = new web3.eth.Contract(
       ADDRESS_BOOK_ABI,
       contractAddress,
-      {
-        gasLimit: 10000000,
-      }
+      // {
+      //   gasLimit: 10000000,
+      // }
     );
     updateMetaMask({ addressBookContract });
   }, [contractAddress, updateMetaMask, handleOpen, network, validNetworks]);

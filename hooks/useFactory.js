@@ -5,7 +5,6 @@ import { getFactoryAddress } from "util/env-funcs";
 
 // Factory address
 const FACTORY_ADDRESS = getFactoryAddress("dev") // or "rinkeby"
-// const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
 
 // create a contract instance if network is Rinkeby
 export default function useFactory(network, validNetworks = [], updateMetaMask) {
@@ -26,9 +25,9 @@ export default function useFactory(network, validNetworks = [], updateMetaMask) 
     const factoryContract = new web3.eth.Contract(
       FACTORY_ABI,
       FACTORY_ADDRESS,
-      {
-        gasLimit: 10000000,
-      }
+      // {
+      //   gasLimit: 10000000,
+      // }
     );
 
     updateMetaMask({ factoryContract });
