@@ -1,18 +1,10 @@
 import { useEffect } from "react";
 import useFeedback from "components/feedback/context";
-import { etherscan } from "util/network-data";
 import useTransaction from "hooks/useTransaction";
+import FeedbackLink from "components/feedback-link";
 
 function isNewState(newState, oldState) {
   return ![oldState, null].includes(newState);
-}
-
-function TransactionLink({ id, network }) {
-  return (
-    <a href={`${etherscan[network]}tx/${id}`} target="_blank" rel="noreferrer">
-      TX ID: {id}
-    </a>
-  );
 }
 
 // ===================================================
@@ -28,7 +20,7 @@ export default function useTransactionFeedback(network) {
   useEffect(() => {
     // on new transaction hash
     if (isNewState(txHash, prevHash)) {
-      handleOpen("success", <TransactionLink id={txHash} network={network} />);
+      handleOpen("success", <FeedbackLink id={txHash} network={network} />);
       updateTransaction({
         prevHash: txHash,
         prevSuccess: null,
