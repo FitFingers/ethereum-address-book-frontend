@@ -25,9 +25,6 @@ import { etherscan } from "util/network-data";
 import useAuth from "components/auth/context";
 import { getFactoryAddress } from "util/env-funcs";
 
-console.log('DEBUG TEST_VAR', process.env.TEST_VAR)
-console.log('DEBUG mykey', process.env.mykey)
-
 /*
   TODO:
   2. Refresh on account change

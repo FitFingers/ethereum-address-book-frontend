@@ -7,6 +7,7 @@ import { ModalContext } from "components/modal/context";
 import { FeedbackContext } from "components/feedback/context";
 import { AuthContext } from "components/auth/context";
 import { TransactionContext } from "hooks/useTransaction";
+import { MetaMaskContext } from "hooks/useMetaMask";
 
 function EthereumAddressBook({ Component, pageProps }) {
   return (
@@ -16,9 +17,11 @@ function EthereumAddressBook({ Component, pageProps }) {
         <ModalContext>
           <FeedbackContext>
             <AuthContext>
-              <Component {...pageProps} />
-              <Snackbar />
-              <Modal />
+              <MetaMaskContext>
+                <Component {...pageProps} />
+                <Snackbar />
+                <Modal />
+              </MetaMaskContext>
             </AuthContext>
           </FeedbackContext>
         </ModalContext>

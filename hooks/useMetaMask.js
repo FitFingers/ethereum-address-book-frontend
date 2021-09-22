@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useMemo, useReducer } from "react";
+import {
+  useContext,
+  createContext,
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+} from "react";
 import useFeedback from "components/feedback/context";
 import useFactory from "./useFactory";
 import useAddressBook from "./useAddressBook";
@@ -8,6 +15,16 @@ import useInitWeb3 from "./useInitWeb3";
 import useSyncVariables from "./useSyncVariables";
 import useTransaction from "hooks/useTransaction";
 import useAuth from "components/auth/context";
+
+// ===================================================
+// USECONTEXT => ACCESS COMPONENT, HANDLERS
+// ===================================================
+
+export const Context = createContext(null);
+
+export default function useMetaMask() {
+  return useContext(Context);
+}
 
 // ===================================================
 // UTIL / OPTIONS
@@ -32,7 +49,7 @@ function sortArguments(values, name) {
 // METAMASK HOOK
 // ===================================================
 
-export default function useMetaMask() {
+export function MetaMaskContext({ children }) {
   const { handleOpen } = useFeedback();
   const { updateTransaction } = useTransaction();
   const { isAuthenticated, handleAuth } = useAuth();
@@ -246,32 +263,38 @@ export default function useMetaMask() {
   useNetworkUpdates(network);
   useTransactionFeedback(network);
 
-  return {
-    metamask: {
-      account,
-      network,
-      factoryContract,
-      addressBookContract,
-      connectWallet,
-      submitForm,
-    },
-    addressBookContract: {
-      isOwner,
-      owner,
-      totalContacts,
-      timelock,
-      contactList,
-      addressBookBalance,
-      refreshVariables,
-    },
-    factoryContract: {
-      isFactoryOwner,
-      txCost,
-      totalAddressBooks,
-      accountOpenCost,
-      factoryBalance,
-      factoryOwner,
-      fetchAddressBook,
-    },
-  };
+  return (
+    <Context.Provider
+      value={{
+        metamask: {
+          account,
+          network,
+          factoryContract,
+          addressBookContract,
+          connectWallet,
+          submitForm,
+        },
+        addressBookContract: {
+          isOwner,
+          owner,
+          totalContacts,
+          timelock,
+          contactList,
+          addressBookBalance,
+          refreshVariables,
+        },
+        factoryContract: {
+          isFactoryOwner,
+          txCost,
+          totalAddressBooks,
+          accountOpenCost,
+          factoryBalance,
+          factoryOwner,
+          fetchAddressBook,
+        },
+      }}
+    >
+      {children}
+    </Context.Provider>
+  );
 }
