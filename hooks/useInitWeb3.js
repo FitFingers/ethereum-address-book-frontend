@@ -13,7 +13,6 @@ export default function useInitWeb3() {
           // new Web3(window.ethereum);
         );
       }
-      console.log("DEBUG", window.web3)
     } catch (err) {
       console.debug("ERROR: failed to initialise web3", { err });
     }

@@ -25,6 +25,9 @@ import { etherscan } from "util/network-data";
 import useAuth from "components/auth/context";
 import { getFactoryAddress } from "util/env-funcs";
 
+console.log('DEBUG TEST_VAR', process.env.TEST_VAR)
+console.log('DEBUG mykey', process.env.mykey)
+
 /*
   TODO:
   2. Refresh on account change
@@ -406,6 +409,18 @@ export default function Home() {
         submitForm(values, "updateTimelock", {}, addressBookContract),
     });
   }, [handleOpen, addressBookContract, submitForm]);
+
+  // TODO:
+  // const removeAddressBook = useCallback(() => {
+  //   handleOpen({
+  //     title: "Close Account",
+  //     description:
+  //       "Remove your address book from our systems",
+  //     contractFunction: "removeAddressBook",
+  //     callback: () =>
+  //       submitForm(values, "removeAddressBook", {}, factoryContract),
+  //   });
+  // }, [handleOpen, factoryContract, submitForm]);
 
   // factory .send functions
   // ===================================================

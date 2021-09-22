@@ -14,6 +14,8 @@ export default function useAuth() {
 // CONTEXT PROVIDER AND HANDLERS
 // ===================================================
 
+// isAuthenticated: Boolean => does the user have an address book? (Signs in automatically, if so)
+// contractAddress: String => the AddressBook contract address for this user/account's address
 export function AuthContext({ children }) {
   const [{ isAuthenticated, contractAddress }, updateAuth] = useReducer(
     (state, newState) => ({ ...state, ...newState }),

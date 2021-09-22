@@ -16,7 +16,7 @@ export default function useAddressBook(
     if (network && !validNetworks.includes(network)) {
       return handleOpen(
         "error",
-        "This app only works on Rinkeby. Please connect to the Rinkeby network",
+        `This app only works on ${validNetworks.join(", ")}. Please connect to the one of: ${validNetworks.join(", ")}`,
         true
       );
     }
