@@ -10,6 +10,8 @@ import useFeedback from "./context";
 const useStyles = makeStyles((theme) => ({
   alert: {
     background: ({ type }) => theme.palette[type].main,
+    color: ({ type }) =>
+      theme.palette.getContrastText(theme.palette[type].main),
   },
 }));
 

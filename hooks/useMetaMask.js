@@ -141,7 +141,7 @@ export function MetaMaskContext({ children }) {
     } catch (err) {
       handleOpen("error", "You must sign up to continue");
     }
-  }, [account, factoryContract.methods, handleAuth, handleOpen, ,]);
+  }, [account, factoryContract.methods, handleAuth, handleOpen]);
 
   // read the requested value from the provided contract
   const readVariable = useCallback(
@@ -248,13 +248,19 @@ export function MetaMaskContext({ children }) {
   useFactory(network, validNetworks, updateMetaMask);
 
   // fetch user's address book on connect, if available
-  useEffect(() => {
-    if (!account || isAuthenticated) return;
-    fetchAddressBook();
-  }, [account, fetchAddressBook, isAuthenticated]);
+  // useEffect(() => {
+  //   if (!account || isAuthenticated) return;
+  //   fetchAddressBook();
+  // }, [account, fetchAddressBook, isAuthenticated]);
 
   // init address book contract once auth'd
-  useAddressBook(network, validNetworks, updateMetaMask);
+  useAddressBook(
+    account,
+    network,
+    validNetworks,
+    updateMetaMask,
+    fetchAddressBook
+  );
 
   // sync
   useSyncVariables(refreshVariables);

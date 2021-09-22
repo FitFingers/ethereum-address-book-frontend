@@ -37,11 +37,13 @@ export default function TransactionStatus() {
   const { prevHash, prevSuccess } = useTransaction();
   const classes = useStyles();
   const theme = useTheme();
+
   const txLabel = useMemo(() => {
     if (!prevHash) return ""; // default => no tx
     if (prevSuccess === null) return "Pending"; // in progress
     return prevSuccess ? "Success" : "Error";
   }, [prevHash, prevSuccess]);
+  
   return (
     <Box className={classes.txStatus}>
       <Box className={classes.spinner}>
