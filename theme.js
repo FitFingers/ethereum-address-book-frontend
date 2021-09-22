@@ -23,6 +23,9 @@ const rootTheme = createTheme({
       paper: "#FAFAFA",
       toolbar: "#ECEFF0",
     },
+    success: {
+      main: "#3c963f"
+    },
     error: {
       main: "#780101",
     },

@@ -27,8 +27,6 @@ import { getFactoryAddress } from "util/env-funcs";
 
 /*
   TODO:
-  2. Refresh on account change
-  1. Remove "you must sign in" feedback on page load OR change to "welcome"
   2. Disable icon buttons before login / show disabled address buttons instead of hide
   4. "A controlled component is changed to uncontrolled"
   5. Add stacking snackbars
@@ -631,7 +629,7 @@ export default function Home() {
                 <Typography variant="h3">Functions</Typography>
                 <Box className={classes.buttonColumns}>
                   <Box className={classes.buttonList}>
-                    {!isAuthenticated ? (
+                    {!isAuthenticated && (
                       <Button
                         color="primary"
                         tip="Create a new address book"
@@ -642,31 +640,30 @@ export default function Home() {
                           Create Address Book
                         </Typography>
                       </Button>
-                    ) : (
+                    )}
+                    <Button
+                      onClick={addContact}
+                      tip="Add a new contact"
+                      network={network}
+                    >
+                      <Typography variant="body1">Add Contact</Typography>
+                    </Button>
+                    <Button
+                      onClick={removeContactByName}
+                      tip="Remove the selected contact"
+                      network={network}
+                    >
+                      <Typography variant="body1">Remove Contact</Typography>
+                    </Button>
+                    <Button
+                      onClick={payContactByName}
+                      tip="Pay the selected contact"
+                      network={network}
+                    >
+                      <Typography variant="body1">Pay Contact</Typography>
+                    </Button>
+                    {isAuthenticated && (
                       <>
-                        <Button
-                          onClick={addContact}
-                          tip="Add a new contact"
-                          network={network}
-                        >
-                          <Typography variant="body1">Add Contact</Typography>
-                        </Button>
-                        <Button
-                          onClick={removeContactByName}
-                          tip="Remove the selected contact"
-                          network={network}
-                        >
-                          <Typography variant="body1">
-                            Remove Contact
-                          </Typography>
-                        </Button>
-                        <Button
-                          onClick={payContactByName}
-                          tip="Pay the selected contact"
-                          network={network}
-                        >
-                          <Typography variant="body1">Pay Contact</Typography>
-                        </Button>
                         <Button
                           color="primary"
                           tip="Refresh the contract data"
