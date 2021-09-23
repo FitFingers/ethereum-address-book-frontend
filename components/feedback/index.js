@@ -12,6 +12,9 @@ const useStyles = makeStyles((theme) => ({
     background: ({ type }) => theme.palette[type].main,
     color: ({ type }) =>
       theme.palette.getContrastText(theme.palette[type].main),
+    "& .MuiAlert-action": {
+      display: ({ persist }) => (persist ? "none" : "block"),
+    },
   },
 }));
 
@@ -29,7 +32,7 @@ function Alert(props) {
 
 export default function Snackbar() {
   const { type, message, open, persist, handleClose } = useFeedback();
-  const classes = useStyles({ type });
+  const classes = useStyles({ type, persist });
 
   return (
     <MuiSnackbar

@@ -1,17 +1,17 @@
-import { Button, Tooltip } from "@material-ui/core";
+import { Button as MuiButton, Tooltip } from "@material-ui/core";
 
 // ===================================================
 // COMPONENTS
 // ===================================================
 
-export default function MyButton({ children, network, tip, ...props }) {
+export default function Button({ children, network, tip, ...props }) {
   return (
     <Tooltip
       title={network ? tip : "You must connect your wallet to use this feature"}
       enterDelay={500}
     >
       <span>
-        <Button
+        <MuiButton
           disabled={!network}
           variant="contained"
           fullWidth
@@ -19,7 +19,7 @@ export default function MyButton({ children, network, tip, ...props }) {
           {...props}
         >
           {children}
-        </Button>
+        </MuiButton>
       </span>
     </Tooltip>
   );
