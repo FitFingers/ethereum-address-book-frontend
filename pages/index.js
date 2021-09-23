@@ -623,7 +623,8 @@ export default function Home() {
                 <Typography variant="h3">Functions</Typography>
                 <Box className={classes.buttonColumns}>
                   <Box className={classes.buttonList}>
-                    {!isAuthenticated && (
+                    {/* UNAUTHENTICATED BUTTONS */}
+                    {network && !isAuthenticated ? (
                       <Button
                         noAuth
                         color="primary"
@@ -634,7 +635,20 @@ export default function Home() {
                           Create Address Book
                         </Typography>
                       </Button>
+                    ) : (
+                      <Button
+                        noAuth
+                        color="primary"
+                        tip="Connect your wallet"
+                        onClick={connectWallet}
+                      >
+                        <Typography variant="body1">
+                          Connect Your Wallet
+                        </Typography>
+                      </Button>
                     )}
+
+                    {/* ADDRESS BOOK BUTTONS */}
                     <Button onClick={addContact} tip="Add a new contact">
                       <Typography variant="body1">Add Contact</Typography>
                     </Button>
@@ -650,6 +664,8 @@ export default function Home() {
                     >
                       <Typography variant="body1">Pay Contact</Typography>
                     </Button>
+
+                    {/* VARIABLE / UI BUTTONS */}
                     {isAuthenticated && (
                       <>
                         <Button
@@ -688,6 +704,7 @@ export default function Home() {
                     )}
                   </Box>
 
+                  {/* ADMIN BUTTONS */}
                   {isFactoryOwner && (
                     <Box className={classes.buttonList}>
                       <Button
