@@ -17,13 +17,13 @@ import PersonRemoveIcon from "@material-ui/icons/PersonAddDisabled";
 import PaymentIcon from "@material-ui/icons/Payment";
 import Logo from "components/logo";
 import Button from "components/button";
-import Option from "components/option";
 import useMetaMask from "hooks/useMetaMask";
 import useModal from "components/modal/context";
 import formatTimestamp from "util/format-date";
 import { etherscan } from "util/network-data";
 import useAuth from "components/auth/context";
 import { getFactoryAddress } from "util/env-funcs";
+import DataDisplayPanel from "components/data-display-panel";
 
 /*
   TODO:
@@ -63,47 +63,6 @@ const desc = {
     false: () => "Please select a contact to send ETH to",
   },
 };
-
-const variables = [
-  {
-    label: "Account Open Cost",
-    tip: "The cost to start using this service",
-  },
-  {
-    label: "Transaction Cost",
-    tip: "Cost per transaction for using this service",
-  },
-  {
-    label: "Total Address Books",
-    tip: "The total number of active users of this service",
-  },
-  {
-    label: "Total Contacts",
-    tip: "Total number of contacts in the address book",
-  },
-  {
-    label: "Security Timelock",
-    tip: "Delay between adding contact and allowing the transfer of ETH to them",
-  },
-  {
-    label: "Balance (Address Book)",
-    tip: "The balance of this smart contract",
-  },
-  {
-    label: "Contract Owner",
-    tip: "The owner of the contract",
-  },
-  {
-    label: "Balance (Factory)",
-    tip: "The balance of this smart contract",
-    onlyOwner: true,
-  },
-  {
-    label: "Factory Owner",
-    tip: "The creator of this service",
-    onlyOwner: true,
-  },
-];
 
 // ===================================================
 // STYLES
@@ -238,11 +197,6 @@ const useStyles = makeStyles((theme) => ({
       )} rgba(0, 0, 0, 0.3)`,
     },
   },
-  variablesList: {
-    display: "flex",
-    flexDirection: "column",
-    marginBottom: theme.spacing(3),
-  },
   buttonColumns: {
     display: "flex",
     margin: theme.spacing(-1),
@@ -306,21 +260,10 @@ export default function Home() {
       factoryContract,
       addressBookContract,
     },
-    addressBookContract: {
-      owner,
-      isOwner,
-      timelock,
-      contactList,
-      totalContacts,
-      addressBookBalance,
-      refreshVariables,
-    },
+    addressBookContract: { contactList, refreshVariables },
     factoryContract: {
       txCost,
-      totalAddressBooks,
       accountOpenCost,
-      factoryBalance,
-      factoryOwner,
       isFactoryOwner,
       fetchAddressBook,
     },
@@ -482,41 +425,6 @@ export default function Home() {
     });
   }, [factoryContract, handleOpen, submitForm]);
 
-  // button / var labels
-  // ===================================================
-  const labels = useMemo(
-    () => ({
-      "Account Open Cost": accountOpenCost
-        ? `${window?.web3?.utils.fromWei(accountOpenCost)} ETH`
-        : null,
-      "Transaction Cost": txCost
-        ? `${window?.web3?.utils.fromWei(txCost)} ETH`
-        : null,
-      "Total Contacts": totalContacts || null,
-      "Security Timelock": timelock ? formatTimestamp(timelock) : null,
-      "Balance (Address Book)": addressBookBalance
-        ? `${window?.web3?.utils.fromWei(addressBookBalance)} ETH`
-        : null,
-      "Balance (Factory)": factoryBalance
-        ? `${window?.web3?.utils.fromWei(factoryBalance)} ETH`
-        : null,
-      "Contract Owner": owner || null,
-      "Total Address Books": totalAddressBooks || null,
-      "Factory Owner": factoryOwner || null,
-    }),
-    [
-      accountOpenCost,
-      addressBookBalance,
-      factoryBalance,
-      factoryOwner,
-      owner,
-      timelock,
-      totalAddressBooks,
-      totalContacts,
-      txCost,
-    ]
-  );
-
   return (
     <Box className={classes.container}>
       <Head>
@@ -606,18 +514,7 @@ export default function Home() {
             <Paper elevation={5} className={classes.paperPanel}>
               <Box>
                 <Typography variant="h3">Variables</Typography>
-                <Box className={classes.variablesList}>
-                  {variables.map(({ tip, label, onlyOwner }) => (
-                    <Option
-                      tip={tip}
-                      label={label}
-                      value={labels[label]}
-                      onlyOwner={onlyOwner}
-                      isFactoryOwner={isFactoryOwner}
-                      key={`option-${label}`}
-                    />
-                  ))}
-                </Box>
+                <DataDisplayPanel />
               </Box>
               <Box>
                 <Typography variant="h3">Functions</Typography>
