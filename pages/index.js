@@ -631,6 +631,7 @@ export default function Home() {
                   <Box className={classes.buttonList}>
                     {!isAuthenticated && (
                       <Button
+                        noAuth
                         color="primary"
                         tip="Create a new address book"
                         onClick={createAddressBook}
