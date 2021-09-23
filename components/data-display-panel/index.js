@@ -1,6 +1,7 @@
 import { makeStyles, Box } from "@material-ui/core";
 import Option from "components/option";
 import useMetaMask from "hooks/useMetaMask";
+import formatTimestamp from "util/format-date";
 
 // ===================================================
 // UTIL
