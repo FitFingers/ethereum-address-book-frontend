@@ -20,7 +20,11 @@ import useAuth from "components/auth/context";
 // USECONTEXT => ACCESS COMPONENT, HANDLERS
 // ===================================================
 
-export const Context = createContext(null);
+export const Context = createContext({
+  metamask: {},
+  addressBookContract: {},
+  factoryContract: {},
+});
 
 export default function useMetaMask() {
   return useContext(Context);
