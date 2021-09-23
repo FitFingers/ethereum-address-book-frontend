@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme) => ({
     color: ({ type }) =>
       theme.palette.getContrastText(theme.palette[type].main),
     "& .MuiAlert-action": {
-      display: ({ persist }) => (persist ? "none" : "block"),
+      display: ({ persist }) => (persist ? "none" : "flex"),
     },
   },
 }));

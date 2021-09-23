@@ -586,22 +586,16 @@ export default function Home() {
                 <Button
                   onClick={removeContactByName}
                   tip="Remove the selected contact"
-                  network={network}
                 >
                   <PersonRemoveIcon />
                 </Button>
                 <Button
                   onClick={payContactByName}
                   tip="Pay the selected contact"
-                  network={network}
                 >
                   <PaymentIcon />
                 </Button>
-                <Button
-                  onClick={addContact}
-                  tip="Add a new contact"
-                  network={network}
-                >
+                <Button onClick={addContact} tip="Add a new contact">
                   <PersonAddIcon />
                 </Button>
               </Box>
@@ -635,31 +629,24 @@ export default function Home() {
                         color="primary"
                         tip="Create a new address book"
                         onClick={createAddressBook}
-                        network={network}
                       >
                         <Typography variant="body1">
                           Create Address Book
                         </Typography>
                       </Button>
                     )}
-                    <Button
-                      onClick={addContact}
-                      tip="Add a new contact"
-                      network={network}
-                    >
+                    <Button onClick={addContact} tip="Add a new contact">
                       <Typography variant="body1">Add Contact</Typography>
                     </Button>
                     <Button
                       onClick={removeContactByName}
                       tip="Remove the selected contact"
-                      network={network}
                     >
                       <Typography variant="body1">Remove Contact</Typography>
                     </Button>
                     <Button
                       onClick={payContactByName}
                       tip="Pay the selected contact"
-                      network={network}
                     >
                       <Typography variant="body1">Pay Contact</Typography>
                     </Button>
@@ -669,7 +656,6 @@ export default function Home() {
                           color="primary"
                           tip="Refresh the contract data"
                           onClick={refreshVariables}
-                          network={network}
                         >
                           <Typography variant="body1">Refresh Data</Typography>
                         </Button>
@@ -677,7 +663,6 @@ export default function Home() {
                           color="primary"
                           tip="Update the security timelock"
                           onClick={updateTimelock}
-                          network={network}
                         >
                           <Typography variant="body1">
                             Update Timelock
@@ -687,7 +672,6 @@ export default function Home() {
                           color="primary"
                           tip="Check the balance of this smart contract"
                           onClick={checkAddressBookBalance}
-                          network={network}
                         >
                           <Typography variant="body1">Check Balance</Typography>
                         </Button> */}
@@ -695,7 +679,6 @@ export default function Home() {
                           color="primary"
                           tip="Withdraw the balance from the smart contract. Please note that this will be 0 unless you sent ETH to your address book directly!"
                           onClick={withdrawAddressBookFunds}
-                          network={network}
                         >
                           <Typography variant="body1">
                             Withdraw Funds
@@ -711,7 +694,6 @@ export default function Home() {
                         color="primary"
                         tip="Update the account open cost"
                         onClick={updateAccountOpenCost}
-                        network={network}
                       >
                         <Typography variant="body1">
                           Update Account Cost
@@ -721,7 +703,6 @@ export default function Home() {
                         color="primary"
                         tip="Update the transaction cost"
                         onClick={updateTransactionCost}
-                        network={network}
                       >
                         <Typography variant="body1">Update TX Cost</Typography>
                       </Button>
@@ -729,7 +710,6 @@ export default function Home() {
                         color="primary"
                         tip="Check the balance of this smart contract"
                         onClick={checkFactoryBalance}
-                        network={network}
                       >
                         <Typography variant="body1">Check Balance</Typography>
                       </Button> */}
@@ -737,7 +717,6 @@ export default function Home() {
                         color="primary"
                         tip="Withdraw the balance from the smart contract"
                         onClick={withdrawFactoryFunds}
-                        network={network}
                       >
                         <Typography variant="body1">Withdraw Funds</Typography>
                       </Button>
