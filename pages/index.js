@@ -1,16 +1,13 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import {
   makeStyles,
   Box,
-  List,
-  ListItemText,
   Typography,
   AppBar,
   Toolbar,
   Paper,
-  ListItem,
 } from "@material-ui/core";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import PersonRemoveIcon from "@material-ui/icons/PersonAddDisabled";
@@ -19,11 +16,11 @@ import Logo from "components/logo";
 import Button from "components/button";
 import useMetaMask from "hooks/useMetaMask";
 import useModal from "components/modal/context";
-import formatTimestamp from "util/format-date";
 import { etherscan } from "util/network-data";
 import useAuth from "components/auth/context";
 import { getFactoryAddress } from "util/env-funcs";
 import DataDisplayPanel from "components/data-display-panel";
+import ContactList from "components/contact-list";
 
 /*
   TODO:
@@ -124,25 +121,6 @@ const useStyles = makeStyles((theme) => ({
       flexDirection: "column",
       "&>*": {
         padding: theme.spacing(2),
-      },
-    },
-  },
-  listitem: {
-    "& .MuiTypography-root": {
-      transition: theme.transitions.create("color", {
-        duration: theme.transitions.duration.shorter,
-      }),
-    },
-    "&:hover": {
-      color: theme.palette.getContrastText(theme.palette.secondary.main),
-      background: theme.palette.secondary.light,
-    },
-    "&.Mui-selected": {
-      color: theme.palette.getContrastText(theme.palette.secondary.main),
-      background: theme.palette.secondary.main,
-      "&:hover": {
-        color: theme.palette.getContrastText(theme.palette.secondary.main),
-        background: theme.palette.secondary.main,
       },
     },
   },
@@ -260,7 +238,7 @@ export default function Home() {
       factoryContract,
       addressBookContract,
     },
-    addressBookContract: { contactList, refreshVariables },
+    addressBookContract: { refreshVariables },
     factoryContract: {
       txCost,
       accountOpenCost,
@@ -317,16 +295,6 @@ export default function Home() {
         ),
     });
   }, [handleOpen, selected, addressBookContract, submitForm, txCost]);
-
-  // const checkAddressBookBalance = useCallback(() => {
-  //   handleOpen({
-  //     title: "Check Balance (Address Book)",
-  //     description: "Check the balance of this smart contract",
-  //     contractFunction: "checkAddressBookBalance",
-  //     callback: (values) =>
-  //       submitForm(values, "checkAddressBookBalance", {}, addressBookContract),
-  //   });
-  // }, [handleOpen, addressBookContract, submitForm]);
 
   const withdrawAddressBookFunds = useCallback(() => {
     handleOpen({
@@ -396,16 +364,6 @@ export default function Home() {
     });
   }, [handleOpen, factoryContract, submitForm]);
 
-  // const checkFactoryBalance = useCallback(() => {
-  //   handleOpen({
-  //     title: "Check Balance (Factory)",
-  //     description: "Check the balance of this smart contract",
-  //     contractFunction: "checkFactoryBalance",
-  //     callback: (values) =>
-  //       submitForm(values, "checkFactoryBalance", {}, factoryContract),
-  //   });
-  // }, [handleOpen, factoryContract, submitForm]);
-
   const updateTransactionCost = useCallback(() => {
     handleOpen({
       title: "Update Transaction Cost",
@@ -466,29 +424,10 @@ export default function Home() {
             >
               <Typography variant="h3">Contacts</Typography>
               <Box className={classes.contactWindow}>
-                <List>
-                  {contactList?.length ? (
-                    contactList.map((contact) => (
-                      <ListItem
-                        className={classes.listitem}
-                        button
-                        disableRipple
-                        selected={selected === contact.name}
-                        onClick={() => handleListItemClick(contact.name)}
-                        key={`contact-list-${contact.name}`}
-                      >
-                        <ListItemText primary={contact.name} />
-                      </ListItem>
-                    ))
-                  ) : (
-                    <ListItem>
-                      <ListItemText
-                        primary="Your address book appears to be empty!"
-                        secondary="Try connecting your wallet or adding a contact using the buttons on this page."
-                      />
-                    </ListItem>
-                  )}
-                </List>
+                <ContactList
+                  selected={selected}
+                  handleListItemClick={handleListItemClick}
+                />
               </Box>
               <Box className={classes.buttonRow}>
                 <Button
