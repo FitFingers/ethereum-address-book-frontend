@@ -130,7 +130,7 @@ export function MetaMaskContext({ children }) {
       await connectAccount();
       await connectNetwork();
     } catch (err) {
-      console.debug("ERROR: couldn't connect wallet", { err });
+      console.warn("Couldn't connect wallet", { err });
       handleOpen("error", `Couldn't connect: ${err.message}`);
     }
   }, [connectAccount, connectNetwork, handleOpen]);
@@ -143,9 +143,9 @@ export function MetaMaskContext({ children }) {
         .call({ from: account });
       handleAuth(addressBook);
     } catch (err) {
-      handleOpen("error", "You must sign up to continue");
+      console.warn("Failed attempt to access address book");
     }
-  }, [account, factoryContract.methods, handleAuth, handleOpen]);
+  }, [account, factoryContract.methods, handleAuth]);
 
   // read the requested value from the provided contract
   const readVariable = useCallback(
@@ -156,6 +156,7 @@ export function MetaMaskContext({ children }) {
         const result = await callback?.().call({ from: account });
         return result;
       } catch (err) {
+        console.warn(`Couldn't read ${functionName} from contract`, err);
         handleOpen("error", `Couldn't read from ${functionName}`);
       }
     },
@@ -226,14 +227,16 @@ export function MetaMaskContext({ children }) {
             "accountOpenCost",
             factoryContract
           ),
-          factoryBalance: await readVariable("checkBalance", factoryContract),
+          factoryBalance:
+            isFactoryOwner &&
+            (await readVariable("checkBalance", factoryContract)),
           factoryOwner: await readVariable("owner", factoryContract),
         });
       } catch (err) {
         handleOpen("error", "Failed to refresh your address book");
       }
     }
-    handleOpen("success", "Contract variables up-to-date!");
+    // handleOpen("success", "Contract variables up-to-date!");
   }, [
     network,
     isAuthenticated,
@@ -241,6 +244,7 @@ export function MetaMaskContext({ children }) {
     handleOpen,
     readVariable,
     addressBookContract,
+    isFactoryOwner,
   ]);
 
   // EFFECT HOOKS

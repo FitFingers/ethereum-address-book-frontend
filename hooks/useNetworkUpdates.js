@@ -9,7 +9,7 @@ export default function useNetworkUpdates(network) {
   // monitor initial network connection
   useEffect(() => {
     if (!network) return;
-    handleOpen("success", `Now connected to ${network}!`);
+    handleOpen("success", `Connected to the ${network} network`);
   }, [handleOpen, network]);
 
   // show feedback on successful network change
