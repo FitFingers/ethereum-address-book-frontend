@@ -1,5 +1,4 @@
 import "../styles/globals.css";
-import { CssBaseline } from "@material-ui/core";
 import ThemeProvider from "theme";
 import Modal from "components/modal";
 import { FeedbackContext } from "components/feedback/context";
@@ -11,7 +10,6 @@ import { MetaMaskContext } from "hooks/useMetaMask";
 function EthereumAddressBook({ Component, pageProps }) {
   return (
     <ThemeProvider>
-      <CssBaseline />
       <TransactionContext>
         <ModalContext>
           <FeedbackContext>

@@ -2,6 +2,7 @@ import {
   MuiThemeProvider,
   createTheme,
   responsiveFontSizes,
+  CssBaseline,
 } from "@material-ui/core";
 
 const rootFonts = ["Lato", "Montserrat", "Sans-Serif"].join(",");
@@ -24,7 +25,7 @@ const rootTheme = createTheme({
       toolbar: "#ECEFF0",
     },
     success: {
-      main: "#3c963f"
+      main: "#3c963f",
     },
     error: {
       main: "#780101",
@@ -107,5 +108,10 @@ const rootTheme = createTheme({
 export const theme = responsiveFontSizes(rootTheme);
 
 export default function ThemeProvider({ children }) {
-  return <MuiThemeProvider theme={theme}>{children}</MuiThemeProvider>;
+  return (
+    <MuiThemeProvider theme={theme}>
+      <CssBaseline />
+      {children}
+    </MuiThemeProvider>
+  );
 }

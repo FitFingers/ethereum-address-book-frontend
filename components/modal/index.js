@@ -47,8 +47,7 @@ const useStyles = makeStyles((theme) => ({
 export default function Modal() {
   const classes = useStyles();
   const theme = useTheme();
-  const { title, description, contractFunction, open, handleClose } =
-    useModal();
+  const { title, description, contractFunction, open, handleClose } = useModal();
 
   return (
     <MuiModal
