@@ -30,6 +30,9 @@ const rootTheme = createTheme({
     error: {
       main: "#780101",
     },
+    info: {
+      main: "#8A92B2", // secondary.main
+    },
   },
   typography: {
     fontFamily: rootFonts,
