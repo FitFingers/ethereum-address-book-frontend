@@ -1,5 +1,5 @@
 import Alert from "@material-ui/lab/Alert";
-import { makeStyles, Slide, Typography } from "@material-ui/core";
+import { makeStyles, Typography } from "@material-ui/core";
 
 // ===================================================
 // STYLES
