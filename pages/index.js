@@ -13,7 +13,6 @@ import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import PersonRemoveIcon from "@material-ui/icons/PersonAddDisabled";
 import PaymentIcon from "@material-ui/icons/Payment";
 import Logo from "components/logo";
-import Button from "components/button";
 import useMetaMask from "hooks/useMetaMask";
 import useModal from "components/modal/context";
 import { etherscan } from "util/network-data";
@@ -22,6 +21,7 @@ import { getFactoryAddress } from "util/env-funcs";
 import DataDisplayPanel from "components/data-display-panel";
 import ContactList from "components/contact-list";
 import ButtonRow from "components/button-row";
+import ButtonList from "components/button-list";
 
 /*
   TODO:
@@ -146,56 +146,12 @@ const useStyles = makeStyles((theme) => ({
       padding: theme.spacing(5, 3),
     },
   },
-  contactWindow: {
-    borderRadius: theme.shape.borderRadius,
-    background: theme.palette.background.default,
-    boxShadow: `inset ${theme.shadows[3].replace(/\),/g, "),inset ")}`,
-    marginBottom: theme.spacing(2),
-    minHeight: 120,
-    height: "100%",
-    overflow: "auto",
-    [theme.breakpoints.down("sm")]: {
-      minHeight: 220,
-    },
-
-    "&::-webkit-scrollbar-track": {
-      borderRadius: theme.shape.borderRadius,
-      backgroundColor: "inherit",
-      "-webkit-box-shadow": `inset 0 0 ${theme.spacing(
-        0.5
-      )} rgba(0, 0, 0, 0.3)`,
-    },
-    "&::-webkit-scrollbar": {
-      width: theme.spacing(0.5),
-      background: "#f5f5f5",
-    },
-    "&::-webkit-scrollbar-thumb": {
-      backgroundColor: theme.palette.secondary.main,
-      borderRadius: theme.shape.borderRadius,
-      "-webkit-box-shadow": `inset 0 0 ${theme.spacing(
-        0.5
-      )} rgba(0, 0, 0, 0.3)`,
-    },
-  },
   buttonColumns: {
     display: "flex",
     margin: theme.spacing(-1),
     [theme.breakpoints.down("sm")]: {
       display: "flex",
       flexDirection: "column",
-    },
-  },
-  buttonList: {
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "flex-end",
-    flex: 1,
-    margin: theme.spacing(1),
-    "&>span": {
-      margin: theme.spacing(1, 0),
-      "&:last-child": {
-        marginBottom: 0,
-      },
     },
   },
   button: {},
@@ -413,12 +369,10 @@ export default function Home() {
               className={[classes.paperPanel, classes.smallPanel]}
             >
               <Typography variant="h3">Contacts</Typography>
-              <Box className={classes.contactWindow}>
-                <ContactList
-                  selected={selected}
-                  handleListItemClick={handleListItemClick}
-                />
-              </Box>
+              <ContactList
+                selected={selected}
+                handleListItemClick={handleListItemClick}
+              />
               <ButtonRow
                 buttons={[
                   {
@@ -450,124 +404,95 @@ export default function Home() {
               <Box>
                 <Typography variant="h3">Functions</Typography>
                 <Box className={classes.buttonColumns}>
-                  <Box className={classes.buttonList}>
-                    {/* UNAUTHENTICATED BUTTONS */}
-                    {!network && (
-                      <Button
-                        noAuth
-                        color="primary"
-                        tip="Connect your wallet"
-                        onClick={connectWallet}
-                      >
-                        <Typography variant="body1">
-                          Connect Your Wallet
-                        </Typography>
-                      </Button>
-                    )}
-                    {network && !isAuthenticated && (
-                      <Button
-                        noAuth
-                        color="primary"
-                        tip="Create a new address book"
-                        onClick={createAddressBook}
-                      >
-                        <Typography variant="body1">
-                          Create Address Book
-                        </Typography>
-                      </Button>
-                    )}
+                  {/* USER OPTIONS */}
+                  <ButtonList
+                    buttons={[
+                      // Unauthenticated buttons
+                      {
+                        conditions: [!network],
+                        noAuth: true,
+                        color: "primary",
+                        label: "Connect Your Wallet",
+                        tip: "Connect your wallet",
+                        action: connectWallet,
+                      },
+                      {
+                        conditions: [network, !isAuthenticated],
+                        noAuth: true,
+                        color: "primary",
+                        label: "Create Address Book",
+                        tip: "Create a new address book",
+                        action: createAddressBook,
+                      },
 
-                    {/* ADDRESS BOOK BUTTONS */}
-                    <Button onClick={addContact} tip="Add a new contact">
-                      <Typography variant="body1">Add Contact</Typography>
-                    </Button>
-                    <Button
-                      onClick={removeContactByName}
-                      tip="Remove the selected contact"
-                    >
-                      <Typography variant="body1">Remove Contact</Typography>
-                    </Button>
-                    <Button
-                      onClick={payContactByName}
-                      tip="Pay the selected contact"
-                    >
-                      <Typography variant="body1">Pay Contact</Typography>
-                    </Button>
+                      // Address book user buttons
+                      {
+                        action: addContact,
+                        tip: "Add a new contact",
+                        label: "Add Contact",
+                      },
+                      {
+                        action: removeContactByName,
+                        tip: "Remove the selected contact",
+                        label: "Remove Contact",
+                      },
+                      {
+                        action: payContactByName,
+                        tip: "Pay the selected contact",
+                        label: "Pay Contact",
+                      },
 
-                    {/* VARIABLE / UI BUTTONS */}
-                    {isAuthenticated && (
-                      <>
-                        <Button
-                          color="primary"
-                          tip="Refresh the contract data"
-                          onClick={() => refreshVariables(true)}
-                        >
-                          <Typography variant="body1">Refresh Data</Typography>
-                        </Button>
-                        <Button
-                          color="primary"
-                          tip="Update the security timelock"
-                          onClick={updateTimelock}
-                        >
-                          <Typography variant="body1">
-                            Update Timelock
-                          </Typography>
-                        </Button>
-                        {/* <Button
-                          color="primary"
-                          tip="Check the balance of this smart contract"
-                          onClick={checkAddressBookBalance}
-                        >
-                          <Typography variant="body1">Check Balance</Typography>
-                        </Button> */}
-                        <Button
-                          color="primary"
-                          tip="Withdraw the balance from the smart contract. Please note that this will be 0 unless you sent ETH to your address book directly!"
-                          onClick={withdrawAddressBookFunds}
-                        >
-                          <Typography variant="body1">
-                            Withdraw Funds
-                          </Typography>
-                        </Button>
-                      </>
-                    )}
-                  </Box>
+                      // Address book user admin buttons
+                      {
+                        conditions: [isAuthenticated],
+                        color: "primary",
+                        tip: "Refresh the contract data",
+                        action: () => refreshVariables(true),
+                        label: "Refresh Data",
+                      },
+                      {
+                        conditions: [isAuthenticated],
+                        color: "primary",
+                        tip: "Update the security timelock",
+                        action: updateTimelock,
+                        label: "Update Timelock",
+                      },
+                      {
+                        conditions: [isAuthenticated],
+                        color: "primary",
+                        tip: "Withdraw the balance from the smart contract. Please note that this will be 0 unless you sent ETH to your address book directly!",
+                        action: withdrawAddressBookFunds,
+                        label: "Withdraw Funds",
+                      },
+                    ]}
+                  />
 
-                  {/* ADMIN BUTTONS */}
-                  {isFactoryOwner && (
-                    <Box className={classes.buttonList}>
-                      <Button
-                        color="primary"
-                        tip="Update the account open cost"
-                        onClick={updateAccountOpenCost}
-                      >
-                        <Typography variant="body1">
-                          Update Account Cost
-                        </Typography>
-                      </Button>
-                      <Button
-                        color="primary"
-                        tip="Update the transaction cost"
-                        onClick={updateTransactionCost}
-                      >
-                        <Typography variant="body1">Update TX Cost</Typography>
-                      </Button>
-                      {/* <Button
-                        color="primary"
-                        tip="Check the balance of this smart contract"
-                        onClick={checkFactoryBalance}
-                      >
-                        <Typography variant="body1">Check Balance</Typography>
-                      </Button> */}
-                      <Button
-                        color="primary"
-                        tip="Withdraw the balance from the smart contract"
-                        onClick={withdrawFactoryFunds}
-                      >
-                        <Typography variant="body1">Withdraw Funds</Typography>
-                      </Button>
-                    </Box>
-                  )}
+                  {/* ADMIN OPTIONS */}
+                  <ButtonList
+                    buttons={[
+                      {
+                        conditions: [isAuthenticated, isFactoryOwner],
+                        color: "primary",
+                        tip: "Update the account open cost",
+                        action: updateAccountOpenCost,
+                        label: "Update Account Cost",
+                      },
+                      {
+                        conditions: [isAuthenticated, isFactoryOwner],
+                        color: "primary",
+                        tip: "Update the transaction cost",
+                        action: updateTransactionCost,
+                        label: "Update TX Cost",
+                      },
+                      {
+                        conditions: [isAuthenticated, isFactoryOwner],
+                        color: "primary",
+                        tip: "Withdraw the balance from the smart contract",
+                        action: withdrawFactoryFunds,
+                        label: "Withdraw Funds",
+                      },
+                    ]}
+                  />
                 </Box>
               </Box>
             </Paper>
