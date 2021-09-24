@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import useFeedback from "components/feedback/context";
+import { useSnackbar } from "notistack";
 import useAuth from "components/auth/context";
 import { ADDRESS_BOOK_ABI } from "util/abi";
 
@@ -11,8 +11,8 @@ export default function useAddressBook(
   updateMetaMask,
   fetchAddressBook
 ) {
-  const { handleOpen } = useFeedback();
   const { isAuthenticated, contractAddress } = useAuth();
+  const { enqueueSnackbar } = useSnackbar();
 
   // fetch user's address book on connect or create
   useEffect(() => {
@@ -23,19 +23,17 @@ export default function useAddressBook(
   // create the contract once the user's address book address has been fetched (above)
   useEffect(() => {
     if (network && !validNetworks.includes(network)) {
-      return handleOpen(
-        "error",
+      return enqueueSnackbar(
         `This app only works on ${validNetworks.join(
           ", "
         )}. Please connect to the one of: ${validNetworks.join(", ")}`,
-        true // persist
+        { persist: true, variant: "error" }
       );
     }
     if (!contractAddress) {
-      return handleOpen(
-        "secondary",
+      return enqueueSnackbar(
         "Welcome! Please connect using the button at the top of the page",
-        true
+        { persist: true, variant: "info" }
       );
     }
 
@@ -48,5 +46,11 @@ export default function useAddressBook(
     );
 
     updateMetaMask({ addressBookContract });
-  }, [updateMetaMask, handleOpen, network, validNetworks, contractAddress]);
+  }, [
+    updateMetaMask,
+    enqueueSnackbar,
+    network,
+    validNetworks,
+    contractAddress,
+  ]);
 }

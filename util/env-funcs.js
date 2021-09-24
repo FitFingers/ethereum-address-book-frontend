@@ -1,6 +1,6 @@
 const addresses = {
   factory: {
-    dev: "0x12806Ca27743ad98B3F246d2671D50d7Bed2766A", // must be manually updated (for ganache)
+    dev: "0x235cbD471A2b2FB25635129934720d8ec042De92", // must be manually updated (for ganache)
     rinkeby: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS, // "0xA5BC059cb9F0D659A7e15C324e330f3adF12b095",
   },
 };

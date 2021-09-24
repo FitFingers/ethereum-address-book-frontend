@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import useFeedback from "components/feedback/context";
+import { useSnackbar } from "notistack";
 import useTransaction from "hooks/useTransaction";
 import FeedbackLink from "components/feedback-link";
 
@@ -15,15 +15,14 @@ function isNewState(newState, oldState) {
 export default function useTransactionFeedback(network) {
   const { txHash, txSuccess, prevHash, prevSuccess, updateTransaction } =
     useTransaction();
-  const { handleOpen } = useFeedback();
+  const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
     // on new transaction hash
     if (isNewState(txHash, prevHash)) {
-      handleOpen(
-        "success",
-        <FeedbackLink id={txHash} network={network} short />
-      );
+      enqueueSnackbar(<FeedbackLink id={txHash} network={network} short />, {
+        variant: "success",
+      });
       updateTransaction({
         prevHash: txHash,
         prevSuccess: null,
@@ -32,9 +31,9 @@ export default function useTransactionFeedback(network) {
 
     // on new transaction status
     if (isNewState(txSuccess, prevSuccess)) {
-      handleOpen(
-        txSuccess ? "success" : "error",
-        `Transaction result: ${txSuccess ? "Success" : "Error"}`
+      enqueueSnackbar(
+        `Transaction result: ${txSuccess ? "Success" : "Error"}`,
+        { variant: txSuccess ? "success" : "error" }
       );
       updateTransaction({
         txHash: null,
@@ -44,7 +43,7 @@ export default function useTransactionFeedback(network) {
     }
   }, [
     updateTransaction,
-    handleOpen,
+    enqueueSnackbar,
     network,
     prevHash,
     prevSuccess,

@@ -30,7 +30,7 @@ export function ModalContext({ children }) {
     callback: () => {},
   });
 
-  const handleOpen = useCallback(
+  const openModal = useCallback(
     ({
       title: newTitle,                // Modal heading
       description: newDescription,    // Modal subheading
@@ -65,7 +65,7 @@ export function ModalContext({ children }) {
         contractFunction,
         formDefaults,
         callback,
-        handleOpen,
+        openModal,
         handleClose,
         Modal,
       }}

@@ -1,41 +1,45 @@
 import { useEffect } from "react";
-import useFeedback from "components/feedback/context";
+import { useSnackbar } from "notistack";
 import { chainID } from "util/network-data";
 
 // show feedback on network changes
 export default function useNetworkUpdates(network) {
-  const { handleOpen } = useFeedback();
+  const { enqueueSnackbar } = useSnackbar();
 
   // monitor initial network connection
   useEffect(() => {
     if (!network) return;
-    handleOpen("success", `Connected to the ${network} network`);
-  }, [handleOpen, network]);
+    enqueueSnackbar(`Connected to the ${network} network`, {
+      variant: "success",
+    });
+  }, [enqueueSnackbar, network]);
 
   // show feedback on successful network change
   useEffect(() => {
     const handleNetworkChange = (chain) => {
-      handleOpen("success", `Now using the ${chainID[chain] || chain} network`);
+      enqueueSnackbar(`Now using the ${chainID[chain] || chain} network`, {
+        variant: "success",
+      });
       window.location.reload();
     };
     window.ethereum?.on("chainChanged", handleNetworkChange);
     return () =>
       window.ethereum?.removeListener("chainChanged", handleNetworkChange);
-  }, [handleOpen]);
+  }, [enqueueSnackbar]);
 
   // show feedback on successful network change
   useEffect(() => {
     const handleAccountChange = ([account]) => {
-      handleOpen(
-        "success",
+      enqueueSnackbar(
         account
           ? `Signed in to new account: ${account?.slice(-4)}`
-          : "Signed out"
+          : "Signed out",
+        { variant: "success" }
       );
       // window.location.reload(); // TODO: is it necessary on account change?
     };
     window.ethereum?.on("accountsChanged", handleAccountChange);
     return () =>
       window.ethereum?.removeListener("accountsChanged", handleAccountChange);
-  }, [handleOpen]);
+  }, [enqueueSnackbar]);
 }

@@ -26,7 +26,7 @@ import ContactList from "components/contact-list";
   TODO:
   2. Disable icon buttons before login / show disabled address buttons instead of hide
   4. "A controlled component is changed to uncontrolled"
-  5. Add stacking snackbars
+  5. Style notisnack
 */
 
 // ===================================================
@@ -225,7 +225,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Home() {
   const classes = useStyles();
-  const { handleOpen } = useModal();
+  const { openModal } = useModal();
   const { isAuthenticated, contractAddress } = useAuth();
 
   // init web3, extract state and contract content
@@ -258,17 +258,17 @@ export default function Home() {
   // address book .send functions (change state)
   // ===================================================
   const addContact = useCallback(() => {
-    handleOpen({
+    openModal({
       title: "Add Contact",
       description: desc.addContact(),
       contractFunction: "addContact",
       callback: (values) =>
         submitForm(values, "addContact", {}, addressBookContract),
     });
-  }, [handleOpen, addressBookContract, submitForm]);
+  }, [openModal, addressBookContract, submitForm]);
 
   const removeContactByName = useCallback(() => {
-    handleOpen({
+    openModal({
       title: "Remove Contact",
       description: desc.removeContactByName[!!selected](selected),
       contractFunction: "removeContactByName",
@@ -276,10 +276,10 @@ export default function Home() {
       callback: (values) =>
         submitForm(values, "removeContactByName", {}, addressBookContract),
     });
-  }, [handleOpen, selected, addressBookContract, submitForm]);
+  }, [openModal, selected, addressBookContract, submitForm]);
 
   const payContactByName = useCallback(() => {
-    handleOpen({
+    openModal({
       title: "Send ETH",
       description: desc.payContactByName[!!selected](selected),
       contractFunction: "payContactByName",
@@ -294,19 +294,19 @@ export default function Home() {
           addressBookContract
         ),
     });
-  }, [handleOpen, selected, addressBookContract, submitForm, txCost]);
+  }, [openModal, selected, addressBookContract, submitForm, txCost]);
 
   const withdrawAddressBookFunds = useCallback(() => {
-    handleOpen({
+    openModal({
       title: "Withdraw Funds",
       description: "Withdraw the funds in this smart contract",
       contractFunction: "withdraw",
       callback: () => submitForm({}, "withdraw", {}, addressBookContract),
     });
-  }, [addressBookContract, handleOpen, submitForm]);
+  }, [addressBookContract, openModal, submitForm]);
 
   const updateTimelock = useCallback(() => {
-    handleOpen({
+    openModal({
       title: "Update Security Timelock",
       description:
         "Change the security timelock. This will change the length of time that must pass before you may transfer ETH to a new contact",
@@ -314,11 +314,11 @@ export default function Home() {
       callback: (values) =>
         submitForm(values, "updateTimelock", {}, addressBookContract),
     });
-  }, [handleOpen, addressBookContract, submitForm]);
+  }, [openModal, addressBookContract, submitForm]);
 
   // TODO:
   // const removeAddressBook = useCallback(() => {
-  //   handleOpen({
+  //   openModal({
   //     title: "Close Account",
   //     description:
   //       "Remove your address book from our systems",
@@ -326,12 +326,12 @@ export default function Home() {
   //     callback: () =>
   //       submitForm(values, "removeAddressBook", {}, factoryContract),
   //   });
-  // }, [handleOpen, factoryContract, submitForm]);
+  // }, [openModal, factoryContract, submitForm]);
 
   // factory .send functions
   // ===================================================
   const createAddressBook = useCallback(() => {
-    handleOpen({
+    openModal({
       title: "Create Address Book",
       description: "Open an account to start using this service",
       contractFunction: "createAddressBook",
@@ -347,7 +347,7 @@ export default function Home() {
         ),
     });
   }, [
-    handleOpen,
+    openModal,
     submitForm,
     accountOpenCost,
     factoryContract,
@@ -355,33 +355,33 @@ export default function Home() {
   ]);
 
   const updateAccountOpenCost = useCallback(() => {
-    handleOpen({
+    openModal({
       title: "Update Account Cost",
       description: "Change the price charged to start using this service",
       contractFunction: "updateAccountOpenCost",
       callback: (values) =>
         submitForm(values, "updateAccountOpenCost", {}, factoryContract),
     });
-  }, [handleOpen, factoryContract, submitForm]);
+  }, [openModal, factoryContract, submitForm]);
 
   const updateTransactionCost = useCallback(() => {
-    handleOpen({
+    openModal({
       title: "Update Transaction Cost",
       description: "Change the value this service charges for each interaction",
       contractFunction: "updateTransactionCost",
       callback: (values) =>
         submitForm(values, "updateTransactionCost", {}, factoryContract),
     });
-  }, [handleOpen, factoryContract, submitForm]);
+  }, [openModal, factoryContract, submitForm]);
 
   const withdrawFactoryFunds = useCallback(() => {
-    handleOpen({
+    openModal({
       title: "Withdraw Funds",
       description: "Withdraw the funds in this smart contract",
       contractFunction: "withdraw",
       callback: () => submitForm({}, "withdraw", {}, factoryContract),
     });
-  }, [factoryContract, handleOpen, submitForm]);
+  }, [factoryContract, openModal, submitForm]);
 
   return (
     <Box className={classes.container}>

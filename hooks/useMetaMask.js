@@ -2,11 +2,10 @@ import {
   useContext,
   createContext,
   useCallback,
-  useEffect,
   useMemo,
   useReducer,
 } from "react";
-import useFeedback from "components/feedback/context";
+import { useSnackbar } from "notistack";
 import useFactory from "./useFactory";
 import useAddressBook from "./useAddressBook";
 import useNetworkUpdates from "./useNetworkUpdates";
@@ -54,7 +53,7 @@ function sortArguments(values, name) {
 // ===================================================
 
 export function MetaMaskContext({ children }) {
-  const { handleOpen } = useFeedback();
+  const { enqueueSnackbar } = useSnackbar();
   const { updateTransaction } = useTransaction();
   const { isAuthenticated, handleAuth } = useAuth();
 
@@ -131,9 +130,9 @@ export function MetaMaskContext({ children }) {
       await connectNetwork();
     } catch (err) {
       console.warn("Couldn't connect wallet", { err });
-      handleOpen("error", `Couldn't connect: ${err.message}`);
+      enqueueSnackbar(`Couldn't connect: ${err.message}`, { variant: "error" });
     }
-  }, [connectAccount, connectNetwork, handleOpen]);
+  }, [connectAccount, connectNetwork, enqueueSnackbar]);
 
   // search the DB to see if user has an address book already
   const fetchAddressBook = useCallback(async () => {
@@ -157,10 +156,12 @@ export function MetaMaskContext({ children }) {
         return result;
       } catch (err) {
         console.warn(`Couldn't read ${functionName} from contract`, err);
-        handleOpen("error", `Couldn't read from ${functionName}`);
+        enqueueSnackbar(`Couldn't read from ${functionName}`, {
+          variant: "error",
+        });
       }
     },
-    [account, handleOpen]
+    [account, enqueueSnackbar]
   );
 
   // all-purpose submit function for Modal forms
@@ -177,10 +178,10 @@ export function MetaMaskContext({ children }) {
             if (onSuccess) onSuccess();
           });
       } catch (err) {
-        handleOpen("error", `TX error: ${err.message}`);
+        enqueueSnackbar(`TX error: ${err.message}`, { variant: "error" });
       }
     },
-    [account, handleOpen, updateTransaction]
+    [account, enqueueSnackbar, updateTransaction]
   );
 
   // function to (re)initialise contract variables
@@ -210,7 +211,9 @@ export function MetaMaskContext({ children }) {
           ),
         });
       } catch (err) {
-        handleOpen("error", "Failed to update global variables");
+        enqueueSnackbar("Failed to update global variables", {
+          variant: "error",
+        });
       }
     }
 
@@ -233,15 +236,17 @@ export function MetaMaskContext({ children }) {
           factoryOwner: await readVariable("owner", factoryContract),
         });
       } catch (err) {
-        handleOpen("error", "Failed to refresh your address book");
+        enqueueSnackbar("Failed to refresh your address book", {
+          variant: "error",
+        });
       }
     }
-    // handleOpen("success", "Contract variables up-to-date!");
+    // enqueueSnackbar("success", "Contract variables up-to-date!");
   }, [
     network,
     isAuthenticated,
     factoryContract,
-    handleOpen,
+    enqueueSnackbar,
     readVariable,
     addressBookContract,
     isFactoryOwner,
