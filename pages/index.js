@@ -386,7 +386,7 @@ export default function Home() {
   return (
     <Box className={classes.container}>
       <Head>
-        <title>Ethereum Address Book</title>
+        <title>Address Book</title>
         <meta
           name="description"
           content="Address book for Ethereum users. Add and remove contacts and send transactions to them"
@@ -398,7 +398,7 @@ export default function Home() {
         <Toolbar className={classes.toolbar}>
           <Link passHref {...linkProps[linkBehaviour]}>
             <a {...linkProps[linkBehaviour]}>
-              <Typography>Ethereum Address Book</Typography>
+              <Typography>Address Book</Typography>
             </a>
           </Link>
           <Box className={classes.tagline}>
@@ -412,7 +412,7 @@ export default function Home() {
         <Box className={classes.columns}>
           <Box className={classes.infoPanel}>
             <Box className={classes.titles}>
-              <Typography variant="h1">Ethereum Address Book</Typography>
+              <Typography variant="h1">Address Book</Typography>
               <Typography variant="h2" color="secondary">
                 Manage contacts and send transactions
               </Typography>
@@ -460,18 +460,7 @@ export default function Home() {
                 <Box className={classes.buttonColumns}>
                   <Box className={classes.buttonList}>
                     {/* UNAUTHENTICATED BUTTONS */}
-                    {network && !isAuthenticated ? (
-                      <Button
-                        noAuth
-                        color="primary"
-                        tip="Create a new address book"
-                        onClick={createAddressBook}
-                      >
-                        <Typography variant="body1">
-                          Create Address Book
-                        </Typography>
-                      </Button>
-                    ) : (
+                    {!network && (
                       <Button
                         noAuth
                         color="primary"
@@ -480,6 +469,18 @@ export default function Home() {
                       >
                         <Typography variant="body1">
                           Connect Your Wallet
+                        </Typography>
+                      </Button>
+                    )}
+                    {network && !isAuthenticated && (
+                      <Button
+                        noAuth
+                        color="primary"
+                        tip="Create a new address book"
+                        onClick={createAddressBook}
+                      >
+                        <Typography variant="body1">
+                          Create Address Book
                         </Typography>
                       </Button>
                     )}

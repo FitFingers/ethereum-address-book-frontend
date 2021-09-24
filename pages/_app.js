@@ -3,7 +3,7 @@ import { CssBaseline } from "@material-ui/core";
 import { SnackbarProvider } from "notistack";
 import ThemeProvider from "theme";
 import Modal from "components/modal";
-import createSnackbar  from "components/feedback";
+import createSnackbar from "components/feedback";
 import { ModalContext } from "components/modal/context";
 import { AuthContext } from "components/auth/context";
 import { TransactionContext } from "hooks/useTransaction";
@@ -16,6 +16,8 @@ function EthereumAddressBook({ Component, pageProps }) {
       <TransactionContext>
         <ModalContext>
           <SnackbarProvider
+            preventDuplicate
+            autoHideDuration={3000}
             maxSnack={3}
             variant="success"
             content={createSnackbar}

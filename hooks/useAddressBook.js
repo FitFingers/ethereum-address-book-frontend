@@ -56,6 +56,7 @@ export default function useAddressBook(
     snacks,
   ]);
 
+  // autohide the peristent snackbars when no longer relevant
   useEffect(() => {
     if (isAuthenticated) closeSnackbar(snacks.networks);
     if (contractAddress) closeSnackbar(snacks.welcome);
@@ -63,6 +64,7 @@ export default function useAddressBook(
     closeSnackbar,
     contractAddress,
     isAuthenticated,
+    snacks,
     snacks.networks,
     snacks.welcome,
   ]);
