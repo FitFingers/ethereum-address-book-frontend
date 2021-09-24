@@ -21,6 +21,7 @@ import useAuth from "components/auth/context";
 import { getFactoryAddress } from "util/env-funcs";
 import DataDisplayPanel from "components/data-display-panel";
 import ContactList from "components/contact-list";
+import ButtonRow from "components/button-row";
 
 /*
   TODO:
@@ -195,14 +196,6 @@ const useStyles = makeStyles((theme) => ({
       "&:last-child": {
         marginBottom: 0,
       },
-    },
-  },
-  buttonRow: {
-    display: "flex",
-    margin: theme.spacing(0, -1),
-    "&>span": {
-      margin: theme.spacing(0, 1),
-      flex: 1,
     },
   },
   button: {},
@@ -426,23 +419,25 @@ export default function Home() {
                   handleListItemClick={handleListItemClick}
                 />
               </Box>
-              <Box className={classes.buttonRow}>
-                <Button
-                  onClick={removeContactByName}
-                  tip="Remove the selected contact"
-                >
-                  <PersonRemoveIcon />
-                </Button>
-                <Button
-                  onClick={payContactByName}
-                  tip="Pay the selected contact"
-                >
-                  <PaymentIcon />
-                </Button>
-                <Button onClick={addContact} tip="Add a new contact">
-                  <PersonAddIcon />
-                </Button>
-              </Box>
+              <ButtonRow
+                buttons={[
+                  {
+                    action: removeContactByName,
+                    tip: "Remove the selected contact",
+                    icon: <PersonRemoveIcon />,
+                  },
+                  {
+                    action: payContactByName,
+                    tip: "Pay the selected contact",
+                    icon: <PaymentIcon />,
+                  },
+                  {
+                    action: addContact,
+                    tip: "Add a new contact",
+                    icon: <PersonAddIcon />,
+                  },
+                ]}
+              />
             </Paper>
           </Box>
 
