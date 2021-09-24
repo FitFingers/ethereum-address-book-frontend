@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useSnackbar } from "notistack";
 import useAuth from "components/auth/context";
 import { ADDRESS_BOOK_ABI } from "util/abi";
@@ -12,7 +12,8 @@ export default function useAddressBook(
   fetchAddressBook
 ) {
   const { isAuthenticated, contractAddress } = useAuth();
-  const { enqueueSnackbar } = useSnackbar();
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const { current: snacks } = useRef({}); // TODO: refactor to own hook
 
   // fetch user's address book on connect or create
   useEffect(() => {
@@ -23,7 +24,7 @@ export default function useAddressBook(
   // create the contract once the user's address book address has been fetched (above)
   useEffect(() => {
     if (network && !validNetworks.includes(network)) {
-      return enqueueSnackbar(
+      snacks.networks = enqueueSnackbar(
         `This app only works on ${validNetworks.join(
           ", "
         )}. Please connect to the one of: ${validNetworks.join(", ")}`,
@@ -31,7 +32,7 @@ export default function useAddressBook(
       );
     }
     if (!contractAddress) {
-      return enqueueSnackbar(
+      snacks.welcome = enqueueSnackbar(
         "Welcome! Please connect using the button at the top of the page",
         { persist: true, variant: "info" }
       );
@@ -52,5 +53,17 @@ export default function useAddressBook(
     network,
     validNetworks,
     contractAddress,
+    snacks,
+  ]);
+
+  useEffect(() => {
+    if (isAuthenticated) closeSnackbar(snacks.networks);
+    if (contractAddress) closeSnackbar(snacks.welcome);
+  }, [
+    closeSnackbar,
+    contractAddress,
+    isAuthenticated,
+    snacks.networks,
+    snacks.welcome,
   ]);
 }
