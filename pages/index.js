@@ -142,6 +142,9 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     justifyContent: "flex-start",
+    [theme.breakpoints.down("sm")]: {
+      padding: theme.spacing(5, 3),
+    },
   },
   contactWindow: {
     borderRadius: theme.shape.borderRadius,
