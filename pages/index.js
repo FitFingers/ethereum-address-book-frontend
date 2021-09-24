@@ -389,10 +389,10 @@ export default function Home() {
   return (
     <Box className={classes.container}>
       <Head>
-        <title>Address Book</title>
+        <title>Ethereum Address Book</title>
         <meta
           name="description"
-          content="Address book for Ethereum users. Add and remove contacts and send transactions to them"
+          content="Ethereum Address book for Ethereum users. Add and remove contacts and send transactions to them"
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -401,7 +401,7 @@ export default function Home() {
         <Toolbar className={classes.toolbar}>
           <Link passHref {...linkProps[linkBehaviour]}>
             <a {...linkProps[linkBehaviour]}>
-              <Typography>Address Book</Typography>
+              <Typography>Ethereum Address Book</Typography>
             </a>
           </Link>
           <Box className={classes.tagline}>
@@ -415,7 +415,7 @@ export default function Home() {
         <Box className={classes.columns}>
           <Box className={classes.infoPanel}>
             <Box className={classes.titles}>
-              <Typography variant="h1">Address Book</Typography>
+              <Typography variant="h1">Ethereum Address Book</Typography>
               <Typography variant="h2" color="secondary">
                 Manage contacts and send transactions
               </Typography>
