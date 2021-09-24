@@ -1,4 +1,5 @@
-import { makeStyles, Box, Button } from "@material-ui/core";
+import { makeStyles, Box } from "@material-ui/core";
+import Button from "components/button";
 
 // ===================================================
 // STYLES
