@@ -241,7 +241,7 @@ export function MetaMaskContext({ children }) {
         });
       }
     }
-    // enqueueSnackbar("success", "Contract variables up-to-date!");
+    enqueueSnackbar("Contract variables up-to-date!", { variant: "success" });
   }, [
     network,
     isAuthenticated,
