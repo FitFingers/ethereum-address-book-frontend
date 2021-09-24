@@ -185,72 +185,79 @@ export function MetaMaskContext({ children }) {
   );
 
   // function to (re)initialise contract variables
-  const refreshVariables = useCallback(async () => {
-    if (!network) return;
+  const refreshVariables = useCallback(
+    async (manual) => {
+      if (!network) return;
 
-    // update address book values
-    if (isAuthenticated) {
-      try {
-        updateAddressBook({
-          totalContacts: await readVariable(
-            "readTotalContacts",
-            addressBookContract
-          ),
-          timelock: await readVariable(
-            "readSecurityTimelock",
-            addressBookContract
-          ),
-          owner: await readVariable("owner", addressBookContract),
-          addressBookBalance: await readVariable(
-            "checkBalance",
-            addressBookContract
-          ),
-          contactList: await readVariable(
-            "readAllContacts",
-            addressBookContract
-          ),
-        });
-      } catch (err) {
-        enqueueSnackbar("Failed to update global variables", {
-          variant: "error",
+      // update address book values
+      if (isAuthenticated) {
+        try {
+          updateAddressBook({
+            totalContacts: await readVariable(
+              "readTotalContacts",
+              addressBookContract
+            ),
+            timelock: await readVariable(
+              "readSecurityTimelock",
+              addressBookContract
+            ),
+            owner: await readVariable("owner", addressBookContract),
+            addressBookBalance: await readVariable(
+              "checkBalance",
+              addressBookContract
+            ),
+            contactList: await readVariable(
+              "readAllContacts",
+              addressBookContract
+            ),
+          });
+        } catch (err) {
+          enqueueSnackbar("Failed to update global variables", {
+            variant: "error",
+          });
+        }
+      }
+
+      // update factory values
+      if (factoryContract._address) {
+        try {
+          updateFactory({
+            txCost: await readVariable("txCost", factoryContract),
+            totalAddressBooks: await readVariable(
+              "totalAddressBooks",
+              factoryContract
+            ),
+            accountOpenCost: await readVariable(
+              "accountOpenCost",
+              factoryContract
+            ),
+            factoryBalance:
+              isFactoryOwner &&
+              (await readVariable("checkBalance", factoryContract)),
+            factoryOwner: await readVariable("owner", factoryContract),
+          });
+        } catch (err) {
+          enqueueSnackbar("Failed to refresh your address book", {
+            variant: "error",
+          });
+        }
+      }
+      if (manual) {
+        enqueueSnackbar("Contract variables up-to-date!", {
+          variant: "success",
         });
       }
-    }
-
-    // update factory values
-    if (factoryContract._address) {
-      try {
-        updateFactory({
-          txCost: await readVariable("txCost", factoryContract),
-          totalAddressBooks: await readVariable(
-            "totalAddressBooks",
-            factoryContract
-          ),
-          accountOpenCost: await readVariable(
-            "accountOpenCost",
-            factoryContract
-          ),
-          factoryBalance:
-            isFactoryOwner &&
-            (await readVariable("checkBalance", factoryContract)),
-          factoryOwner: await readVariable("owner", factoryContract),
-        });
-      } catch (err) {
-        enqueueSnackbar("Failed to refresh your address book", {
-          variant: "error",
-        });
-      }
-    }
-    enqueueSnackbar("Contract variables up-to-date!", { variant: "success" });
-  }, [
-    network,
-    isAuthenticated,
-    factoryContract,
-    enqueueSnackbar,
-    readVariable,
-    addressBookContract,
-    isFactoryOwner,
-  ]);
+    },
+    [
+      network,
+      isAuthenticated,
+      factoryContract,
+      enqueueSnackbar,
+      readVariable,
+      addressBookContract,
+      isFactoryOwner,
+    ]
+  );
 
   // EFFECT HOOKS
   // ===================================================

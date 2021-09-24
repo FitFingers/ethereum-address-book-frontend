@@ -510,7 +510,7 @@ export default function Home() {
                         <Button
                           color="primary"
                           tip="Refresh the contract data"
-                          onClick={refreshVariables}
+                          onClick={() => refreshVariables(true)}
                         >
                           <Typography variant="body1">Refresh Data</Typography>
                         </Button>
