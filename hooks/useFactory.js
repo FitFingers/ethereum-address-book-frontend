@@ -4,7 +4,7 @@ import { FACTORY_ABI } from "util/abi";
 import { getFactoryAddress } from "util/env-funcs";
 
 // Factory address
-const FACTORY_ADDRESS = getFactoryAddress("dev"); // or "rinkeby"
+const FACTORY_ADDRESS = getFactoryAddress();
 
 // create a contract instance if network is Rinkeby
 export default function useFactory(

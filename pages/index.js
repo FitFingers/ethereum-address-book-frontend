@@ -24,16 +24,14 @@ import ContactList from "components/contact-list";
 
 /*
   TODO:
-  1. Readd title from "noauth snackbars"
   4. "A controlled component is changed to uncontrolled"
-  5. Style notisnack
 */
 
 // ===================================================
 // UTIL (PAGE OPTIONS)
 // ===================================================
 
-const FACTORY_ADDRESS = getFactoryAddress("dev");
+const FACTORY_ADDRESS = getFactoryAddress();
 
 const linkBehaviour = "samesite";
 
@@ -291,9 +289,7 @@ export default function Home() {
         submitForm(
           values,
           "payContactByName",
-          {
-            value: Number(txCost) + Number(values.sendValue), // +1
-          },
+          { value: Number(txCost) + Number(values.sendValue) },
           addressBookContract
         ),
     });
@@ -342,9 +338,7 @@ export default function Home() {
         submitForm(
           values,
           "createAddressBook",
-          {
-            value: Number(accountOpenCost),
-          },
+          { value: Number(accountOpenCost) },
           factoryContract,
           fetchAddressBook // onSuccess
         ),
