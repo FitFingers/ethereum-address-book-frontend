@@ -24,6 +24,7 @@ import ContactList from "components/contact-list";
 
 /*
   TODO:
+  1. Readd title from "noauth snackbars"
   4. "A controlled component is changed to uncontrolled"
   5. Style notisnack
 */
