@@ -24,7 +24,6 @@ import ContactList from "components/contact-list";
 
 /*
   TODO:
-  2. Disable icon buttons before login / show disabled address buttons instead of hide
   4. "A controlled component is changed to uncontrolled"
   5. Style notisnack
 */

@@ -29,12 +29,17 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: 180,
     width: "100%",
     height: "auto",
+    mixBlendMode: network === "rinkeby" ? "multiply" : "normal",
     padding: theme.spacing(network === "rinkeby" ? 1 : 0, 2),
     margin: theme.spacing(network === "rinkeby" ? -2 : 0, 0),
-    mixBlendMode: network === "rinkeby" ? "multiply" : "normal",
     "& .MuiSvgIcon-root": {
       marginLeft: theme.spacing(1),
       color: theme.palette.background.toolbar,
+    },
+    [theme.breakpoints.down("sm")]: {
+      "& .MuiButton-root": {
+        margin: theme.spacing(0, -1),
+      },
     },
   }),
 }));
