@@ -26,7 +26,11 @@ export function AuthContext({ children }) {
   );
 
   const handleAuth = useCallback((address) => {
-    updateAuth({ isAuthenticated: !!address, contractAddress: address });
+    updateAuth({
+      isAuthenticated:
+        address && address !== "0x0000000000000000000000000000000000000000",
+      contractAddress: address,
+    });
   }, []);
 
   return (
