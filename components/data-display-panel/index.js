@@ -17,20 +17,12 @@ const variables = [
     tip: "Cost per transaction for using this service",
   },
   {
-    label: "Total Address Books",
-    tip: "The total number of active users of this service",
-  },
-  {
     label: "Total Contacts",
     tip: "Total number of contacts in the address book",
   },
   {
     label: "Security Timelock",
     tip: "Delay between adding contact and allowing the transfer of ETH to them",
-  },
-  {
-    label: "Balance (Address Book)",
-    tip: "The balance of this smart contract",
   },
   {
     label: "Contract Owner",
@@ -71,7 +63,6 @@ export default function DataDisplayPanel({}) {
     addressBookContract: { owner, timelock, totalContacts, addressBookBalance },
     factoryContract: {
       txCost,
-      totalAddressBooks,
       accountOpenCost,
       factoryBalance,
       factoryOwner,
@@ -87,13 +78,9 @@ export default function DataDisplayPanel({}) {
     "Transaction Cost": txCost && `${window?.web3?.utils.fromWei(txCost)} ETH`,
     "Total Contacts": totalContacts,
     "Security Timelock": timelock && formatTimestamp(timelock),
-    "Balance (Address Book)":
-      addressBookBalance &&
-      `${window?.web3?.utils.fromWei(addressBookBalance)} ETH`,
     "Balance (Factory)":
       factoryBalance && `${window?.web3?.utils.fromWei(factoryBalance)} ETH`,
     "Contract Owner": owner,
-    "Total Address Books": totalAddressBooks,
     "Factory Owner": factoryOwner,
   };
 

@@ -84,17 +84,10 @@ export function MetaMaskContext({ children }) {
 
   // factory contract variables
   const [
-    {
-      txCost,
-      totalAddressBooks,
-      accountOpenCost,
-      factoryBalance,
-      factoryOwner,
-    },
+    { txCost, accountOpenCost, factoryBalance, factoryOwner },
     updateFactory,
   ] = useReducer((state, moreState) => ({ ...state, ...moreState }), {
     txCost: null, // cost to send a transaction via this service
-    totalAddressBooks: null, // total numbers of address books created
     accountOpenCost: null, // cost to start using this service
     factoryOwner: null, // factory contract owner's address
     factoryBalance: null,
@@ -226,10 +219,6 @@ export function MetaMaskContext({ children }) {
         try {
           updateFactory({
             txCost: await readVariable("txCost", factoryContract),
-            totalAddressBooks: await readVariable(
-              "totalAddressBooks",
-              factoryContract
-            ),
             accountOpenCost: await readVariable(
               "accountOpenCost",
               factoryContract
@@ -310,7 +299,6 @@ export function MetaMaskContext({ children }) {
         factoryContract: {
           isFactoryOwner,
           txCost,
-          totalAddressBooks,
           accountOpenCost,
           factoryBalance,
           factoryOwner,
