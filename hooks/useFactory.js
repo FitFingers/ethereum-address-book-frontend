@@ -3,7 +3,7 @@ import { useSnackbar } from "notistack";
 import { FACTORY_ABI } from "util/abi";
 import { getFactoryAddress } from "util/env-funcs";
 
-// Factory address
+// Factory contract address
 const FACTORY_ADDRESS = getFactoryAddress();
 
 // create a contract instance if network is Rinkeby
