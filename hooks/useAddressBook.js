@@ -23,14 +23,6 @@ export default function useAddressBook(
 
   // create the contract once the user's address book address has been fetched (above)
   useEffect(() => {
-    if (network && !validNetworks.includes(network)) {
-      snacks.networks = enqueueSnackbar(
-        `This app only works on ${validNetworks.join(
-          ", "
-        )}. Please connect to the one of: ${validNetworks.join(", ")}`,
-        { persist: true, variant: "error" }
-      );
-    }
     if (!contractAddress) {
       snacks.welcome = enqueueSnackbar(
         "Welcome! Please connect using the button at the top of the page",
