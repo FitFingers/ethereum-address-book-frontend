@@ -11,7 +11,7 @@ export default function FeedbackLink({
   //   metamask: { network },
   // } = useMetaMask();
   return (
-    <a href={`${etherscan[network]}tx/${id}`} target="_blank" rel="noreferrer">
+    <a href={`${etherscan[network || "rinkeby"]}tx/${id}`} target="_blank" rel="noreferrer">
       <Typography variant="body1">
         {short ? "TX ID" : "Transaction hash"}: {id}
       </Typography>

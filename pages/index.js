@@ -508,7 +508,9 @@ export default function Home() {
         {contractAddress && (
           <Link
             passHref
-            href={`${etherscan[network]}address/${contractAddress}`}
+            href={`${
+              etherscan[network || "rinkeby"]
+            }address/${contractAddress}`}
           >
             <a target="_blank" rel="noreferrer">
               <Typography variant="h6">
@@ -520,7 +522,10 @@ export default function Home() {
             </a>
           </Link>
         )}
-        <Link passHref href={`${etherscan[network]}address/${FACTORY_ADDRESS}`}>
+        <Link
+          passHref
+          href={`${etherscan[network || "rinkeby"]}address/${FACTORY_ADDRESS}`}
+        >
           <a target="_blank" rel="noreferrer">
             <Typography variant="h6">
               Contract address:{" "}
