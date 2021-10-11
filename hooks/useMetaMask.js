@@ -61,7 +61,7 @@ export function MetaMaskContext({ children }) {
   // ===================================================
   // metamask / web3 state
   const [
-    { account, network, factoryContract, addressBookContract },
+    { account, network, isValidNetwork, factoryContract, addressBookContract },
     updateMetaMask,
   ] = useReducer((state, moreState) => ({ ...state, ...moreState }), {
     account: null,
@@ -120,7 +120,10 @@ export function MetaMaskContext({ children }) {
   // connect to the network
   const connectNetwork = useCallback(async () => {
     const connectedNetwork = await window.web3.eth.net.getNetworkType();
-    updateMetaMask({ network: connectedNetwork });
+    updateMetaMask({
+      network: connectedNetwork,
+      isValidNetwork: validNetworks.includes(connectedNetwork),
+    });
   }, []);
 
   // connect to user's wallet
@@ -142,7 +145,7 @@ export function MetaMaskContext({ children }) {
         .call({ from: account });
       handleAuth(addressBook);
     } catch (err) {
-      console.warn("Failed attempt to access address book");
+      console.warn("Failed attempt to access address book", err);
     }
   }, [account, factoryContract.methods, handleAuth]);
 
@@ -187,7 +190,7 @@ export function MetaMaskContext({ children }) {
   // function to (re)initialise contract variables
   const refreshVariables = useCallback(
     async (manual) => {
-      if (!network) return;
+      if (!network || !isValidNetwork) return;
 
       // update address book values
       if (isAuthenticated) {
@@ -250,11 +253,12 @@ export function MetaMaskContext({ children }) {
     },
     [
       network,
+      isValidNetwork,
       isAuthenticated,
       factoryContract,
-      enqueueSnackbar,
       readVariable,
       addressBookContract,
+      enqueueSnackbar,
       isFactoryOwner,
     ]
   );
