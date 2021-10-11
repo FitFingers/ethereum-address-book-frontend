@@ -93,6 +93,10 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
     whiteSpace: "nowrap",
+    "&>*": {
+      textOverflow: "initial",
+      width: "fit-content",
+    },
     [theme.breakpoints.down("sm")]: {
       whiteSpace: "break-spaces",
       textAlign: "right",

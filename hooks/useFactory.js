@@ -15,6 +15,7 @@ export default function useFactory(
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
+    // TODO: move this to useNetworkUpdates
     if (network && !validNetworks.includes(network)) {
       return enqueueSnackbar(
         "This app only works on Rinkeby. Please connect to the Rinkeby network",
