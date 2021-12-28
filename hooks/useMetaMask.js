@@ -186,7 +186,11 @@ export function MetaMaskContext({ children }) {
       if (!network || !isValidNetwork) return;
 
       // update address book values
-      if (isAuthenticated) {
+      if (
+        addressBookContract?._address &&
+        addressBookContract?._address !==
+          "0x0000000000000000000000000000000000000000"
+      ) {
         try {
           updateAddressBook({
             totalContacts: await readVariable(
@@ -243,7 +247,6 @@ export function MetaMaskContext({ children }) {
     [
       network,
       isValidNetwork,
-      isAuthenticated,
       factoryContract,
       readVariable,
       addressBookContract,

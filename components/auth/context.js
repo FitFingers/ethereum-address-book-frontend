@@ -25,6 +25,7 @@ export function AuthContext({ children }) {
     }
   );
 
+  // NOTE: isAuthenticated will fire other effects before the contract is actually initialised!
   const handleAuth = useCallback((address) => {
     updateAuth({
       isAuthenticated:
