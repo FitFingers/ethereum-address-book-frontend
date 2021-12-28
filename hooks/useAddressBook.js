@@ -30,6 +30,13 @@ export default function useAddressBook(
       );
     }
 
+    if (!window.web3) {
+      return enqueueSnackbar(
+        "You don't seem to have a Web3 provider installed",
+        { persist: true, variant: "error" }
+      );
+    }
+
     const addressBookContract = new web3.eth.Contract(
       ADDRESS_BOOK_ABI,
       contractAddress

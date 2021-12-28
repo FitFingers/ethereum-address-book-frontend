@@ -15,10 +15,15 @@ export default function useFactory(
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
-    // TODO: move this to useNetworkUpdates
     if (network && !validNetworks.includes(network)) {
       return enqueueSnackbar(
         "This app only works on Rinkeby. Please connect to the Rinkeby network",
+        { persist: true, variant: "error" }
+      );
+    }
+    if (!window.web3) {
+      return enqueueSnackbar(
+        "You don't seem to have a Web3 provider installed",
         { persist: true, variant: "error" }
       );
     }
